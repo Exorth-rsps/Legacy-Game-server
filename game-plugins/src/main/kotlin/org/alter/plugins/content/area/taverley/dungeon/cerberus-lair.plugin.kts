@@ -8,7 +8,7 @@ package org.alter.plugins.content.area.taverley.dungeon
 on_obj_option(obj = Objs.PORTCULLIS_21772, option = "Exit") {
     if (player.getSkills().getCurrentLevel(Skills.SLAYER) > 89) {
         player.queue {
-            player.moveTo(tile = Tile(x = 2950, z = 9853, height = 0))
+            player.moveTo(tile = Tile(x = 2873, z = 9847, height = 0))
         }
     } else {
         player.message("How you get here? You need a slayer of 90 to get here!")
