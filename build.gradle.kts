@@ -6,6 +6,7 @@ plugins {
     idea
 }
 
+
 allprojects {
     apply(plugin = "idea")
     apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -52,6 +53,7 @@ allprojects {
         implementation(lib.kotlinx.serialization.core)
         testImplementation(lib.junit)
         testImplementation(lib.kotlin.test.junit)
+
     }
 
     idea {
@@ -69,7 +71,8 @@ allprojects {
 
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
-            languageVersion = "1.7"
+            languageVersion = "1.8"
+            apiVersion = "1.8"
             jvmTarget = "17"
             freeCompilerArgs = listOf(
                 "-Xallow-any-scripts-in-source-roots" ,
