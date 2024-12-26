@@ -19,9 +19,6 @@ on_command("ardy", description = "Teleports you to East Ardougne") {
 on_command("wardy", description = "Teleports you to West Ardougne") {
     player.moveTo(Tile(x = 2534, z = 3306, height = 0))
 }
-on_command("seers", description = "Teleports you to Seers Village") {
-    player.moveTo(Tile(x = 2725, z = 3484, height = 0))
-}
 on_command("cath", description = "Teleports you to Catherby") {
     player.moveTo(Tile(x = 2804, z = 3433, height = 0))
 }
