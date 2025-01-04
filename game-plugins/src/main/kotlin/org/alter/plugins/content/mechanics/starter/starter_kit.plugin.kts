@@ -5,9 +5,6 @@ import org.alter.game.model.attr.NEW_ACCOUNT_ATTR
 on_login {
     if (player.attr[NEW_ACCOUNT_ATTR] ?: return@on_login) {
         with (player.inventory) {
-            add(Items.BREAD, 5)
-            add(Items.BRONZE_PICKAXE)
-            add(Items.BRONZE_AXE)
             add(Items.TRAINING_SWORD)
             add(Items.TRAINING_SHIELD)
             add(Items.TRAINING_BOW)
