@@ -3,7 +3,7 @@ package org.alter.plugins.content.area.exorth.catherby.shops
 import org.alter.game.model.shop.PurchasePolicy
 import org.alter.plugins.content.mechanics.shops.CoinCurrency
 
-create_shop("Hickton's Archery Emporium", CoinCurrency(), purchasePolicy = PurchasePolicy.BUY_TRADEABLES) {
+create_shop("Hickton's Archery Emporium", CoinCurrency(), purchasePolicy = PurchasePolicy.BUY_STOCK) {
     items[0] = ShopItem(Items.BRONZE_BOLTS, 200, 5, 0, 1, 10)
     items[1] = ShopItem(Items.IRON_BOLTS, 150, 10, 1, 1, 10)
     items[2] = ShopItem(Items.STEEL_BOLTS, 50, 75, 6, 1, 10)
