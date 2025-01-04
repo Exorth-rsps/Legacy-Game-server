@@ -29,7 +29,7 @@ suspend fun QueueTask.options(): Int = options(
 
 suspend fun QueueTask.question_1() {
     chatPlayer("Who are you?", animation = 568)
-    chatNpc("My name is Radimus Erkle, the keeper of the Legends Guild. I have honored this place for many years. How can I help you?", animation = 554)
+    chatNpc("My name is Radimus Erkle, the keeper of the Legends Guild. I have honored this place for many years.", animation = 554)
 }
 
 suspend fun QueueTask.question_2() {
@@ -45,7 +45,7 @@ suspend fun QueueTask.question_3() {
 
 suspend fun QueueTask.question_4() {
     chatPlayer("Those stairs leading down... <br>what's there?", animation = 568)
-    chatNpc("I’d rather not talk about it.", animation = 554)
+    chatNpc("I'd rather not talk about it.", animation = 554)
     chatNpc("I must admit, I feel a bit of fear when I hear the rumors about the horrors that happen down there.", animation = 554)
 }
 
