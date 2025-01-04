@@ -10,23 +10,23 @@ on_command("yell", description = "Yell to everyone") {
         }
         1 -> {
             rank = "<img=0>Moderator"
-            color = "<shad=8388736>"
+            color = "<col=8900331>"
         }
         2 -> {
             rank = "<img=1>Admin"
-            color = "<shad=139>"
+            color = "<col=8900331>"
         }
         3 -> {
             rank = "<img=1>Developer"
-            color = "<shad=12850>"
+            color = "<col=8900331>"
         }
         4 -> {
             rank = "<img=1>Owner"
-            color = "<shad=139>"
+            color = "<col=8900331>"
         }
         5 -> {
             rank = "<img=8>Donator"
-            color = "<shad=16776960>"
+            color = "<col=8900331>"
         }
         else -> {
             rank = "unidentified"
