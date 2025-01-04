@@ -389,13 +389,19 @@ abstract class KotlinPlugin(private val r: PluginRepository, val world: World, v
     /**
      * Invoked when npc with [Npc.id] of [npc] invokes their death task.
      */
-    fun on_npc_pre_death(npc: Int, plugin: Plugin.() -> Unit) = r.bindNpcPreDeath(npc, plugin)
+    fun on_npc_pre_death(
+        vararg npc: Int,
+        plugin: Plugin.() -> Unit,
+    ) = npc.forEach { r.bindNpcPreDeath(it, plugin) }
 
     /**
      * Invoked when npc with [Npc.id] of [npc] finishes their death task and
      * is de-registered from the world.
      */
-    fun on_npc_death(npc: Int, plugin: Plugin.() -> Unit) = r.bindNpcDeath(npc, plugin)
+    fun on_npc_death(
+        vararg npc: Int,
+        plugin: Plugin.() -> Unit,
+    ) = npc.forEach { r.bindNpcDeath(it, plugin) }
 
 
     /**

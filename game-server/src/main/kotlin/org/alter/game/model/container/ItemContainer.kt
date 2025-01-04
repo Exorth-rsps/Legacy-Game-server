@@ -146,6 +146,23 @@ class ItemContainer(val definitions: DefinitionSet, val key: ContainerKey) : Ite
     val hasSpace: Boolean get() = nextFreeSlot != -1
 
     /**
+     * Method to check if player has free slots.
+     */
+
+    fun hasFreeSpace(): Boolean {
+        return freeSlotCount > 0
+    }
+    fun requiresFreeSlotToAdd(item: Int): Boolean {
+        val def = definitions.get(ItemDef::class.java, item)
+
+        return if (def.stackable) {
+            !contains(item)
+        } else {
+            true
+        }
+    }
+
+    /**
      * Calculate the total amount of items in this container who's [Item.id]
      * matches [itemId].
      */
