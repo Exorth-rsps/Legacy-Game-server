@@ -20,3 +20,22 @@ on_obj_option(obj = Objs.STAIRCASE_15648, option = "climb-down") {
     }
 }
 
+on_obj_option(obj = Objs.STAIRCASE_15653, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        11032 -> { // Legendsguild
+            player.moveTo(x = 2767, z = 1596, 1)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.STAIRCASE_15654, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        11032 -> { // Legendsguild
+            player.moveTo(x = 2767, z = 1592, 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+
