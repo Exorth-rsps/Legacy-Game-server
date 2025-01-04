@@ -5,3 +5,6 @@ table(Rare.rareTable, slots = 16)
 ### Legendsguild
 - General store (Buy all tradeble items)
 - Shop of usefull items (Buy only stock)
+
+### Witchaven
+- Lovecrafts Tackle (Buy only stock)
