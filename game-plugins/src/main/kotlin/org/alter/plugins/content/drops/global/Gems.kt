@@ -3,29 +3,25 @@ package org.alter.plugins.content.drops.global
 import org.alter.api.EquipmentType
 import org.alter.api.cfg.Items
 import org.alter.plugins.content.drops.DropTableFactory
-import org.alter.plugins.content.drops.global.MegaRare.megaRareTable
-
-/**
- * @author Alycia <https://github.com/alycii>
- */
 object Gems {
     val gemTable =
         DropTableFactory.build {
             main {
-
-                // TODO: check all 4 rings
+                
                 val hasRingOfWealth = player.equipment.hasAt(EquipmentType.RING.id, Items.RING_OF_WEALTH)
 
-                total(1024)
+                total(10240)
                 if (!hasRingOfWealth) nothing(512)
-                obj(Items.UNCUT_SAPPHIRE, quantity = 1, slots = if (hasRingOfWealth) 492 else 240)
-                obj(Items.UNCUT_EMERALD, quantity = 1, slots = if (hasRingOfWealth) 228 else 112)
-                obj(Items.UNCUT_RUBY, quantity = 1, slots = if (hasRingOfWealth) 114 else 64)
-                obj(Items.CHAOS_TALISMAN, quantity = 1, slots = if (hasRingOfWealth) 47 else 24)
-                obj(Items.NATURE_TALISMAN, quantity = 1, slots = if (hasRingOfWealth) 47 else 24)
-                obj(Items.UNCUT_DIAMOND, quantity = 1, slots = if (hasRingOfWealth) 32 else 16)
-                obj(Items.RUNE_JAVELIN, quantity = 5, slots = if (hasRingOfWealth) 16 else 8)
-                table(megaRareTable, slots = if (hasRingOfWealth) 16 else 8)
+                obj(Items.UNCUT_OPAL, quantity = 1, slots = if (hasRingOfWealth) 160 else 80)
+                obj(Items.UNCUT_JADE, quantity = 1, slots = if (hasRingOfWealth) 160 else 80)
+                obj(Items.UNCUT_RED_TOPAZ, quantity = 1, slots = if (hasRingOfWealth) 160 else 80)
+                obj(Items.UNCUT_SAPPHIRE, quantity = 1, slots = if (hasRingOfWealth) 80 else 40)
+                obj(Items.UNCUT_EMERALD, quantity = 1, slots = if (hasRingOfWealth) 80 else 40)
+                obj(Items.UNCUT_RUBY, quantity = 1, slots = if (hasRingOfWealth) 40 else 20)
+                obj(Items.UNCUT_DIAMOND, quantity = 1, slots = if (hasRingOfWealth) 40 else 20)
+                obj(Items.UNCUT_DRAGONSTONE, quantity = 1, slots = if (hasRingOfWealth) 4 else 2)
+                obj(Items.UNCUT_ONYX, quantity = 1, slots = if (hasRingOfWealth) 4 else 2)
+                obj(Items.UNCUT_ZENYTE, quantity = 1, slots = if (hasRingOfWealth) 2 else 1)
             }
         }
 }
