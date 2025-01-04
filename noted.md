@@ -9,3 +9,8 @@ table(Rare.rareTable, slots = 16)
 
 ### Witchaven
 - Lovecrafts Tackle (Buy only stock)
+
+### Catherby
+- Arheins general store (Buy all tradeble items)
+- Hickton archery store (Buy stock only)
+- Harry fishing (Buy stock only)
