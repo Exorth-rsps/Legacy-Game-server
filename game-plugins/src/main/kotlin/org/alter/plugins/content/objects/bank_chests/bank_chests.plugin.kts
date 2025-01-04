@@ -3,7 +3,8 @@ package org.alter.plugins.content.objects.bank_chests
 import org.alter.plugins.content.interfaces.bank.openBank
 
 private val CHESTS = with(Objs) { setOf(
-         BANK_CHEST_28861
+        BANK_CHEST_28861,
+        BANK_CHEST_19051
 ) }
 
 CHESTS.forEach { booth ->
