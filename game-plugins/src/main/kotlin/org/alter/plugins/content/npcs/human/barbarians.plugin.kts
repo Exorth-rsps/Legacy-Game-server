@@ -119,7 +119,7 @@ suspend fun QueueTask.dialogue4() {
 suspend fun QueueTask.dialogue5() {
     chatPlayer("Do you train every day?")
     chatNpc("Every hour we're awake. Strength doesn't come from sitting around.")
-    chatPlayer("That explains why you’re all so strong.")
+    chatPlayer("That explains why you're all so strong.")
     chatNpc("And why you'd better not make us angry.")
 }
 
