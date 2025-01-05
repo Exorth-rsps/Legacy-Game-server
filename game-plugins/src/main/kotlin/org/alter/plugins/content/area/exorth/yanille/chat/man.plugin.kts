@@ -13,9 +13,9 @@ suspend fun QueueTask.dialog1() {
 
 suspend fun QueueTask.dialog2() {
     chatNpc("Have you seen the sunrise from the hills?")
-    chatPlayer("No, I haven’t. Is it special?")
-    chatNpc("It’s a sight that reminds you why the gods gave us this land.")
-    chatPlayer("I’ll make sure to catch it someday.")
+    chatPlayer("No, I haven't. Is it special?")
+    chatNpc("It's a sight that reminds you why the gods gave us this land.")
+    chatPlayer("I'll make sure to catch it someday.")
 }
 
 suspend fun QueueTask.dialog3() {
@@ -29,18 +29,18 @@ suspend fun QueueTask.dialog4() {
     chatNpc("Be careful when venturing out. Not all paths are safe.")
     chatPlayer("Thanks for the warning. Are there many dangers nearby?")
     chatNpc("Wolves, bandits, and the occasional stray spell.<br>Stay alert.")
-    chatPlayer("I’ll keep that in mind. Thanks.")
+    chatPlayer("I'll keep that in mind. Thanks.")
 }
 
 suspend fun QueueTask.dialog5() {
-    chatNpc("Did you hear about the merchant’s lost caravan?")
+    chatNpc("Did you hear about the merchant's lost caravan?")
     chatPlayer("No, what happened?")
-    chatNpc("Vanished without a trace. Some say it’s cursed.")
-    chatPlayer("Sounds like trouble. I’ll stay away from cursed goods.")
+    chatNpc("Vanished without a trace. Some say it's cursed.")
+    chatPlayer("Sounds like trouble. I'll stay away from cursed goods.")
 }
 
 suspend fun QueueTask.dialog6() {
-    chatPlayer("What’s the news around here?")
+    chatPlayer("What's the news around here?")
     chatNpc("Not much, just the usual village gossip and farm troubles.")
     chatPlayer("Anything interesting?")
     chatNpc("If you find sheep wandering about, let the shepherd know!")
