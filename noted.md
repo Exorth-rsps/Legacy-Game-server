@@ -14,3 +14,8 @@ table(Rare.rareTable, slots = 16)
 - Arheins general store (Buy all tradeble items)
 - Hickton archery store (Buy stock only)
 - Harry fishing (Buy stock only)
+
+### Yanille
+- Magic Guild Store (Buy stock)
+- Yanille General Store (Buy all tradeble items)
+- Frenita's cooked food shop (Buy stock)
