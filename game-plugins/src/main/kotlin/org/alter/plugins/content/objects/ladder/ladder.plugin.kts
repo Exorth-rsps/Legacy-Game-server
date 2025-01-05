@@ -35,7 +35,11 @@ val ladders = arrayOf(
     Objs.LADDER_12966,
     Objs.LADDER_16679,
     Objs.LADDER_16684,
-    Objs.LADDER_16681
+    Objs.LADDER_16681,
+    Objs.LADDER_25938,
+    Objs.LADDER_25939,
+    Objs.LADDER_25941,
+    Objs.LADDER_25940
 )
 
 ladders.forEach { ladder ->
