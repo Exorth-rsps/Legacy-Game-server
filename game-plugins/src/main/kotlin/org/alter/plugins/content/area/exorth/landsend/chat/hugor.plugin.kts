@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.landsend.chat
+package org.alter.plugins.content.areas.exorth.landsend.chat
 
 
 arrayOf(Npcs.HUGOR).forEach { shop ->

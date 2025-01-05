@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.yanille.chat
+package org.alter.plugins.content.area.exorth.legendsguild.chat
 
 on_npc_option(npc = Npcs.RADIMUS_ERKLE, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
 

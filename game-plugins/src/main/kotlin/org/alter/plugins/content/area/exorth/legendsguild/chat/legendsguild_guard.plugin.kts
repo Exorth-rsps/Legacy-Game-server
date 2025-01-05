@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.legendsguild.chat
+package org.alter.plugins.content.area.exorthlegendsguild.chat
 
 on_npc_option(npc = Npcs.LEGENDS_GUARD, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
 on_npc_option(npc = Npcs.LEGENDS_GUARD_3952, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }

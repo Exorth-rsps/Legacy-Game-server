@@ -1,4 +1,4 @@
-package gg.rsmod.plugins.content.areas.yanille
+package gg.rsmod.plugins.content.areas.exorth.yanille
 /**
  * @author Eikenb00m <https://github.com/eikenb00m>
  */

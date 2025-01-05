@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.yanille.chat
+package org.alter.plugins.content.areas.exorth.catherby.chat
 
 arrayOf(Npcs.HICKTON).forEach { shop ->
 

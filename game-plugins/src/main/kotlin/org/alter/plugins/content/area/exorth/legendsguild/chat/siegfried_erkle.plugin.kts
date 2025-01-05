@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.yanille.chat
+package org.alter.plugins.content.areas.exorth.legendsguild.chat
 
 arrayOf(Npcs.SIEGFRIED_ERKLE).forEach { shop ->
 
