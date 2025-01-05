@@ -28,7 +28,7 @@ suspend fun QueueTask.dialog() {
 
 suspend fun QueueTask.options(): Int = options(
     "Can you teleport me to the Rune Essence Mine?",
-    "What is this place?"
+    "What is this place?",
     "No thank you."
 )
 
