@@ -1,6 +1,6 @@
 package org.alter.plugins.content.areas.yanille.chat
 
-arrayOf(Npcs.SHOP_KEEPER).forEach { shop ->
+arrayOf(Npcs.SHOP_KEEPER, Npcs.SHOP_ASSISTANT).forEach { shop ->
 
     on_npc_option(npc = shop, option = "talk-to") { player.queue { dialog(this) } }
 
