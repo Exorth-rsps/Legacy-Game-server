@@ -107,7 +107,7 @@ suspend fun cycle(it: QueueTask): Boolean {
                 }
             } else {
                 if (pawn is Player) {
-                    pawn.message("There is no config for this npc, please report.")
+                    //pawn.message("There is no config for this npc, please report.")
                 }
                 strategy.attack(pawn, target)
                 Combat.postAttack(pawn, target)
