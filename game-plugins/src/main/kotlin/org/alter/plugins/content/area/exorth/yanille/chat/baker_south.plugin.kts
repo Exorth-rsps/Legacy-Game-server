@@ -1,6 +1,6 @@
 package org.alter.plugins.content.area.exorth.yanille.chat
 
-arrayOf(Npcs.BAKER_8724).forEach { shop ->
+arrayOf(Npcs.BAKER_8725).forEach { shop ->
 
     on_npc_option(npc = shop, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
     on_npc_option(npc = shop, option = "trade") { open_shop(player) }
