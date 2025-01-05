@@ -45,7 +45,7 @@ suspend fun QueueTask.question_2() {
             }
             2 -> {
                 chatPlayer("I think I have the money right here, actually.")
-                if (player.inventory.freeSlotCount < 2) {
+                if (player.inventory.freeSlotCount < 1) {
                     chatNpc(
                         "You don't have enough free space in your inventory for me to sell you a Skillcape of Fletching.",
                     )
