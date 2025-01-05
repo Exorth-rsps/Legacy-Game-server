@@ -36,45 +36,24 @@ class DefinitionSet {
     private var xteaService: XteaKeyService? = null
 
     fun loadAll(store: Store) {
-        /*
-         * Load [AnimDef]s.
-         */
         load(store, AnimDef::class.java)
         logger.info("Loaded ${getCount(AnimDef::class.java)} animation definitions.")
 
-        /*
-         * Load [VarpDef]s.
-         */
         load(store, VarpDef::class.java)
         logger.info("Loaded ${getCount(VarpDef::class.java)} varp definitions.")
 
-        /*
-         * Load [VarbitDef]s.
-         */
         load(store, VarbitDef::class.java)
         logger.info("Loaded ${getCount(VarbitDef::class.java)} varbit definitions.")
 
-        /*
-         * Load [EnumDef]s.
-         */
         load(store, EnumDef::class.java)
         logger.info("Loaded ${getCount(EnumDef::class.java)} enum definitions.")
 
-        /*
-         * Load [NpcDef]s.
-         */
         load(store, NpcDef::class.java)
         logger.info("Loaded ${getCount(NpcDef::class.java)} npc definitions.")
 
-        /*
-         * Load [ItemDef]s.
-         */
         load(store, ItemDef::class.java)
         logger.info("Loaded ${getCount(ItemDef::class.java)} item definitions.")
 
-        /*
-         * Load [ObjectDef]s.
-         */
         load(store, ObjectDef::class.java)
         logger.info("Loaded ${getCount(ObjectDef::class.java)} object definitions.")
     }
@@ -135,7 +114,7 @@ class DefinitionSet {
         return def as T
     }
 
-    fun getCount(type: Class<*>) = defs[type]!!.size
+    fun getCount(type: Class<*>) = defs[type]?.size ?: 0
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Definition> get(type: Class<out T>, id: Int): T {
@@ -205,14 +184,6 @@ class DefinitionSet {
         world.collision.applyUpdate(blockedTileBuilder.build())
 
         if (xteaService == null) {
-            /*
-             * If we don't have an [XteaKeyService], then we assume we don't
-             * need to decrypt the files through xteas. This means the objects
-             * from each region has to be decrypted a different way.
-             *
-             * If this is the case, you need to use [gg.rsmod.game.model.region.Chunk.addEntity]
-             * to add the object to the world for collision detection.
-             */
             return true
         }
 
@@ -226,17 +197,24 @@ class DefinitionSet {
                 val hasBridge = bridges.contains(tile)
                 if (hasBridge && loc.position.z == 0) return@forEach
                 val adjustedTile = if (bridges.contains(tile)) tile.transform(-1) else tile
+
+                // Debugging: Check if object definition exists
+                val objDef = getNullable(ObjectDef::class.java, loc.id)
+                if (objDef == null) {
+                    logger.error("Missing object definition for ID ${loc.id} at Tile $adjustedTile in Region $id")
+                }
+
                 val obj = StaticObject(loc.id, loc.type, loc.orientation, adjustedTile)
                 world.chunks.getOrCreate(adjustedTile).addEntity(world, obj, adjustedTile)
             }
             return true
         } catch (e: IOException) {
-            logger.error("Could not decrypt map region {}.", id)
+            logger.error("Could not decrypt map region $id: ${e.message}")
             return false
         }
     }
 
     companion object {
-        private val logger = KotlinLogging.logger{}
+        private val logger = KotlinLogging.logger {}
     }
 }
