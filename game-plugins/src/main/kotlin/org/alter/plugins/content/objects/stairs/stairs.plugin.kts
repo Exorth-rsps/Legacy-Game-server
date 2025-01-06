@@ -56,5 +56,23 @@ on_obj_option(obj = Objs.STAIRCASE_25935, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.STAIRCASE_16664, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        10777 -> { // Yanille Dungeon
+            player.moveTo(x = 3768, z = 1258, 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.STAIRCASE_16665, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        14867 -> { // Yanille Dungeon
+            player.moveTo(x = 2695, z = 1629, 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
 
 
