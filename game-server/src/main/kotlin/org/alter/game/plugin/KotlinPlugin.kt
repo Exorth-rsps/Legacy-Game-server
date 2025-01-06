@@ -639,6 +639,14 @@ abstract class KotlinPlugin(private val r: PluginRepository, val world: World, v
     fun <T : Definition> getDefCount(type: KClass<out T>) : Int {
         return world.definitions.getCount(type.java)
     }
+    fun getObjectTile(world: World, obj: GameObject): Tile {
+        return obj.tile
+    }
+
+    fun isSpecificDoor(world: World, obj: GameObject, doorId: Int): Boolean {
+        return obj.id == doorId
+    }
+
 
 
 }
