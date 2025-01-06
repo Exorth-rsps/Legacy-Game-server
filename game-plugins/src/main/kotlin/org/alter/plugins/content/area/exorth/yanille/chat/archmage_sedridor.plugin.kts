@@ -64,7 +64,7 @@ fun teleport(p: Player) {
         wait(2)
         player.graphic(110, 125)
         wait(2)
-        player.moveTo(2912, 4833, 0)
+        player.moveTo(3616, 1245, 0)
         player.lock = LockState.NONE
     }
 }
