@@ -1,5 +1,7 @@
 package org.alter.plugins.content.objects.ladder
 
+import org.alter.api.cfg.Objs
+
 /**Stairs*/
 
 val stairs = arrayOf(
@@ -36,6 +38,9 @@ val ladders = arrayOf(
     Objs.LADDER_16679,
     Objs.LADDER_16684,
     Objs.LADDER_16681,
+    Objs.LADDER_18234,
+    Objs.LADDER_18235,
+    Objs.LADDER_18237,
     Objs.LADDER_25938,
     Objs.LADDER_25939,
     Objs.LADDER_25941,
@@ -55,7 +60,7 @@ ladders.forEach { ladder ->
     }
     if (objHasOption(obj = ladder, option = "climb-down")) {
         on_obj_option(obj = ladder, option = "climb-down") {
-            climbdownladder(player)
+            climbdownladder(player, ladder)
         }
     }
 }
@@ -72,12 +77,16 @@ fun climbupladder(player : Player) {
     }
 }
 
-fun climbdownladder(player : Player) {
+fun climbdownladder(player : Player, ladder : Int) {
     player.queue {
         player.animate(828)
         player.lock()
         wait(2)
-        player.moveTo(player.tile.x, player.tile.z, player.tile.height - 1)
+        if (ladder == Objs.LADDER_18237) {
+            player.moveTo(player.tile.x + 2, player.tile.z, player.tile.height - 1)
+        } else {
+            player.moveTo(player.tile.x, player.tile.z, player.tile.height - 1)
+        }
         player.unlock()
     }
 }
@@ -86,7 +95,7 @@ fun climbladder(player: Player) {
     player.queue {
         when (options("Climb up the ladder.", "Climb down the ladder")) {
             1 -> climbupladder(player)
-            2 -> climbdownladder(player)
+            2 -> climbdownladder(player, 1)
         }
     }
 }
