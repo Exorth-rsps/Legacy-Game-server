@@ -61,6 +61,9 @@ on_obj_option(obj = Objs.STAIRCASE_16664, option = "Climb-Down") {
         10777 -> { // Yanille Dungeon
             player.moveTo(x = 3768, z = 1258, 0)
         }
+        11032 -> { // Legends Dungeon
+            player.moveTo(x = 3953, z = 1262, 0)
+        }
 
         else -> player.message("Nothing interesting happens.")
     }
@@ -69,6 +72,9 @@ on_obj_option(obj = Objs.STAIRCASE_16665, option = "Climb-Up") {
     when(player.tile.regionId) {
         14867 -> { // Yanille Dungeon
             player.moveTo(x = 2695, z = 1629, 0)
+        }
+        15635 -> { // Legends Dungeon
+            player.moveTo(x = 2758, z = 1590, 0)
         }
 
         else -> player.message("Nothing interesting happens.")
