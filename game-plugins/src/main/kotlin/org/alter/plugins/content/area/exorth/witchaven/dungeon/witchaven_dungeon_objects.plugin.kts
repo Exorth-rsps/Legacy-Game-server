@@ -5,7 +5,7 @@ package gg.rsmod.plugins.content.areas.exorth.yanille.dungeon
  */
 
 on_obj_option(obj = Objs.EXIT_18354, option = "Climb-up") { //exit
-    player.moveTo(3109, 3163, 0)
+    player.moveTo(2724, 1557, 0)
 }
 on_obj_option(obj = Objs.OLD_RUIN_ENTRANCE, option = "Climb-down") { //entrance
     player.moveTo(3464, 1235, 0)
