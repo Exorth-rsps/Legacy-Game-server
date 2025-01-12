@@ -39,3 +39,13 @@ on_obj_option(obj = Objs.LADDER_17385, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.LADDER_41924, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        10520 -> { //Barbarians
+            //player.moveTo(x = 2683, z = 1636, height = 0)
+            player.message("Nothing interesting happens.")
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
