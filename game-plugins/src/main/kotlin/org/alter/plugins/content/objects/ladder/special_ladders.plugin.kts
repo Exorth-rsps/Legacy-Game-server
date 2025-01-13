@@ -41,9 +41,19 @@ on_obj_option(obj = Objs.LADDER_17385, option = "Climb-Up") {
 }
 on_obj_option(obj = Objs.LADDER_41924, option = "Climb-Down") {
     when(player.tile.regionId) {
-        10520 -> { //Barbarians
-            //player.moveTo(x = 2683, z = 1636, height = 0)
-            player.message("Nothing interesting happens.")
+        10520 -> { //Bryophyta
+            player.moveTo(x = 4037, z = 1240, height = 0)
+            //player.message("Nothing interesting happens.")
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.LADDER_41925, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        16147 -> { //Bryophyta
+            player.moveTo(x = 2640, z = 1572, height = 0)
+            //player.message("Nothing interesting happens.")
         }
 
         else -> player.message("Nothing interesting happens.")
