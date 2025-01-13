@@ -80,5 +80,23 @@ on_obj_option(obj = Objs.STAIRCASE_16665, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.STAIRCASE_3415, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        11035 -> { // Obor Dungeon
+            player.moveTo(x = 4203, z = 1260, 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.STAIRCASE_3416, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        16659 -> { // Obor Dungeon
+            player.moveTo(x = 2775, z = 1748, 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
 
 
