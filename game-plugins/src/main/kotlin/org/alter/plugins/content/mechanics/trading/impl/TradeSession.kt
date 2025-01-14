@@ -1,5 +1,7 @@
 package org.alter.plugins.content.mechanics.trading.impl
 
+import org.alter.game.fs.def.ItemDef
+import org.alter.game.model.item.Item
 import org.alter.api.ext.getInterfaceHash
 import org.alter.game.model.container.ContainerStackType
 import org.alter.game.model.container.ItemContainer
@@ -8,6 +10,7 @@ import org.alter.api.InterfaceDestination
 import org.alter.api.ext.*
 import org.alter.plugins.content.mechanics.trading.*
 import org.alter.plugins.service.marketvalue.ItemMarketValueService
+import org.alter.game.model.priv.Privilege
 
 /**
  * @author Triston Plummer ("Dread")
@@ -153,16 +156,28 @@ class TradeSession(private val player: Player, private val partner: Player) {
     fun offer(slot: Int, amount: Int) {
         if (stage != TradeStage.TRADE_SCREEN) return
 
-        val item = inventory[slot]?: return
+        val item = inventory[slot] ?: return
+        val unnoted = Item(item).toUnnoted(player.world.definitions)
         val count = Math.min(amount, inventory.getItemCount(item.id))
 
+        // Controleer of de speler een admin is of het item tradeable is
+        if (!player.privilege.equals("OWNER_POWER") && !player.world.definitions
+                .get(ItemDef::class.java, unnoted.id)
+                .tradeable
+        ) {
+            player.message("You can't trade this item.")
+            return
+        }
+
         val transaction = inventory.remove(item.id, count, assureFullRemoval = true, beginSlot = slot)
-        if (transaction.hasSucceeded())
+        if (transaction.hasSucceeded()) {
             container.add(item.id, count)
+        }
 
         refresh()
         progress(false)
     }
+
 
     /**
      * Removes an item from this [Player]'s trade [ItemContainer]
