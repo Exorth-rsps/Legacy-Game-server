@@ -63,7 +63,7 @@ spawn_npc(Npcs.HERO_3295, 2652, 1710, 0, 3, Direction.NORTH)
 
 spawn_npc(Npcs.HORVIK, 2637, 1668, 0, 3, Direction.EAST)
 spawn_npc(Npcs.LOUIE_LEGS, 2664, 1673, 0, 3, Direction.EAST)
-spawn_npc(Npcs.CASSIE, 2662, 1685, 0, 3, Direction.EAST)
+spawn_npc(Npcs.CASSIE, 2663, 1685, 0, 3, Direction.EAST)
 spawn_npc(Npcs.PEKSA, 2661, 1698, 0, 3, Direction.EAST)
 spawn_npc(Npcs.GAIUS, 2643, 1699, 0, 3, Direction.EAST)
 spawn_npc(Npcs.WIZARD_AKUTHA, 2684, 1637, 1, 5, Direction.EAST)
