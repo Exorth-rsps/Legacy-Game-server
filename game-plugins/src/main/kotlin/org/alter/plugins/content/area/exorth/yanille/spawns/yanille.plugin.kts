@@ -2,8 +2,8 @@ package org.alter.plugins.content.area.exorth.yanille.spawns
 
 spawn_npc(Npcs.ARCHMAGE_SEDRIDOR_11433, 2680, 1636, 0, 5, Direction.EAST)
 
-spawn_npc(Npcs.SHOP_KEEPER, 2682, 1655, 0, 4, Direction.SOUTH)
-spawn_npc(Npcs.SHOP_ASSISTANT, 2684, 1655, 0, 4, Direction.SOUTH)
+spawn_npc(Npcs.SHOP_KEEPER, 2682, 1655, 0, 2, Direction.SOUTH)
+spawn_npc(Npcs.SHOP_ASSISTANT, 2684, 1655, 0, 2, Direction.SOUTH)
 
 spawn_npc(Npcs.SOLDIER_5421, 2700, 1653, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.SOLDIER_5421, 2703, 1651, 0, 5, Direction.SOUTH)
