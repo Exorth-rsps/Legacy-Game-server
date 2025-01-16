@@ -12,34 +12,34 @@ private val SOUNDAREA_ID = 200
 private val SOUNDAREA_RADIUS = 5
 private val SOUNDAREA_VOLUME = 1
 
-private val LOCATIONS = mapOf(
-    "Miscellania" to Tile(2537, 3875),
-    "Grand Exchange" to Tile(3164, 3481),
-    "Falador" to Tile(3004, 3361),
-    "Dondakan" to Tile(3004, 3361)
-)
+//private val LOCATIONS = mapOf(
+//    "Miscellania" to Tile(2537, 3875),
+//    "Grand Exchange" to Tile(3164, 3481),
+//    "Falador" to Tile(3004, 3361),
+//    "Dondakan" to Tile(3004, 3361)
+//)
 
-private val OPTIONS = mapOf(
-    "Boss Log" to Tile(3004, 3361),
-    "Coin Collection" to Tile(3004, 3361)
-)
+//private val OPTIONS = mapOf(
+//    "Boss Log" to Tile(3004, 3361),
+//    "Coin Collection" to Tile(3004, 3361)
+//)
 
-RING_OF_WEALTH.forEach { wealth ->
-    LOCATIONS.forEach { location, tile ->
-        on_equipment_option(wealth, option = location) {
-            player.queue(TaskPriority.STRONG) {
-                player.teleport(tile)
-            }
-        }
-    }
-    OPTIONS.forEach { options, open ->
-        on_equipment_option(wealth, option = options) {
-            player.queue(TaskPriority.STRONG) {
-                player.message("Placeholder for both boss log and coin collector. mapof(${open})" , ChatMessageType.ENGINE)
-                }
-            }
-        }
-    }
+//RING_OF_WEALTH.forEach { wealth ->
+//    LOCATIONS.forEach { location, tile ->
+//        on_equipment_option(wealth, option = location) {
+//            player.queue(TaskPriority.STRONG) {
+//                player.teleport(tile)
+//            }
+//        }
+//    }
+//    OPTIONS.forEach { options, open ->
+//        on_equipment_option(wealth, option = options) {
+//            player.queue(TaskPriority.STRONG) {
+//                player.message("Placeholder for both boss log and coin collector. mapof(${open})" , ChatMessageType.ENGINE)
+//                }
+//            }
+//        }
+//    }
 
 fun Player.teleport(endTile : Tile) {
     if (canTeleport(TeleportType.GLORY) && hasEquipped(EquipmentType.RING, *RING_OF_WEALTH)) {
