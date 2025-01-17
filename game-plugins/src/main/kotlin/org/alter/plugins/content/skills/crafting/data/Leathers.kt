@@ -14,8 +14,8 @@ enum class Leathers(val id: Int, val leatherOptions: Array<LeatherItem>) {
     BLUE_DRAGON_LEATHER(id=Items.BLUE_DRAGON_LEATHER, leatherOptions = arrayOf(LeatherItem.BLUE_DHIDE_VAMBRACES, LeatherItem.BLUE_DHIDE_CHAPS, LeatherItem.BLUE_DHIDE_BODY)),
     RED_DRAGON_LEATHER(id=Items.RED_DRAGON_LEATHER, leatherOptions = arrayOf(LeatherItem.RED_DHIDE_VAMBRACES, LeatherItem.RED_DHIDE_CHAPS, LeatherItem.RED_DHIDE_BODY)),
     BLACK_DRAGON_LEATHER(id=Items.BLACK_DRAGON_LEATHER, leatherOptions = arrayOf(LeatherItem.BLACK_DHIDE_VAMBRACES, LeatherItem.BLACK_DHIDE_CHAPS, LeatherItem.BLACK_DHIDE_BODY)),
-    //YAKHIDE(id= Items.YAKHIDE, leatherOptions = arrayOf(LeatherItem.YAKHIDE_ARMOUR_LEGS, LeatherItem.YAKHIDE_ARMOUR_TOP)),
-    //SNAKESKIN(id=Items.SNAKESKIN, leatherOptions = arrayOf(LeatherItem.SNAKESKIN_BOOTS, LeatherItem.SNAKESKIN_VAMBRACES, LeatherItem.SNAKESKIN_BANDANA, LeatherItem.SNAKESKIN_CHAPS, LeatherItem.SNAKESKIN_BODY)),
+    YAKHIDE(id= Items.YAKHIDE, leatherOptions = arrayOf(LeatherItem.YAKHIDE_ARMOUR_LEGS, LeatherItem.YAKHIDE_ARMOUR_TOP)),
+    SNAKESKIN(id=Items.SNAKESKIN, leatherOptions = arrayOf(LeatherItem.SNAKESKIN_BOOTS, LeatherItem.SNAKESKIN_VAMBRACES, LeatherItem.SNAKESKIN_BANDANA, LeatherItem.SNAKESKIN_CHAPS, LeatherItem.SNAKESKIN_BODY)),
     ;
 
     companion object {
