@@ -3,6 +3,8 @@
 name: "Alter"
 game-port: 43594
 revision: 215
+xpmultiplier: 4.0
+doublexp: false
 
 # The coordinates for the home location.
 home-x: 3218

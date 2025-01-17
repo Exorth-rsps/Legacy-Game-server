@@ -97,6 +97,8 @@ class Server {
             name = gameProperties.get<String>("name")!!,
             revision = gameProperties.get<Int>("revision")!!,
             cycleTime = gameProperties.getOrDefault("cycle-time", 600),
+            xpmultiplier = gameProperties.getOrDefault("xpmultiplier", 1.0),
+            doublexp = gameProperties.getOrDefault("doublexp", false),
 
             playerLimit = gameProperties.getOrDefault("max-players", 2048),
             home = Tile(
@@ -195,6 +197,7 @@ class Server {
         /*
          * Inform the time it took to load up all non-network logic.
          */
+        logger.info("${gameProperties.get<String>("name")!!} double xp is ${gameProperties.get<String>("doublexp")!!}")
         logger.info("${gameProperties.get<String>("name")!!} loaded up in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)}ms.")
 
         /*

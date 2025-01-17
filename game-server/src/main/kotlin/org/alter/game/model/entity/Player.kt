@@ -501,12 +501,25 @@ open class Player(world: World) : Pawn(world) {
         }
     }
 
-    fun addXp(skill: Int, xp: Double) {
+    fun addXp(
+        skill: Int,
+        xp: Double,
+        xpMultiplier: Double = world.gameContext.xpmultiplier,
+        doubleXp: Boolean = world.gameContext.doublexp
+    ) {
         val oldXp = getSkills().getCurrentXp(skill)
         if (oldXp >= SkillSet.MAX_XP) {
             return
         }
-        val newXp = Math.min(SkillSet.MAX_XP.toDouble(), (oldXp + (xp * xpRate)))
+
+        // Pas de multiplier toe
+        val adjustedXp = xp * xpMultiplier
+
+        // Verdubbel de uitkomst als doubleXp actief is
+        val finalXp = if (doubleXp) adjustedXp * 2 else adjustedXp
+
+        val newXp = Math.min(SkillSet.MAX_XP.toDouble(), (oldXp + (finalXp * xpRate)))
+
         /*
          * Amount of levels that have increased with the addition of [xp].
          */
@@ -528,6 +541,8 @@ open class Player(world: World) : Pawn(world) {
             world.plugins.executeSkillLevelUp(this)
         }
     }
+
+
 
     /**
      * @see largeViewport
