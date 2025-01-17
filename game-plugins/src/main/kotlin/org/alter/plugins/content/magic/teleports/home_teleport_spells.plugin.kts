@@ -16,8 +16,8 @@ val TERMINATE_HOME_TELEPORT_SITTING: QueueTask.() -> Unit = {
     player.graphic(-1)
 }
 
-val HOME_TELEPORT_TIMER_ENABLED = true
-val HOME_TELEPORT_TIMER_DELAY = 3000
+val HOME_TELEPORT_TIMER_ENABLED = false
+val HOME_TELEPORT_TIMER_DELAY = 500
 val HOME_TELEPORT_TIMER = TimerKey(persistenceKey = "home_teleport_delay")
 
 HomeTeleport.values.forEach { teleport ->
