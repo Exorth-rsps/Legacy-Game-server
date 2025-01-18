@@ -21,6 +21,7 @@ import org.alter.game.model.entity.Pawn
 import org.alter.game.model.entity.Player
 import org.alter.game.model.interf.DisplayMode
 import org.alter.game.model.item.Item
+import org.alter.api.cfg.Items
 import org.alter.game.model.timer.SKULL_ICON_DURATION_TIMER
 import org.alter.game.sync.block.UpdateBlockType
 import org.alter.api.*
@@ -105,6 +106,15 @@ fun Player.focusTab(tab: GameframeTab) {
 fun Player.setInterfaceUnderlay(color: Int, transparency: Int) {
     runClientScript(917, color, transparency)
     runClientScript(2524, color, transparency)
+}
+fun hasAnyHides(player: Player): Boolean {
+    return player.inventory.getItemCount(Items.COWHIDE) >= 1 ||
+            player.inventory.getItemCount(Items.SNAKE_HIDE) >= 1 ||
+            player.inventory.getItemCount(Items.SNAKE_HIDE_7801) >= 1 ||
+            player.inventory.getItemCount(Items.GREEN_DRAGONHIDE) >= 1 ||
+            player.inventory.getItemCount(Items.BLUE_DRAGONHIDE) >= 1 ||
+            player.inventory.getItemCount(Items.RED_DRAGONHIDE) >= 1 ||
+            player.inventory.getItemCount(Items.BLACK_DRAGONHIDE) >= 1
 }
 
 fun Player.setInterfaceEvents(interfaceId: Int, component: Int, from: Int, to: Int, setting: Int) {
