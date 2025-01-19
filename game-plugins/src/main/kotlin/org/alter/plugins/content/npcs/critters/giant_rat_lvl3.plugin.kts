@@ -7,7 +7,7 @@ val ids = intArrayOf(
 )
 
 val table = DropTableFactory
-val soldier =
+val droptable =
     table.build {
         guaranteed {
             obj(Items.BONES, quantity = 1)
@@ -34,7 +34,7 @@ val soldier =
     }
 
 
-table.register(soldier, *ids)
+table.register(droptable, *ids)
 
 on_npc_pre_death(*ids) {
     val p = npc.damageMap.getMostDamage()!! as Player
