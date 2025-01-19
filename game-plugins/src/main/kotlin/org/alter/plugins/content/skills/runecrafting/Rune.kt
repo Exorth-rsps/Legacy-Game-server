@@ -10,7 +10,7 @@ import org.alter.api.cfg.Items
  * @param level     The level required to craft the rune
  * @param xp        The xp granted per crafted rune
  */
-enum class Rune(val id: Int, val essence: IntArray = intArrayOf(Items.PURE_ESSENCE), val level: Int, val xp: Double) {
+enum class Rune(val id: Int, val essence: IntArray = intArrayOf(Items.RUNE_ESSENCE), val level: Int, val xp: Double) {
 
     AIR(id = Items.AIR_RUNE,        essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 5.0),
     MIND(id = Items.MIND_RUNE,      essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 5.5),
