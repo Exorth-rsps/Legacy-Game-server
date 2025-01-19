@@ -9,12 +9,13 @@ import org.alter.api.cfg.Items
 import org.alter.api.cfg.Objs
 import org.alter.api.ext.*
 import org.alter.plugins.content.skills.thieving.objs.ChestRewards.yanille_chest
+import org.alter.plugins.content.skills.thieving.objs.ChestRewards.legends_chest
 
 import gg.rsmod.util.Misc
 
 enum class Chest(val Chests: IntArray, private val levelRequired: Int, val xp: Double, private val respawnCycles: Int, val attemptMsg: String = "", val steals: Array<ChestItem>) {
-    YANILLE(intArrayOf(Objs.CLOSED_CHEST_375), 70, 0.0, 60, steals = yanille_chest)
-	//TO-DO Legends chest
+    YANILLE(intArrayOf(Objs.CLOSED_CHEST_375), 70, 0.0, 60, steals = yanille_chest),
+	LEGENDS(intArrayOf(Objs.CHEST_1994), 70, 0.0, 60, steals = legends_chest)
     ;
 
 	fun steal(player: Player, ChestId: Int) {
