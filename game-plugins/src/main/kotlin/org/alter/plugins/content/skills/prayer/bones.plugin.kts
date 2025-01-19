@@ -12,12 +12,21 @@ Bones.values.forEach { bones ->
             Bury.Bury(player, bones)
         }
     }
-    on_item_on_obj(obj = Objs.CHAOS_ALTAR_411, item = bones.id) {
+    on_item_on_obj(obj = Objs.CHAOS_ALTAR_412, item = bones.id) {
         if (!Offer.canOffer(player, bones)) {
             return@on_item_on_obj
         }
         if (player.inventory.contains(bones.id)) {
-            // 1(gilded), 2(ecto), 3(chaos)
+            // 0(gilded), 1(ecto), 2(chaos), 3(normal)
+            Offer.OfferBones(player, bones, 2)
+        }
+    }
+    on_item_on_obj(obj = Objs.ALTAR_409, item = bones.id) {
+        if (!Offer.canOffer(player, bones)) {
+            return@on_item_on_obj
+        }
+        if (player.inventory.contains(bones.id)) {
+            // 0(gilded), 1(ecto), 2(chaos), 3(normal)
             Offer.OfferBones(player, bones, 3)
         }
     }
