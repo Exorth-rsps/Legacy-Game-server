@@ -17,12 +17,12 @@ import org.alter.plugins.content.skills.thieving.objs.StallRewards.spice_stall_s
 import gg.rsmod.util.Misc
 
 enum class Stall(val stalls: IntArray, private val levelRequired: Int, val xp: Double, private val respawnCycles: Int, val attemptMsg: String = "", val steals: Array<StallItem>) {
-    BAKERS_STALL(intArrayOf(Objs.BAKERS_STALL_11730), 10, 1000.0, 4, steals = bakers_stall_steals),
-    SILK_STALL(intArrayOf(Objs.SILK_STALL_11729), 20, 1400.0, 6, steals = silk_stall_steals),
-    FUR_STALL(intArrayOf(Objs.FUR_STALL_11732), 40, 1800.0, 10, steals = fur_stall_steals),
-    SILVER_STALL(intArrayOf(Objs.SILVER_STALL_11734), 65, 2500.0, 20, steals = silver_stall_steals),
-	SPICE_STALL(intArrayOf(Objs.SPICE_STALL_11733), 80, 4800.0, 40, steals = spice_stall_steals),
-    GEM_STALL(intArrayOf(Objs.GEM_STALL_11731), 90, 58000.0, 100, steals = gem_stall_steals)
+    BAKERS_STALL(intArrayOf(Objs.BAKERS_STALL_11730), 5, 16.0, 12, steals = bakers_stall_steals),
+    SILK_STALL(intArrayOf(Objs.SILK_STALL_11729), 20, 24.0, 32, steals = silk_stall_steals),
+    FUR_STALL(intArrayOf(Objs.FUR_STALL_11732), 35, 45.0, 48, steals = fur_stall_steals),
+    SILVER_STALL(intArrayOf(Objs.SILVER_STALL_11734), 50, 205.0, 64, steals = silver_stall_steals),
+	SPICE_STALL(intArrayOf(Objs.SPICE_STALL_11733), 65, 92.0, 20, steals = spice_stall_steals),
+    GEM_STALL(intArrayOf(Objs.GEM_STALL_11731), 75, 408.0, 100, steals = gem_stall_steals)
     ;
 
 	fun steal(player: Player, stallId: Int) {
