@@ -1,8 +1,6 @@
 package org.alter.plugins.content.npcs.human;
 
-import org.alter.plugins.content.combat.isBeingAttacked
 import org.alter.plugins.content.drops.DropTableFactory
-import kotlin.reflect.typeOf
 
 val ids = intArrayOf(
     Npcs.SOLDIER_5421
