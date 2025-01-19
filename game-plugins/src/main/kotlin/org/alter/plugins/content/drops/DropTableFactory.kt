@@ -387,8 +387,6 @@ class TableBuilder(
      * Builds this drop table.
      */
     internal fun build(): DropTable {
-        if (occupiedSlots != totalSlots && name != GUARANTEED_TABLE_NAME) {
-        }
 
         return DropTable(name, entries.toTypedArray())
     }
