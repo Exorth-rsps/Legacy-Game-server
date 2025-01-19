@@ -82,7 +82,7 @@ enum class PickpocketNpc(val npcIds: IntArray, val experience: Double, val reqLe
     ),
     HERO(
         npcIds = intArrayOf(
-            Npcs.WATCHMAN_5420
+            Npcs.HERO_3295
         ),
         experience = 137.5,
         reqLevel = 65,
