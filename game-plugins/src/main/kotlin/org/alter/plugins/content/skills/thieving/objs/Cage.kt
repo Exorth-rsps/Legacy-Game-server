@@ -13,7 +13,7 @@ import org.alter.plugins.content.skills.thieving.objs.CageRewards.cage_steals
 import gg.rsmod.util.Misc
 
 enum class Cage(val Cages: IntArray, private val levelRequired: Int, val xp: Double, private val respawnCycles: Int, val attemptMsg: String = "", val steals: Array<CageItem>) {
-    CAGES(intArrayOf(Objs.CAGE_20873), 1, 150.0, 4, steals = cage_steals)
+    CAGES(intArrayOf(Objs.CAGE_20873), 1, 5.0, 4, steals = cage_steals)
     ;
 
 	fun steal(player: Player, CageId: Int) {
