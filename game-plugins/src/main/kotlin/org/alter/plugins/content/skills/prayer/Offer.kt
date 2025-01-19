@@ -16,7 +16,7 @@ object Offer {
     // Altar = 1(gilded), Altar = 2(ecto), Altar = 3(chaos)
     fun OfferBones(p: Player, bones: Bones, Altar: Int) {
         val boneName = p.world.definitions.get(ItemDef::class.java, bones.id).name
-        val altars = arrayOf(bones.gilded, bones.ecto, bones.chaos)
+        val altars = arrayOf(bones.gilded, bones.ecto, bones.chaos, bones.normal)
         p.queue {
             p.lock()
             p.addXp(Skills.PRAYER, altars[Altar + 1])
