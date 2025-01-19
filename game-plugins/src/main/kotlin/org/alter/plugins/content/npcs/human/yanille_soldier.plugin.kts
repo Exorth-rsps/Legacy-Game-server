@@ -11,10 +11,10 @@ val soldier =
     table.build {
         guaranteed {
             obj(Items.BONES, quantity = 1)
-            obj(Items.COINS_995, quantityRange = 5..10)
         }
         main {
             total(256)
+            obj(Items.COINS_995, quantityRange = 5..20, 128)
             obj(Items.STEEL_FULL_HELM, quantity = 1, slots = 1)
             obj(Items.STEEL_CHAINBODY, quantity = 1, slots = 2)
             obj(Items.STEEL_PLATELEGS, quantity = 1, slots = 1)
