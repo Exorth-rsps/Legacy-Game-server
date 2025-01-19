@@ -18,6 +18,18 @@ object Herbs {
                 obj(Items.GRIMY_DWARF_WEED, quantity = 1, slots = 24)
             }
         }
+    val lowlevelHerbTable =
+        DropTableFactory.build {
+            main {
+                total(1024)
+                obj(Items.GRIMY_GUAM_LEAF, quantity = 1, slots = 198)
+                obj(Items.GRIMY_MARRENTILL, quantity = 1, slots = 146)
+                obj(Items.GRIMY_TARROMIN, quantity = 1, slots = 114)
+                obj(Items.GRIMY_HARRALANDER, quantity = 1, slots = 49)
+                obj(Items.GRIMY_IRIT_LEAF, quantity = 1, slots = 39)
+                nothing(250)
+            }
+        }
 
     val minorMultipleHerbTable =
         DropTableFactory.build {
