@@ -8,7 +8,7 @@ on_login {
 
 on_timer(RunEnergy.RUN_DRAIN) {
     player.timers[RunEnergy.RUN_DRAIN] = 1
-    RunEnergy.drain(player)
+    //RunEnergy.drain(player)
 }
 
 /**
