@@ -268,6 +268,7 @@ object Graphic {
     const val KARILS_TAINTED_SHOT = 401
     const val BRUTAL_ARROW_DRAWBACK = 403
     const val BRUTAL_ARROW_PROJECTILE = 404
+    const val HUGE_ROCK = 406
     const val ABYSSAL_DEMON_TELEPORT = 409
     const val ELEMENTAL_WIZARD_DEATH = 432
     const val REDEMPTION = 436
