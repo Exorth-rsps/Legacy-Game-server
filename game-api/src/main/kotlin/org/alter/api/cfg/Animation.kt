@@ -1732,6 +1732,7 @@ object Animation {
     const val TRICK_EMOTE = 31939
     const val TROLL_ATTACK = 284
     const val TROLL_DEATH = 287
+    const val DAD_DEATH = 4989
     const val TROLL_DEFEND = 285
     const val TSTANON_KARLAK_DEATH = 68
     const val TUMEKENS_SHADOW_ATTACK = 9493
