@@ -144,10 +144,9 @@ server-packets:
         type: BYTES
 
 
-  # @IGNORED
-  #  - message: org.alter.game.message.impl.FriendListLoadedMessage
-  #    type: VARIABLE_SHORT
-  #    opcode: 73
+#    - message: org.alter.game.message.impl.FriendListLoadedMessage
+#      type: VARIABLE_SHORT
+#      opcode: 73
 
   - message: org.alter.game.message.impl.UpdateRunEnergyMessage
     type: FIXED
