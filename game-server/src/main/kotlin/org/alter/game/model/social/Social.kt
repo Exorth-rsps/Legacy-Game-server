@@ -25,7 +25,7 @@ class Social {
         }
         val world = player.world
 
-        if (friends.isEmpty()) {
+        if (friends.isEmpty() || true) {
             player.write(FriendListLoadedMessage())
         } else {
             friends.forEach {
@@ -105,17 +105,34 @@ class Social {
         }
     }
 
-    fun sendPrivateMessage(player: Player, target: Player, length: Int, message: ByteArray) {
-        val decompressed = ByteArray(230)
-        val huffman = player.world.huffman
-        huffman.decompress(message, decompressed, length)
-        val unpacked = String(decompressed, 0, length)
-
-        logger.info { "${player.username} is attempting to message: ${target.username} with message: $unpacked" }
-
+//    fun sendPrivateMessage(player: Player, target: Player, length: Int, message: ByteArray) {
+//        val decompressed = ByteArray(230)
+//        val huffman = player.world.huffman
+//        huffman.decompress(message, decompressed, length)
+//        val unpacked = String(decompressed, 0, length)
+//
+//        logger.info { "${player.username} is attempting to message: ${target.username} with message: $unpacked" }
+//
+//        target.write(MessagePrivateReceiverMessage(player.username, 255, 0, player.privilege.icon, "Testing"))
+//        player.write(MessagePrivateReceiverMessage(target.username, 255, -1, 0, "Testing"))
+//
+//    }
+fun sendPrivateMessage(
+    player: Player,
+    target: Player,
+    unpacked: String,
+) {
+    logger.info { "${player.username} is attempting to message: ${target.username} with message: $unpacked" }
         target.write(MessagePrivateReceiverMessage(player.username, 255, 0, player.privilege.icon, "Testing"))
         player.write(MessagePrivateReceiverMessage(target.username, 255, -1, 0, "Testing"))
-
+}
+    fun dummyList(player: Player) {
+        friends.add("Test1")
+        friends.add("Test2")
+        friends.add("Test3")
+        ignores.add("Test4")
+        ignores.add("Test5")
+        ignores.add("Test6")
     }
     companion object {
         private val logger = KotlinLogging.logger{}

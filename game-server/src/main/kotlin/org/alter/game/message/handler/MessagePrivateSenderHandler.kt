@@ -16,12 +16,15 @@ class MessagePrivateSenderHandler : MessageHandler<MessagePrivateSenderMessage> 
         huffman.decompress(message.message, decompressed, message.length)
         val unpacked = String(decompressed, 0, message.length)
 
+
         logger.info { "Sender: ${client.username} - Target: ${message.target} - Message: [${message.length}] $unpacked" }
 
         val target = world.getPlayerForName(message.target)
         if (target != null) {
             logger.info { "Attempting to send packet to target" }
-            client.social.sendPrivateMessage(client, target, message.length, message.message)
+            //client.social.sendPrivateMessage(client, target, message.length, message.message)
+            client.social.sendPrivateMessage(client, target, unpacked)
+
         }
     }
     companion object {
