@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.exorth.yanille.chat
+package org.alter.plugins.content.area.legacy.falador.chat
 
 arrayOf(Npcs.LOUIE_LEGS).forEach { shop ->
 

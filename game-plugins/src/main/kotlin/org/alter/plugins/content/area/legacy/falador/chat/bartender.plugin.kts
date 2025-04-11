@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.varrock
+package org.alter.plugins.content.area.legacy.falador.chat
 
 on_npc_option(npc = Npcs.BARTENDER_1320, option = "talk-to", lineOfSightDistance = 3) {
     player.queue {

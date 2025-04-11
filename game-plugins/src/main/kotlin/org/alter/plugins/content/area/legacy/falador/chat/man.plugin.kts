@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.exorth.yanille.chat
+package org.alter.plugins.content.areas.legacy.falador.chat
 
 arrayOf(Npcs.MAN_3106, Npcs.MAN_3107, Npcs.WOMAN_3111, Npcs.WOMAN_3112).forEach { npc ->
     on_npc_option(npc = npc, option = "talk-to") { player.queue { randomDialog() } }

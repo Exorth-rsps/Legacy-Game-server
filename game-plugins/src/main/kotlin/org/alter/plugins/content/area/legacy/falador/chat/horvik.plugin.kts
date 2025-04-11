@@ -1,13 +1,13 @@
-package org.alter.plugins.content.area.exorth.yanille.chat
+package org.alter.plugins.content.area.legacy.falador.chat
 
-arrayOf(Npcs.GAIUS).forEach { shop ->
+arrayOf(Npcs.HORVIK).forEach { shop ->
 
     on_npc_option(npc = shop, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
     on_npc_option(npc = shop, option = "trade") { open_shop(player) }
 }
 
     suspend fun QueueTask.dialog() {
-        chatNpc("Would you like to buy some swords?")
+        chatNpc("Would you like to buy some armour?")
         var continueDialog = true
         while (continueDialog) {
             when (options()) {
@@ -35,5 +35,5 @@ arrayOf(Npcs.GAIUS).forEach { shop ->
     }
 
 fun open_shop(p: Player) {
-    p.openShop("Gaius' Sword Shop")
+    p.openShop("Horvik's Armour Shop")
 }

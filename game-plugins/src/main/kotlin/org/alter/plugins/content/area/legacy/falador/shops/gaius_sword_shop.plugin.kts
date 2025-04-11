@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.varrock.shops
+package org.alter.plugins.content.area.legacy.falador.shops
 
 import org.alter.game.model.shop.PurchasePolicy
 import org.alter.plugins.content.mechanics.shops.CoinCurrency
