@@ -1,9 +1,9 @@
-package org.alter.plugins.content.area.exorth.yanille.shops
+package org.alter.plugins.content.area.legacy.falador.shops
 
 import org.alter.game.model.shop.PurchasePolicy
 import org.alter.plugins.content.mechanics.shops.CoinCurrency
 
-create_shop("Yanille General Store", CoinCurrency(), purchasePolicy = PurchasePolicy.BUY_TRADEABLES) {
+create_shop("Falador General Store", CoinCurrency(), purchasePolicy = PurchasePolicy.BUY_TRADEABLES) {
     items[0] = ShopItem(Items.TINDERBOX, 10, 3, 1)
     items[1] = ShopItem(Items.HAMMER, 7, 3, 1)
     items[2] = ShopItem(Items.KNIFE, 6, 4, 1)

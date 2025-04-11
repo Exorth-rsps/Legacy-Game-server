@@ -1,4 +1,4 @@
-package org.alter.plugins.content.areas.yanille.chat
+package org.alter.plugins.content.areas.legacy.falador.chat
 
 arrayOf(Npcs.SHOP_KEEPER, Npcs.SHOP_ASSISTANT).forEach { shop ->
 
@@ -16,5 +16,5 @@ suspend fun dialog(it: QueueTask) {
 }
 
 fun open_shop(p: Player) {
-    p.openShop("Yanille General Store")
+    p.openShop("Falador General Store")
 }
