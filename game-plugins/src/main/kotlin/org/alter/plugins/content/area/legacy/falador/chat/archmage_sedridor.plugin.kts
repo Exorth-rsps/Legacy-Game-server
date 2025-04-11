@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.yanille.chat
+package org.alter.plugins.content.area.legacy.falador.chat
 
 arrayOf(Npcs.ARCHMAGE_SEDRIDOR_11433).forEach { npc ->
     on_npc_option(npc = npc, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
