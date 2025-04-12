@@ -8,7 +8,7 @@ enum class TeleportSpell(val spellName: String, val type: TeleportType, val endA
     /**
      * Standard.
      */
-    VARROCK("Seers Teleport", TeleportType.MODERN, Area(3210, 3423, 3216, 3425), 35.0),
+    //VARROCK("Seers Teleport", TeleportType.MODERN, Area(3210, 3423, 3216, 3425), 35.0),
     LUMBRIDGE("Lands End Teleport", TeleportType.MODERN, Area(3221, 3218, 3222, 3219), 41.0),
     FALADOR("Falador Teleport", TeleportType.MODERN, Area(2961, 3376, 2969, 3385), 47.0),
     CAMELOT("Camelot Teleport", TeleportType.MODERN, Area(2756, 3476, 2758, 3480), 55.5),
