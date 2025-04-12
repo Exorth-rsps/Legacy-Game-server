@@ -73,3 +73,6 @@ spawn_npc(Npcs.FRENITA, 3051, 3356, 0, 3, Direction.EAST)
 spawn_npc(Npcs.BARTENDER_1320, 2956, 3371, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.MAN_3106, 2957, 3368, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.MAN_3107, 2958, 3374, 0, 5, Direction.SOUTH)
+
+spawn_npc(Npcs.MAN_3106, 3041, 3356, 0, 5, Direction.SOUTH)
+spawn_npc(Npcs.MAN_3107, 3036, 3351, 0, 5, Direction.SOUTH)
