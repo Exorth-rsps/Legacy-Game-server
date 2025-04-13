@@ -24,7 +24,11 @@ enum class FishingSpots(val spotEntityId: Int, val option: String, val toolId: I
     LURE(Npcs.ROD_FISHING_SPOT_1527, "lure", Items.FLY_FISHING_ROD, Items.FEATHER, 622, Fish.TROUT, Fish.SALMON),
     LURE2(Npcs.ROD_FISHING_SPOT_1526, "lure", Items.FLY_FISHING_ROD, Items.FEATHER, 622, Fish.TROUT, Fish.SALMON, Fish.RAINBOWFISH),
     BIG_NET(Npcs.FISHING_SPOT_1511, "net", Items.BIG_FISHING_NET, -1, 621, Fish.MACKEREL, Fish.COD, Fish.BASS),
-    BIG_NET2(Npcs.FISHING_SPOT_1520, "big net", Items.BIG_FISHING_NET, -1, 621, Fish.MACKEREL, Fish.COD, Fish.BASS);
+    BIG_NET2(Npcs.FISHING_SPOT_1520, "big net", Items.BIG_FISHING_NET, -1, 621, Fish.MACKEREL, Fish.COD, Fish.BASS),
+    CAGE(Npcs.FISHING_SPOT_1522, "cage", Items.LOBSTER_POT, -1, 621, Fish.LOBSTER),
+    HARPOON(Npcs.FISHING_SPOT_1522, "harpoon", Items.HARPOON, -1, 621, Fish.TUNA, Fish.SWORDFISH),
+    HARPOON2(Npcs.FISHING_SPOT_5820, "harpoon", Items.HARPOON, -1, 621, Fish.SWORDFISH),
+    NET2(Npcs.FISHING_SPOT_5820, "net", Items.HARPOON, -1, 621, Fish.MONKFISH);
     private val fish = fish
 
     fun getFish(): Array<out Fish> { return this.fish
