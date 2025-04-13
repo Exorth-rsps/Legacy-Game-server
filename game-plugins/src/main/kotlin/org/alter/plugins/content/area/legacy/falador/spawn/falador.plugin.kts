@@ -62,6 +62,7 @@ spawn_npc(Npcs.CHAOS_DWARF, 2994, 3411, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.CHAOS_DWARF, 2998, 3412, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.CHAOS_DWARF, 3001, 3410, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.CHAOS_DWARF, 3001, 3406, 0, 5, Direction.SOUTH)
+spawn_npc(Npcs.FIRE_WARRIOR_OF_LESARKUS, 2999, 3410, 0, 5, Direction.SOUTH)
 
 spawn_npc(Npcs.CASSIE, 2977, 3383, 0, 3, Direction.EAST)
 spawn_npc(Npcs.PEKSA, 2990, 3364, 0, 3, Direction.NORTH)
