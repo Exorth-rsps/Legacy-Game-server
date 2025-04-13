@@ -8,15 +8,16 @@ enum class TeleportSpell(val spellName: String, val type: TeleportType, val endA
     /**
      * Standard.
      */
-    //VARROCK("Seers Teleport", TeleportType.MODERN, Area(3210, 3423, 3216, 3425), 35.0),
-    LUMBRIDGE("Lands End Teleport", TeleportType.MODERN, Area(3221, 3218, 3222, 3219), 41.0),
-    FALADOR("Falador Teleport", TeleportType.MODERN, Area(2961, 3376, 2969, 3385), 47.0),
-    CAMELOT("Camelot Teleport", TeleportType.MODERN, Area(2756, 3476, 2758, 3480), 55.5),
-    ARDOUGNE("Ardougne Teleport", TeleportType.MODERN, Area(2659, 3300, 2665, 3310), 61.0),
-    WATCHTOWER("Watchtower Teleport", TeleportType.MODERN, Area(2551, 3113, 2553, 3116), 68.0),
-    TROLLHEIM("Trollheim Teleport", TeleportType.MODERN, Area(2888, 3675, 2890, 3678), 68.0),
-    APE_ATOLL("Ape Atoll Teleport", TeleportType.MODERN, Area(2760, 2781, 2763, 2784), 74.0),
-    KOUREND_CASTLE("Kourend Castle Teleport", TeleportType.MODERN, Area(1633, 3665, 1639, 3670), 82.0),
+    LUMBRIDGE("Lumbridge Home Teleport", TeleportType.MODERN, Area(2963, 3377, 2968, 3380), 0.0),
+    //ENTRANA("Entrana Teleport", TeleportType.MODERN, Area(2825, 3343, 2828, 3345), 0.0),
+    DRAYNOR("Draynor Teleport", TeleportType.MODERN, Area(3077, 3248, 3082, 3252), 0.0),
+    FISHING_GUILD("Fishing Guild Teleport", TeleportType.MODERN, Area(2602, 3398, 2606, 3402), 0.0),
+    //LEGENDS_GUILD("Legends Guild Teleport", TeleportType.MODERN, Area(2728, 3351, 2729, 3359), 0.0),
+    //SHILO("Shilo Village Teleport", TeleportType.MODERN, Area(2845, 2962, 2850, 2966), 0.0),
+    //EDGEVILLE("Edgeville Teleport", TeleportType.MODERN, Area(3084, 3484, 3096, 3487), 0.0),
+    GNOME_STRONGHOLD("Gnome Stronghold Teleport", TeleportType.MODERN, Area(2459, 3423, 2462, 3430), 0.0),
+   // VARROCK("Varrock Teleport", TeleportType.MODERN, Area(3209, 3422, 3216, 3424), 0.0),
+ //   KOUREND_CASTLE("Kourend Castle Teleport", TeleportType.MODERN, Area(1633, 3665, 1639, 3670), 0.0),
 //
 //    /**
 //     * Ancients.
