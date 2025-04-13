@@ -23,7 +23,6 @@ suspend fun QueueTask.dialog() {
 
 suspend fun QueueTask.options(): Int = options(
     "Let's see what you've got then.",
-    "Can you sell me a Fletching Skillcape?",
     "No, I prefer to bash things close up.",
 )
 
