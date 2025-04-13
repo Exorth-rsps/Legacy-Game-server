@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.exorth.rune_essence_mine.spawns
+package org.alter.plugins.content.area.legacy.rune_essence_mine.spawns
 
 spawn_npc(Npcs.ABYSSAL_LEECH, 3589, 1242, 0, 3, Direction.EAST)
 spawn_npc(Npcs.ABYSSAL_LEECH, 3591, 1244, 0, 3, Direction.EAST)

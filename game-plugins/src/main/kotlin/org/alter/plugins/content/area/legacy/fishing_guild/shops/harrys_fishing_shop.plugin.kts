@@ -1,4 +1,4 @@
-package org.alter.plugins.content.area.exorth.catherby.shops
+package org.alter.plugins.content.area.legacy.fishing_guild.shops
 
 import org.alter.game.model.shop.PurchasePolicy
 import org.alter.plugins.content.mechanics.shops.CoinCurrency
