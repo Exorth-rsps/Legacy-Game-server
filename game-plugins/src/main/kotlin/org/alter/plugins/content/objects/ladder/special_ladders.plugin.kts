@@ -35,6 +35,9 @@ on_obj_option(obj = Objs.LADDER_17385, option = "Climb-Up") {
         14867 -> { //Wizardsguild
             player.moveTo(x = 2683, z = 1636, height = 0)
         }
+        11925 -> {
+            player.moveTo(x = 2997, z = 3410, height = 0)
+        }
 
         else -> player.message("Nothing interesting happens.")
     }
