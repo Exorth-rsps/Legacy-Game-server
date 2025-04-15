@@ -49,9 +49,9 @@ on_obj_option(obj = Objs.STEPS, option = "Climb") {
             player.message("You need a frozen key to open this wall.")
             return@on_obj_option
         }
-        player.moveTo(3060, 9557, player.tile.height)
+        player.moveTo(3060, 9557, 0)
     } else if (player.tile.x == 3060 && player.tile.z == 9557) {
-        player.moveTo(3060, 9555, player.tile.height)
+        player.moveTo(3060, 9555, 0)
     } else {
         player.message("Nothing interesting happens.")
     }
