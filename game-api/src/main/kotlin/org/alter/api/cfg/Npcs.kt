@@ -636,7 +636,7 @@ object Npcs {
     const val ICE_TROLL_649 = 649
     const val ICE_TROLL_650 = 650
     const val ICE_TROLL_651 = 651
-    const val ICE_TROLL_652 = 652
+    const val GIANT_ICE_TROLL = 652
     const val ICE_TROLL_653 = 653
     const val ICE_TROLL_654 = 654
     const val GOBLIN = 655
