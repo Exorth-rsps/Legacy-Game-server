@@ -38,6 +38,7 @@ on_obj_option(obj = Objs.STAIRCASE_15654, option = "Climb-Down") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+
 on_obj_option(obj = Objs.STAIRCASE_25801, option = "Climb-Down") {
     when(player.tile.regionId) {
         11035 -> { // Seers Pub
@@ -64,6 +65,9 @@ on_obj_option(obj = Objs.STAIRCASE_16664, option = "Climb-Down") {
         11032 -> { // Legends Dungeon
             player.moveTo(x = 3953, z = 1262, 0)
         }
+        12084 -> { // Falador -> Dwarvenmine
+            player.moveTo(x = 3058, z = 9776, 0)
+        }
 
         else -> player.message("Nothing interesting happens.")
     }
@@ -77,6 +81,14 @@ on_obj_option(obj = Objs.STAIRCASE_16665, option = "Climb-Up") {
             player.moveTo(x = 2758, z = 1590, 0)
         }
 
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.STAIRCASE_23969, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        12184 -> { // Dwarven mines -> Falador
+            player.moveTo(x = 3061, z = 3377, 0)
+        }
         else -> player.message("Nothing interesting happens.")
     }
 }
