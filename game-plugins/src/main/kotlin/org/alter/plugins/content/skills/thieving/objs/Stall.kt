@@ -15,10 +15,14 @@ import org.alter.plugins.content.skills.thieving.objs.StallRewards.silk_stall_st
 import org.alter.plugins.content.skills.thieving.objs.StallRewards.silver_stall_steals
 import org.alter.plugins.content.skills.thieving.objs.StallRewards.spice_stall_steals
 import gg.rsmod.util.Misc
+import org.alter.plugins.content.skills.thieving.objs.StallRewards.draynor_market_stall_steals
+import org.alter.plugins.content.skills.thieving.objs.StallRewards.draynor_seed_stall_steals
 
 enum class Stall(val stalls: IntArray, private val levelRequired: Int, val xp: Double, private val respawnCycles: Int, val attemptMsg: String = "", val steals: Array<StallItem>) {
     BAKERS_STALL(intArrayOf(Objs.BAKERS_STALL_11730), 5, 16.0, 12, steals = bakers_stall_steals),
     SILK_STALL(intArrayOf(Objs.SILK_STALL_11729), 20, 24.0, 32, steals = silk_stall_steals),
+	MARKET_STALL_DRAYNOR(intArrayOf(Objs.MARKET_STALL_14011), 22, 27.0, 34, steals = draynor_market_stall_steals),
+	SEEDS_STALL_DRAYNOR(intArrayOf(Objs.SEED_STALL_7053), 27, 10.0, 12, steals = draynor_seed_stall_steals),
     FUR_STALL(intArrayOf(Objs.FUR_STALL_11732), 35, 45.0, 48, steals = fur_stall_steals),
     SILVER_STALL(intArrayOf(Objs.SILVER_STALL_11734), 50, 205.0, 64, steals = silver_stall_steals),
 	SPICE_STALL(intArrayOf(Objs.SPICE_STALL_11733), 65, 92.0, 20, steals = spice_stall_steals),
@@ -107,7 +111,7 @@ enum class Stall(val stalls: IntArray, private val levelRequired: Int, val xp: D
 	private fun getEmptyStall(stallId: Int): Int {
 		return when (stallId) {
 			Objs.BAKERS_STALL_11730 -> Objs.EMPTY_STALL
-			Objs.GEM_STALL_6162, Objs.BAKERY_STALL_6163, Objs.SILVER_STALL_6164 -> Objs.MARKET_STALL_6984
+			Objs.GEM_STALL_6162, Objs.BAKERY_STALL_6163, Objs.SILVER_STALL_6164, Objs.MARKET_STALL_14011, Objs.SEED_STALL_7053 -> Objs.MARKET_STALL_6984
 			Objs.SHOP_COUNTER_30279, Objs.SHOP_COUNTER_30280 -> Objs.SHOP_COUNTER_30278
 			Objs.CRAFTING_STALL, Objs.FOOD_STALL, Objs.GENERAL_STALL, Objs.MAGIC_STALL, Objs.SCIMITAR_STALL -> Objs.BAMBOO_DESK
 			else -> Objs.MARKET_STALL
@@ -132,6 +136,16 @@ object StallRewards {
 	)
 
 	val silk_stall_steals = arrayOf(
+		StallItem(Items.COINS_995, amount = 5, chance = 50.0),
+		StallItem(Items.COINS_995, amount = 50, chance = 5.0),
+		StallItem(Items.COINS_995, amount = 500, chance = 1.0)
+	)
+	val draynor_market_stall_steals = arrayOf(
+		StallItem(Items.COINS_995, amount = 5, chance = 50.0),
+		StallItem(Items.COINS_995, amount = 50, chance = 5.0),
+		StallItem(Items.COINS_995, amount = 500, chance = 1.0)
+	)
+	val draynor_seed_stall_steals = arrayOf(
 		StallItem(Items.COINS_995, amount = 5, chance = 50.0),
 		StallItem(Items.COINS_995, amount = 50, chance = 5.0),
 		StallItem(Items.COINS_995, amount = 500, chance = 1.0)
