@@ -66,6 +66,20 @@ enum class PickpocketNpc(val npcIds: IntArray, val experience: Double, val reqLe
         damage = 1..3,
         stunTicks = 5
     ),
+    GUARD(
+        npcIds = intArrayOf(
+            Npcs.GUARD_3269
+        ),
+        experience = 46.8,
+        reqLevel = 40,
+        rewards = arrayOf(
+            WeightItem(item = Items.BREAD, amount = 1, weight = ALWAYS),
+            WeightItem(item = Items.COINS_995, amount = 1..60, weight = ALWAYS),
+            WeightItem(item = Items.COINS_995, amount = 60..120, weight = UNCOMMON),
+        ),
+        damage = 1..2,
+        stunTicks = 5
+    ),
     WATCHMAN(
         npcIds = intArrayOf(
             Npcs.WATCHMAN_5420
@@ -80,16 +94,32 @@ enum class PickpocketNpc(val npcIds: IntArray, val experience: Double, val reqLe
         damage = 1..3,
         stunTicks = 5
     ),
-    HERO(
+    PALADIN(
         npcIds = intArrayOf(
-            Npcs.HERO_3295
+            Npcs.PALADIN_1144
         ),
-        experience = 137.5,
-        reqLevel = 65,
+        experience = 163.3,
+        reqLevel = 80,
         rewards = arrayOf(
             WeightItem(item = Items.COINS_995, amount = 1..200, weight = COMMON),
             WeightItem(item = Items.DEATH_RUNE, amount = 1..2, weight = UNCOMMON),
             WeightItem(item = Items.BLOOD_RUNE, amount = 1..2, weight = RARE),
+            WeightItem(item = Items.UNCUT_RUBY, amount = 1, weight = RARE),
+            WeightItem(item = Items.COAL, amount = 1, weight = VERY_RARE),
+        ),
+        damage = 1..4,
+        stunTicks = 8
+    ),
+    HERO(
+        npcIds = intArrayOf(
+            Npcs.HERO_3295
+        ),
+        experience = 163.3,
+        reqLevel = 80,
+        rewards = arrayOf(
+            WeightItem(item = Items.COINS_995, amount = 1..250, weight = COMMON),
+            WeightItem(item = Items.DEATH_RUNE, amount = 2..8, weight = UNCOMMON),
+            WeightItem(item = Items.BLOOD_RUNE, amount = 2..8, weight = RARE),
             WeightItem(item = Items.UNCUT_DIAMOND, amount = 1, weight = RARE),
             WeightItem(item = Items.GOLD_ORE, amount = 1, weight = VERY_RARE),
         ),
