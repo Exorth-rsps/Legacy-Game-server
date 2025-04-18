@@ -62,3 +62,15 @@ on_obj_option(obj = Objs.LADDER_41925, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+
+on_obj_option(obj = Objs.LADDER_23584, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        11410 -> { //Shilo Gem mine
+            player.moveTo(x = 3054, z = 9744, height = 0)
+            //player.message("Nothing interesting happens.")
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+
