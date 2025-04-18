@@ -51,3 +51,7 @@ spawn_npc(Npcs.DWARF_GANG_MEMBER_1356, 2997, 9829, 0, 5, Direction.SOUTH)
 spawn_npc(Npcs.DWARF_GANG_MEMBER_1356, 3002, 9827, 0, 5, Direction.SOUTH)
 
 spawn_npc(Npcs.SLAGILITH, 2997, 9844, 0, 5, Direction.SOUTH)
+
+spawn_npc(Npcs.BELONA, 3030, 9746, 0, 10, Direction.SOUTH)
+spawn_npc(Npcs.YARSUL, 3032, 9747, 0, 10, Direction.SOUTH)
+spawn_npc(Npcs.HENDOR, 3032, 9745, 0, 10, Direction.SOUTH)
