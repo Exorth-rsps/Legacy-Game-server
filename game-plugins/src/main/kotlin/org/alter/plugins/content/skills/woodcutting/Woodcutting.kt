@@ -10,6 +10,7 @@ import org.alter.api.Skills
 import org.alter.api.cfg.Items
 
 import org.alter.api.ext.*
+import kotlin.random.Random
 
 /**
  * @author Tom <rspsmods@gmail.com>
@@ -45,6 +46,13 @@ object Woodcutting {
                 p.filterableMessage("You get some ${logName.pluralSuffix(2)}.")
                 p.playSound(3600)
                 p.inventory.add(tree.log)
+                if (Random.nextInt(5) == 0) {
+                    val bonusItemId = Items.ANIMAINFUSED_BARK
+                    val maxAmount = ((level / 10) * 5).coerceAtLeast(1)
+                    val randomAmount = Random.nextInt(1, maxAmount + 1)
+                    p.inventory.add(bonusItemId, randomAmount)
+                    p.filterableMessage("You also get $randomAmount x anima-infused bark.")
+                }
                 p.addXp(Skills.WOODCUTTING, tree.xp)
 
                 if (p.world.random(tree.depleteChance) == 0) {
