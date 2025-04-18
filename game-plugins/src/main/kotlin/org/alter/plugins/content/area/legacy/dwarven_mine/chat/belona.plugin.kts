@@ -1,6 +1,6 @@
 package org.alter.plugins.content.area.legacy.dwarven_mine.chat
 
-arrayOf(Npcs.YARSUL).forEach { shop ->
+arrayOf(Npcs.BELONA).forEach { shop ->
 
     on_npc_option(npc = shop, option = "talk-to", lineOfSightDistance = 1) { player.queue { dialog() } }
     on_npc_option(npc = shop, option = "trade") { open_shop(player) }
