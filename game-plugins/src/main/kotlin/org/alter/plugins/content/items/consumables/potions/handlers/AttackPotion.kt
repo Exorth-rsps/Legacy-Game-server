@@ -32,7 +32,6 @@ object AttackPotion : PotionHandler {
         )
 
         player.animate(829)
-        player.graphic(141)
 
         player.inventory.remove(itemId, 1)
         player.inventory.add(replacementMap.getValue(itemId), 1)
