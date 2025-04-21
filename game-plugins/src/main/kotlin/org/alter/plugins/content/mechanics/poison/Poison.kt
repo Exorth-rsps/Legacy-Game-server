@@ -21,8 +21,8 @@ object Poison {
 
     fun isImmune(pawn: Pawn): Boolean = when (pawn) {
         is Player -> pawn.hasEquipped(EquipmentType.HEAD, Items.SERPENTINE_HELM, Items.TANZANITE_HELM, Items.MAGMA_HELM)
-        is Npc -> pawn.combatDef.poisonImmunity
-        else -> false
+        is Npc    -> pawn.combatDef.poisonImmunity
+        else      -> false
     }
 
     fun poison(pawn: Pawn, initialDamage: Int): Boolean {
@@ -39,11 +39,26 @@ object Poison {
 
     fun setHpOrb(player: Player, state: OrbState) {
         val value = when (state) {
-            Poison.OrbState.NONE -> 0
-            Poison.OrbState.POISON -> 1
-            Poison.OrbState.VENOM -> 1_000_000
+            OrbState.NONE   -> 0
+            OrbState.POISON -> 1
+            OrbState.VENOM  -> 1_000_000
         }
         player.setVarp(HP_ORB_VARP, value)
+    }
+
+    /**
+     * Stopt alle poison‐effecten op de speler (of NPC), zet de varp terug
+     * naar normaal en verwijdert eventuele ticks.
+     */
+    fun cureWithPotion(pawn: Pawn, itemId: Int) {
+        // 1) Stop poison‐timer
+        pawn.timers.remove(POISON_TIMER)
+        // 2) Reset resterende poison‐ticks
+        pawn.attr.remove(POISON_TICKS_LEFT_ATTR)
+        // 3) Voor spelers: zet de HP‐orb weer op NONE
+        if (pawn is Player) {
+            setHpOrb(pawn, OrbState.NONE)
+        }
     }
 
     enum class OrbState {
