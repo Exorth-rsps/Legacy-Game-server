@@ -1,53 +1,57 @@
-//package org.alter.plugins.content.skills.fletching
-//
-//import org.alter.plugins.content.skills.fletching.action.ChiselAction
-//import org.alter.plugins.content.skills.fletching.data.Chiseled
-//
-//// ===========================================================================
-//// Whittling Logs
-///**
-// * The map of Chiseled item ids to their definition
-// */
-//val chiseledDefs = Chiseled.chiseledDefinitions
-//
-///**
-// * The Chiseling action instance
-// */
-//val chiselAction = ChiselAction(world.definitions)
-//
-///**
-// * Handles using a chisel on a gem or kebbit
-// */
-//chiseledDefs.values.forEach { chiseled ->
-//    on_item_on_item(item1 = Items.CHISEL, item2 = chiseled.unchiseled) { makeChiseled(player, chiseled.id) }
-//}
-//
-///**
-// * Opens the prompt to allow the player to select the number of items to chisel
-// *
-// * @param player    The player instance
-// */
-//fun makeChiseled(player: Player, chiseled: Int) {
-//    val chiseledDef = chiseledDefs[chiseled] ?: return
-//    val maxChiseled = player.inventory.getItemCount(chiseledDef.unchiseled)
-//    when (maxChiseled) {
-//        0 -> return
-//        1 -> chisel(player, chiseled, 1)
-//        else -> player.queue { produceItemBox(chiseledDef.id, type = 2,  maxProducable = maxChiseled, logic = ::chisel) }
-//    }
-//}
-//
-///**
-// * Handles the chiseling of an item into the chiseled item id
-// *
-// * @param player    The player instance
-// * @param item      The item the player is trying to whittle the log into
-// * @param amount    The number of items the player is trying to smelt
-// */
-//fun chisel(player: Player, item: Int, amount: Int) {
-//    val chiseledDef = chiseledDefs[item] ?: return
-//
-//    player.interruptQueues()
-//    player.resetInteractions()
-//    player.queue { chiselAction.chisel(this, chiseledDef, amount) }
-//}
+package org.alter.plugins.content.skills.fletching
+
+import org.alter.api.cfg.Items
+import org.alter.plugins.content.skills.fletching.action.ChiselAction
+import org.alter.plugins.content.skills.fletching.data.Chiseled
+
+// ===========================================================================
+// Whittling Logs
+
+/**
+ * De map van chiseled item‑ids naar hun definitie
+ */
+val chiseledDefs = Chiseled.chiseledDefinitions
+
+/**
+ * De Chiseling‑action
+ */
+val chiselAction = ChiselAction(world.definitions)
+
+/**
+ * Wanneer je chisel op een ongefrette item (gem of kebbit) gebruikt
+ */
+chiseledDefs.values.forEach { chiseled ->
+    on_item_on_item(item1 = Items.CHISEL, item2 = chiseled.unchiseled) {
+        makeChiseled(player, chiseled.id)
+    }
+}
+
+/**
+ * Opent de “hoeveel wil je chisel-en?” prompt
+ */
+fun makeChiseled(player: Player, chiseled: Int) {
+    val def = chiseledDefs[chiseled] ?: return
+    val max = player.inventory.getItemCount(def.unchiseled)
+    when {
+        max == 0   -> return
+        max == 1   -> chisel(player, chiseled, 1)
+        else       -> player.queue {
+            produceItemBox(
+                def.id,
+                title = "How many would you like to chisel?",
+                maxProducable = max,
+                logic = ::chisel
+            )
+        }
+    }
+}
+
+/**
+ * Roept de daadwerkelijke chiseling‑action aan
+ */
+fun chisel(player: Player, item: Int, amount: Int) {
+    val def = chiseledDefs[item] ?: return
+    player.interruptQueues()
+    player.resetInteractions()
+    player.queue { chiselAction.chisel(this, def, amount) }
+}

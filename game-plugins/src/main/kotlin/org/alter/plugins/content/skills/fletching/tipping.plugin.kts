@@ -1,55 +1,64 @@
-//package org.alter.plugins.content.skills.fletching
-//
-//import org.alter.plugins.content.skills.fletching.data.Tipped
-//import org.alter.plugins.content.skills.fletching.action.TipAction
-//
-//// ===========================================================================
-//// Tipping Ammunition
-///**
-// * The map of tipped ids to their definition
-// */
-//val tippedDefs = Tipped.tippedDefinitions
-//
-///**
-// * The item tipping action instance
-// */
-//val tippedAction = TipAction(world.definitions)
-//
-///**
-// * Handles using a untipped ammunition on a tip
-// */
-//tippedDefs.values.forEach { tipped ->
-//    on_item_on_item(item1 = tipped.base, item2 = tipped.tip) { makeTipped(player, tipped.id) }
-//}
-//
-///**
-// * Opens the prompt to get the quantity to tip unless they can only tip a single set or less
-// *
-// * @param player    The player instance
-// * @param tipped    The tipped item id the player is trying to make
-// */
-//fun makeTipped(player: Player, tipped: Int) {
-//    val tippedDef = tippedDefs[tipped] ?: return
-//    val maxTipped = Math.ceil(Math.min(player.inventory.getItemCount(tippedDef.base), player.inventory.getItemCount(tippedDef.tip)) / tippedDef.setAmount.toDouble()).toInt()
-//    when (maxTipped) {
-//        0 -> return
-//        1 -> tip(player, tipped, 1)
-//        else -> player.queue { produceItemBox(tippedDef.id, type = 3,  maxProducable = maxTipped, logic = ::tip) }
-//    }
-//}
-//
-///**
-// * Handles the tipping of the selected tipped item
-// *
-// * @param player    The player instance
-// * @param item      The tipped item id the player is trying to make
-// * @param amount    The number of items the player is trying to make
-// */
-//
-//fun tip(player: Player, item: Int, amount: Int) {
-//    val tippedDef = tippedDefs[item] ?: return
-//
-//    player.interruptQueues()
-//    player.resetInteractions()
-//    player.queue { tippedAction.tip(this, tippedDef, amount) }
-//}
+package org.alter.plugins.content.skills.fletching
+
+import org.alter.api.cfg.Items
+import org.alter.plugins.content.skills.fletching.data.Tipped
+import org.alter.plugins.content.skills.fletching.action.TipAction
+
+// ===========================================================================
+// Tipping Ammunition
+
+/**
+ * De map van Tipped ids naar hun definitie
+ */
+val tippedDefs = Tipped.tippedDefinitions
+
+/**
+ * De tipping action
+ */
+val tipAction = TipAction(world.definitions)
+
+/**
+ * Wanneer je ongepunt munitie op een tip gebruikt
+ */
+tippedDefs.values.forEach { tipped ->
+    on_item_on_item(item1 = tipped.base, item2 = tipped.tip) {
+        makeTipped(player, tipped.id)
+    }
+}
+
+/**
+ * Opent de "hoeveel sets wil je tippen?" prompt
+ */
+fun makeTipped(player: Player, tippedId: Int) {
+    val def = tippedDefs[tippedId] ?: return
+    val maxSets = Math.ceil(
+        minOf(
+            player.inventory.getItemCount(def.base),
+            player.inventory.getItemCount(def.tip)
+        ).toDouble() / def.setAmount
+    ).toInt()
+    when {
+        maxSets == 0 -> return
+        maxSets == 1 -> tip(player, tippedId, 1)
+        else -> player.queue {
+            produceItemBox(
+                def.id,
+                title         = "How many sets would you like to tip?",
+                maxProducable = maxSets,
+                logic         = ::tip
+            )
+        }
+    }
+}
+
+/**
+ * Roept de tipping actie aan met de gekozen hoeveelheid
+ */
+fun tip(player: Player, itemId: Int, amount: Int) {
+    val def = tippedDefs[itemId] ?: return
+    player.interruptQueues()
+    player.resetInteractions()
+    player.queue {
+        tipAction.tip(this, def, amount)
+    }
+}

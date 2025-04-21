@@ -1,60 +1,67 @@
-//package org.alter.plugins.content.skills.fletching
-//
-//import org.alter.plugins.content.skills.fletching.data.Log
-//import org.alter.plugins.content.skills.fletching.action.WhittlingAction
-//import org.alter.game.model.attr.OTHER_ITEM_ID_ATTR
-//import org.alter.game.model.attr.INTERACTING_ITEM_ID
-//
-//// ===========================================================================
-//// Whittling Logs
-///**
-// * The map of Log ids to their definition
-// */
-//val logDefs = Log.logDefinitions
-//
-///**
-// * The whittling action instance
-// */
-//val whittleAction = WhittlingAction(world.definitions)
-//
-///**
-// * Handles using a knife on logs
-// */
-//logDefs.keys.forEach { log ->
-//    on_item_on_item(item1 = Items.KNIFE, item2 = log) { cutLog(player, log) }
-//}
-//
-///**
-// * Opens the prompt to show the log's fletchable items
-// *
-// * @param player    The player instance
-// */
-//fun cutLog(player: Player, log: Int) {
-//    val fletchables = logDefs[log]?.values?.map { fletchable -> fletchable.id }?.toIntArray() ?: return
-//    player.queue { produceItemBox(*fletchables, type = 12, logic = ::whittle) }
-//}
-//
-///**
-// * Handles the whittling of the log into the selected item
-// *
-// * @param player    The player instance
-// * @param item      The item the player is trying to whittle the log into
-// * @param amount    The number of items the player is trying to smelt
-// */
-//
-//fun whittle(player: Player, item: Int, amount: Int) {
-//    val log = if(logDefs.containsKey(player.attr[INTERACTING_ITEM_ID])){
-//        player.attr[INTERACTING_ITEM_ID]
-//    } else if(logDefs.containsKey(player.attr[OTHER_ITEM_ID_ATTR])){
-//        player.attr[OTHER_ITEM_ID_ATTR]
-//    } else {
-//        null
-//    }
-//    log ?: return
-//
-//    val whittleOption = logDefs[log]?.get(item) ?: return
-//
-//    player.interruptQueues()
-//    player.resetInteractions()
-//    player.queue { whittleAction.whittle(this, log, whittleOption, amount) }
-//}
+package org.alter.plugins.content.skills.fletching
+
+import org.alter.api.cfg.Items
+import org.alter.game.model.attr.INTERACTING_ITEM_ID
+import org.alter.game.model.attr.OTHER_ITEM_ID_ATTR
+import org.alter.plugins.content.skills.fletching.action.WhittlingAction
+import org.alter.plugins.content.skills.fletching.data.Log
+
+// ===========================================================================
+// Whittling Logs
+
+/**
+ * De map van Log ids naar hun definitie
+ */
+val logDefs = Log.logDefinitions
+
+/**
+ * De Whittling actie
+ */
+val whittleAction = WhittlingAction(world.definitions)
+
+/**
+ * Wanneer je mes gebruikt op een log
+ */
+logDefs.keys.forEach { logId ->
+    on_item_on_item(item1 = Items.KNIFE, item2 = logId) {
+        cutLog(player, logId)
+    }
+}
+
+/**
+ * Opent de keuzedialoog voor welk item je van de log wilt maken
+ */
+fun cutLog(player: Player, logId: Int) {
+    val choices = logDefs[logId]?.values?.map { it.id }?.toIntArray() ?: return
+    if (choices.isEmpty()) return
+    player.queue {
+        produceItemBox(
+            *choices,
+            title = "What would you like to make?",
+            logic = ::whittle
+        )
+    }
+}
+
+/**
+ * Roept de whittle-actie aan met de gekozen hoeveelheid
+ */
+fun whittle(player: Player, itemId: Int, amount: Int) {
+    // probeer eerst INTERACTING_ITEM_ID, en anders OTHER_ITEM_ID_ATTR
+    val interactingId = player.attr[INTERACTING_ITEM_ID]
+    val otherId       = player.attr[OTHER_ITEM_ID_ATTR]
+
+    val logId: Int = when {
+        interactingId != null && logDefs.containsKey(interactingId) -> interactingId
+        otherId       != null && logDefs.containsKey(otherId)       -> otherId
+        else -> return   // geen geldige log, dus out
+    }
+
+    val option = logDefs[logId]?.get(itemId) ?: return
+
+    player.interruptQueues()
+    player.resetInteractions()
+    player.queue {
+        whittleAction.whittle(this, logId, option, amount)
+    }
+}
