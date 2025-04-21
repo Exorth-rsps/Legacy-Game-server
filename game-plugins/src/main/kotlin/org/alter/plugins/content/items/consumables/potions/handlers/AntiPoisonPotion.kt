@@ -1,4 +1,3 @@
-// src/main/kotlin/org/alter/plugins/content/items/consumables/potions/handlers/AntiPoisonPotion.kt
 package org.alter.plugins.content.items.consumables.potions.handlers
 
 import org.alter.api.cfg.Items
@@ -6,9 +5,7 @@ import org.alter.game.model.entity.Player
 import org.alter.plugins.content.items.consumables.potions.PotionHandler
 import org.alter.plugins.content.mechanics.poison.Poison
 
-/**
- * Eén handler voor ANTIPOISON4 → 3 → 2 → 1 → VIAL
- */
+
 object AntiPoisonPotion : PotionHandler {
 
     override val itemIds = listOf(
@@ -26,11 +23,8 @@ object AntiPoisonPotion : PotionHandler {
     )
 
     override fun onDrink(player: Player, itemId: Int) {
-        // 1) Cure poison
         Poison.cureWithPotion(player, itemId)
-        // 2) Animatie & graphic
         player.animate(829)
-        // 3) Inventory: huidige dose eruit, replacement erin
         player.inventory.remove(itemId, 1)
         player.inventory.add(replacementMap.getValue(itemId), 1)
     }
