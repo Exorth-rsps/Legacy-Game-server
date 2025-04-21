@@ -10,7 +10,7 @@ import spark.Spark.stop
 
 class RestApiService : Service {
     override fun init(server: Server, world: World, serviceProperties: ServerProperties) {
-        spark.Spark.port(4080)
+        spark.Spark.port(8880)
         CorsRoute(serviceProperties.getOrDefault("origin", "*"), serviceProperties.getOrDefault("methods", "GET, POST"), serviceProperties.getOrDefault("headers", "X-PINGOTHER, Content-Type"))
         RestApiRoutes().init(world, serviceProperties.getOrDefault("auth", false))
     }
