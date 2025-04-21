@@ -1,6 +1,6 @@
 package org.alter.plugins.content.items.consumables.potions
 
-import org.alter.plugins.content.items.consumables.potions.handlers.AntiPoisonPotion
+import org.alter.plugins.content.items.consumables.potions.handlers.*
 import org.alter.game.model.entity.Player
 
 
@@ -26,7 +26,8 @@ interface PotionHandler {
  */
 object Potions {
     val handlers: List<PotionHandler> = listOf(
-        AntiPoisonPotion
+        AntiPoisonPotion,
+        AttackPotion
         // + andere handlers
     )
 }
