@@ -12,10 +12,12 @@ import org.alter.api.cfg.Items
 import org.alter.api.cfg.Sound
 import org.alter.api.ext.*
 import kotlin.math.min
+import kotlin.random.Random
 
 object Mining {
 
     private const val MINING_ANIMATION_TIME = 16
+
 
     suspend fun mineRock(it: QueueTask, obj: GameObject, rock: RockType) {
         val player = it.player
@@ -135,6 +137,14 @@ object Mining {
         }
         player.inventory.add(reward)
         player.addXp(Skills.MINING, rock.experience)
+        val level = player.getSkills().getCurrentLevel(Skills.MINING)
+        if (Random.nextInt(5) == 0) {
+            val bonusItemId = Items.UNIDENTIFIED_MINERALS
+            val maxAmount = ((level / 10) * 5).coerceAtLeast(1)
+            val randomAmount = Random.nextInt(1, maxAmount + 1)
+            player.inventory.add(bonusItemId, randomAmount)
+            player.filterableMessage("You also get $randomAmount unidentified minerals.")
+        }
         player.filterableMessage("You manage to mine some $oreName.")
     }
 
@@ -147,7 +157,7 @@ object Mining {
                 (Skills.MINING) >= it.level && (p.equipment.contains(it.item) || p.inventory.contains(it.item))
         }
         if (pick == null) {
-            it.messageBox("You need a pickaxe to mine this rock. You do not have a pickaxe<br><br>which you have the Mining level to use.")
+            it.messageBox("You need a pickaxe to mine this rock. You do not have a pickaxe<br>which you have the Mining level to use.")
             return false
         }
         if (p.getSkills().getBaseLevel
