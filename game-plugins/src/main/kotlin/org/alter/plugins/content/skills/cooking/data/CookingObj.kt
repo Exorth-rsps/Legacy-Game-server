@@ -1,5 +1,7 @@
 package org.alter.plugins.content.skills.cooking.data
 
+import org.alter.api.cfg.Objs
+
 /**
  * @author Kyle Escobar
  *
@@ -13,13 +15,15 @@ package org.alter.plugins.content.skills.cooking.data
 enum class CookingObj(val objId: Int, val animation: Int = 896, val isRange: Boolean = true, val sound: Int = 2577) {
     TUTORIAL_ISLAND_RANGE(objId = 9736, isRange = true),
     LUMBRIDGE_CASTLE_RANGE(objId = 114, isRange = true),
-    ALKHARID_RANGE(objId = 26181, isRange = true),
+    GENERAL_WORLD_RANGE(objId = 26181, isRange = true),
     VARROCK_RANGE(objId = 7183, isRange = true),
     VARROCK_OVEN(objId = 7421, isRange = true),
     EDGE_RANGE(objId = 12269, isRange = true),
     RIMMININGTON_OVEN(objId = 9682, isRange = true),
     COOKING_POT(objId = 26180, isRange = false),
-    FIRE(objId = 26185, animation = 897, isRange = false);
+    FIRE(objId = 26185, animation = 897, isRange = false),
+    FALADOR(objId = 40149, isRange = true),
+    ;
 
 
     companion object {
