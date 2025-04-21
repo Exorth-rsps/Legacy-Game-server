@@ -26,12 +26,12 @@ object Mining {
         }
         val oreName = player.world.definitions.get(ItemDef::class.java, rock.reward).name.lowercase()
         var animations = 0
-        val pick = PickaxeType.values.reversed().firstOrNull {
-            player.getSkills()
-                (Skills.MINING) >= it.level && (player.equipment.contains(it.item) || player.inventory.contains(
-                it.item
-            ))
-        }!!
+        val pick =
+            PickaxeType.values.reversed().firstOrNull {
+                player.getSkills()
+                    .getMaxLevel(Skills.MINING) >= it.level &&
+                        (player.equipment.contains(it.item) || player.inventory.contains(it.item))
+            }!!
         player.filterableMessage("You swing your pick at the rock.")
         var ticks = 0
         while (canMine(it, player, obj, rock)) {
@@ -152,10 +152,12 @@ object Mining {
         if (!p.world.isSpawned(obj)) {
             return false
         }
-        val pick = PickaxeType.values.reversed().firstOrNull {
-            p.skillSet
-                (Skills.MINING) >= it.level && (p.equipment.contains(it.item) || p.inventory.contains(it.item))
-        }
+        val pick =
+            PickaxeType.values.reversed().firstOrNull {
+                p.getSkills()
+                    .getMaxLevel(Skills.MINING) >= it.level &&
+                        (p.equipment.contains(it.item) || p.inventory.contains(it.item))
+            }
         if (pick == null) {
             it.messageBox("You need a pickaxe to mine this rock. You do not have a pickaxe<br>which you have the Mining level to use.")
             return false
