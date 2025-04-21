@@ -26,8 +26,28 @@ interface PotionHandler {
  */
 object Potions {
     val handlers: List<PotionHandler> = listOf(
+        AncientBrew,
+        AntidotePlusPotion,
         AntiPoisonPotion,
-        AttackPotion
-        // + andere handlers
+        AttackPotion,
+        BastionPotion,
+        BattlemagePotion,
+        CombatPotion,
+        DefencePotion,
+        ForgottenBrew,
+        MagicEssencePotion,
+        MagicPotion,
+        PrayerPotion,
+        RangingPotion,
+        RestorePotion,
+        SaradominBrew,
+        StrengthPotion,
+        SuperAntiPoisonPotion,
+        SuperAttackPotion,
+        SuperCombatPotion,
+        SuperDefencePotion,
+        SuperRestorePotion,
+        SuperStrengthPotion,
+        ZamorakBrew
     )
 }
