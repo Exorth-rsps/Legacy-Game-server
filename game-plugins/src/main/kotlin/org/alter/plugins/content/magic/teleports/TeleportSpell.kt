@@ -15,7 +15,7 @@ enum class TeleportSpell(val spellName: String, val type: TeleportType, val endA
     //LEGENDS_GUILD("Legends Guild Teleport", TeleportType.MODERN, Area(2728, 3351, 2729, 3359), 0.0),
     //SHILO("Shilo Village Teleport", TeleportType.MODERN, Area(2845, 2962, 2850, 2966), 0.0),
     //EDGEVILLE("Edgeville Teleport", TeleportType.MODERN, Area(3084, 3484, 3096, 3487), 0.0),
-    GNOME_STRONGHOLD("Gnome Stronghold Teleport", TeleportType.MODERN, Area(2459, 3423, 2462, 3430), 0.0),
+    //GNOME_STRONGHOLD("Gnome Stronghold Teleport", TeleportType.MODERN, Area(2459, 3423, 2462, 3430), 0.0),
    // VARROCK("Varrock Teleport", TeleportType.MODERN, Area(3209, 3422, 3216, 3424), 0.0),
  //   KOUREND_CASTLE("Kourend Castle Teleport", TeleportType.MODERN, Area(1633, 3665, 1639, 3670), 0.0),
 //
