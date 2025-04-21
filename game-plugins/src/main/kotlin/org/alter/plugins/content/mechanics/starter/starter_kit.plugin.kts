@@ -11,6 +11,7 @@ on_login {
             add(Items.TRAINING_ARROWS, 30)
             add(Items.AIR_RUNE, 30)
             add(Items.MIND_RUNE, 30)
+            add(Items.COINS_995, 25)
         }
     }
 }
