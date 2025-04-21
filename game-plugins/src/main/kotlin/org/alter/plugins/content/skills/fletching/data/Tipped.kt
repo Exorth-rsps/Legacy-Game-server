@@ -11,7 +11,7 @@ enum class Tipped(val id: Int, val base: Int, val tip: Int, val level: Int, val 
     BROAD_ARROW(id = Items.BROAD_ARROWS, base = Items.HEADLESS_ARROW, tip = Items.BROAD_ARROWHEADS, level = 52, setAmount = 15, fletchingXP = 10.0),
     ADAMANT_ARROW(id = Items.ADAMANT_ARROW, base = Items.HEADLESS_ARROW, tip = Items.ADAMANT_ARROWTIPS, level = 60, setAmount = 15, fletchingXP = 10.0),
     RUNE_ARROW(id = Items.RUNE_ARROW, base = Items.HEADLESS_ARROW, tip = Items.RUNE_ARROWTIPS, level = 75, setAmount = 15, fletchingXP = 12.5),
-    AMETHYST_ARROW(id = Items.AMETHYST_ARROW, base = Items.HEADLESS_ARROW, tip = Items.AMETHYST_ARROWTIPS, level = 82, setAmount = 15, fletchingXP = 13.5),
+    AMETHYST_ARROW(id = Items.AMETHYST_ARROW_21326, base = Items.HEADLESS_ARROW, tip = Items.AMETHYST_ARROWTIPS, level = 82, setAmount = 15, fletchingXP = 13.5),
     DRAGON_ARROW(id = Items.DRAGON_ARROW, base = Items.HEADLESS_ARROW, tip = Items.DRAGON_ARROWTIPS, level = 90, setAmount = 15, fletchingXP = 15.0),
 
     // Ogre Arrows
