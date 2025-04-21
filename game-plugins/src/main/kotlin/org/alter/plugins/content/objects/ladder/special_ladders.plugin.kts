@@ -73,4 +73,22 @@ on_obj_option(obj = Objs.LADDER_23584, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.LADDER_18988, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        12192 -> { //KBD
+            player.moveTo(x = 3117, z = 3244, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.LADDER_18990, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        12192 -> { //Dragons
+            player.moveTo(x = 3084, z = 3271, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
 
