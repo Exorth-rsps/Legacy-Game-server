@@ -12,9 +12,9 @@ import org.alter.api.ext.*
 
 // Uitgebreide Pot-klasse die meerdere secondary ingrediënten ondersteunt
 class Pot(
-    private val unfinished: Int,
-    private val secondaries: IntArray,
-    private val finished: IntArray,
+    val unfinished: Int,
+    val secondaries: IntArray,
+    val finished: IntArray,
     private val minLevel: Int,
     private val xpAwarded: Double
 ) {

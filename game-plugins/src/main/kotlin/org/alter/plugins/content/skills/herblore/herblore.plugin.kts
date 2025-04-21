@@ -48,13 +48,13 @@ Herbs.values().forEach { h ->
      * herb on finished potions do nothing
      */
     Pots.values().forEach { p ->
-//        p.pot.finished.forEach { f ->
-//            on_item_on_item(h.herb.dirty, f) {
-//                player.nothingMessage()
-//            }
-//            on_item_on_item(h.herb.clean, f) {
-//                player.nothingMessage()
-//            }
-//        }
+        p.pot.finished.forEach { f ->
+            on_item_on_item(h.herb.dirty, f) {
+                player.nothingMessage()
+            }
+            on_item_on_item(h.herb.clean, f) {
+                player.nothingMessage()
+            }
+        }
     }
 }

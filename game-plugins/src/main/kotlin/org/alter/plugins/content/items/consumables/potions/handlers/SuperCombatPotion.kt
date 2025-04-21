@@ -8,17 +8,17 @@ import org.alter.plugins.content.items.consumables.potions.PotionHandler
 object SuperCombatPotion : PotionHandler {
 
     override val itemIds = listOf(
-        Items.SUPER_DEFENCE4,
-        Items.SUPER_DEFENCE3,
-        Items.SUPER_DEFENCE2,
-        Items.SUPER_DEFENCE1
+        Items.SUPER_COMBAT_POTION4,
+        Items.SUPER_COMBAT_POTION3,
+        Items.SUPER_COMBAT_POTION2,
+        Items.SUPER_COMBAT_POTION1
     )
 
     private val replacementMap = mapOf(
-        Items.SUPER_DEFENCE4 to Items.SUPER_DEFENCE3,
-        Items.SUPER_DEFENCE3 to Items.SUPER_DEFENCE2,
-        Items.SUPER_DEFENCE2 to Items.SUPER_DEFENCE1,
-        Items.SUPER_DEFENCE1 to Items.VIAL
+        Items.SUPER_COMBAT_POTION4 to Items.SUPER_COMBAT_POTION3,
+        Items.SUPER_COMBAT_POTION3 to Items.SUPER_COMBAT_POTION2,
+        Items.SUPER_COMBAT_POTION2 to Items.SUPER_COMBAT_POTION1,
+        Items.SUPER_COMBAT_POTION1 to Items.VIAL
     )
 
     override fun onDrink(player: Player, itemId: Int) {

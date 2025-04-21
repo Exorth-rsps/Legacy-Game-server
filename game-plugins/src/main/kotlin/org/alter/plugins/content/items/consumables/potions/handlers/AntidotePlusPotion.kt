@@ -12,7 +12,7 @@ object AntidotePlusPotion : PotionHandler {
         Items.ANTIDOTE1,
         Items.ANTIDOTE3,
         Items.ANTIDOTE2,
-        Items.ANTIDOTE1
+        Items.ANTIDOTE4
     )
 
     private val replacementMap = mapOf(
