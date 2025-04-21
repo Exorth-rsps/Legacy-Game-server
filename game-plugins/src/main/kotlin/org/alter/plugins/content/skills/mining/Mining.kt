@@ -107,6 +107,11 @@ object Mining {
         if (chanceOfGem == 1 && rock != RockType.ESSENCE) {
             player.inventory.add(Items.UNCUT_DIAMOND + (player.world.random(0..3) * 2))
         }
+        if (rock.isGemRock) {
+            rock.drop(player)
+            return
+        }
+
 
         if (player.hasEquipped(
                 EquipmentType.CHEST,
