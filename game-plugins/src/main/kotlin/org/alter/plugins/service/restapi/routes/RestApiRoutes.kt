@@ -21,7 +21,7 @@ class RestApiRoutes {
                         res.header("Cache-Control", "no-cache")
                         val out = res.raw().writer
                         val gson = Gson()
-                    
+
                         Timer(true).scheduleAtFixedRate(object: TimerTask() {
                                 override fun run() {
                                         val json = gson.toJson(
