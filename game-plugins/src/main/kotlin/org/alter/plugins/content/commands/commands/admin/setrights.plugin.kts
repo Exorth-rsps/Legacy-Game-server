@@ -6,8 +6,11 @@ import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
  */
 on_command("setrights", Privilege.ADMIN_POWER) {
     val args = player.getCommandArgs()
-    tryWithUsage(player, args, "Cba") { values ->
-        val privilege = values[0].toInt()
-        player.privilege = world.privileges.get(privilege)!!
+    tryWithUsage(player, args, "setrights <player_name> <privilege_id>") { values ->
+        val playerName = values[0]
+        val privilege = values[1].toInt()
+
+        val targetPlayer = world.getPlayerForName(playerName)
+        targetPlayer?.privilege = world.privileges.get(privilege)!!
     }
 }
