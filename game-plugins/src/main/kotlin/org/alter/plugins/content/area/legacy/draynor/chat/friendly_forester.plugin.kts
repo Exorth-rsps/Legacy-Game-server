@@ -56,12 +56,24 @@ suspend fun QueueTask.dialog() {
         }
     }
 }
-suspend fun QueueTask.options(): Int = options(
-    "Can you teleport me to Seers Village to cut down trees?",
-    "Can you teleport me to the Woodcutting Guild to cut down trees?",
-    "Can i check out your shop?",
-    "No thank you."
-)
+suspend fun QueueTask.options(): Int {
+    val region = player.tile.regionId
+    return if (region == 10806) {
+        options(
+            "Can you teleport me to Draynor Village to cut down trees?",
+            "Can you teleport me to the Woodcutting Guild to cut down trees?",
+            "Can i check out your shop?",
+            "No thank you."
+        )
+    } else {
+        options(
+            "Can you teleport me to Seers Village to cut down trees?",
+            "Can you teleport me to the Woodcutting Guild to cut down trees?",
+            "Can i check out your shop?",
+            "No thank you."
+        )
+    }
+}
 
 suspend fun QueueTask.no_thank_you() {
     chatPlayer("No thank you.", animation = 568)
