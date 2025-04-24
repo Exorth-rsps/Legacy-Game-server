@@ -10,29 +10,52 @@ arrayOf(Npcs.FRIENDLY_FORESTER_11427).forEach { shop ->
 
 suspend fun QueueTask.dialog() {
     chatNpc("Can I help you?")
+    val region = player.tile.regionId
     var continueDialog = true
     while (continueDialog) {
-        when (options()) {
-            1 -> {
-                teleport_seers()
-                continueDialog = false
+        when(player.tile.regionId) {
+            10779 -> { //Seers Village
+                when (options()) {
+                    1 -> {
+                        teleport_draynor()
+                        continueDialog = false
+                    }
+                    2 -> {
+                        teleport_wcguild()
+                        continueDialog = false
+                    }
+                    3 -> {
+                        shop()
+                        continueDialog = false
+                    }
+                    4 -> {
+                        no_thank_you()
+                        continueDialog = false
+                    }
+                }
+            } else -> {
+            when (options()) {
+                1 -> {
+                    teleport_seers()
+                    continueDialog = false
+                }
+                2 -> {
+                    teleport_wcguild()
+                    continueDialog = false
+                }
+                3 -> {
+                    shop()
+                    continueDialog = false
+                }
+                4 -> {
+                    no_thank_you()
+                    continueDialog = false
+                }
             }
-            2 -> {
-                teleport_wcguild()
-                continueDialog = false
-            }
-            3 -> {
-                shop()
-                continueDialog = false
-            }
-            4 -> {
-                no_thank_you()
-                continueDialog = false
             }
         }
     }
 }
-
 suspend fun QueueTask.options(): Int = options(
     "Can you teleport me to Seers Village to cut down trees?",
     "Can you teleport me to the Woodcutting Guild to cut down trees?",
@@ -48,6 +71,10 @@ suspend fun QueueTask.no_thank_you() {
 suspend fun QueueTask.teleport_seers() {
     chatPlayer("Can you teleport me to Seers Village to cut down trees?", animation = 568)
     teleportseers(player)
+}
+suspend fun QueueTask.teleport_draynor() {
+    chatPlayer("Can you teleport me to Draynor Village to cut down trees?", animation = 568)
+    teleportdraynor(player)
 }
 suspend fun QueueTask.teleport_wcguild() {
     val wcLevel = player.getSkills().getCurrentLevel(Skills.WOODCUTTING)
@@ -72,6 +99,16 @@ fun teleportseers(p: Player) {
         npc.forceChat("Chop Chop Crack them Forester!")
         wait(3)
         player.teleport(type = TeleportType.MODERN, endTile = Tile (2725, 3485, 0))
+        player.lock = LockState.NONE
+    }
+}
+fun teleportdraynor(p: Player) {
+    p.queue {
+        val npc = player.getInteractingNpc()
+        player.lock = LockState.FULL
+        npc.forceChat("Chop Chop Chop them Forester!")
+        wait(3)
+        player.teleport(type = TeleportType.MODERN, endTile = Tile (3095, 3238, 0))
         player.lock = LockState.NONE
     }
 }
