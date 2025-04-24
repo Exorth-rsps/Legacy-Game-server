@@ -14,7 +14,7 @@ suspend fun QueueTask.dialog() {
     var continueDialog = true
     while (continueDialog) {
         when(player.tile.regionId) {
-            10779 -> { //Seers Village
+            10806 -> { //Seers Village
                 when (options()) {
                     1 -> {
                         teleport_draynor()
