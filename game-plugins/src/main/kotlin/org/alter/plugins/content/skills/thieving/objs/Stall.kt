@@ -110,7 +110,7 @@ enum class Stall(val stalls: IntArray, private val levelRequired: Int, val xp: D
 
 	private fun getEmptyStall(stallId: Int): Int {
 		return when (stallId) {
-			Objs.BAKERS_STALL_11730 -> Objs.EMPTY_STALL
+			Objs.BAKERS_STALL_11730 -> Objs.MARKET_STALL_6984
 			Objs.GEM_STALL_6162, Objs.BAKERY_STALL_6163, Objs.SILVER_STALL_6164, Objs.MARKET_STALL_14011, Objs.SEED_STALL_7053 -> Objs.MARKET_STALL_6984
 			Objs.SHOP_COUNTER_30279, Objs.SHOP_COUNTER_30280 -> Objs.SHOP_COUNTER_30278
 			Objs.CRAFTING_STALL, Objs.FOOD_STALL, Objs.GENERAL_STALL, Objs.MAGIC_STALL, Objs.SCIMITAR_STALL -> Objs.BAMBOO_DESK
