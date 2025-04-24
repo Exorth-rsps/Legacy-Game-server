@@ -52,6 +52,7 @@ ids.forEach {
             respawnDelay = 30
             poisonChance = 0.0
             venomChance = 0.0
+            followRange = 5
         }
         stats {
             hitpoints = 5

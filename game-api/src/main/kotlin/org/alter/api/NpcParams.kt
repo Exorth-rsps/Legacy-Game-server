@@ -149,6 +149,7 @@ class NpcCombatBuilder {
             venomChance,
             poisonImmunity,
             venomImmunity,
+            followRange,
             slayerReq,
             slayerXp,
             bonuses.toList(),
@@ -445,6 +446,11 @@ class NpcCombatBuilder {
         return this
     }
 
+    private var followRange: Int = 0
+    
+    fun setFollowRange(range: Int) {
+        this.followRange = range
+    }
 
     companion object {
         private const val BONUS_COUNT = 14

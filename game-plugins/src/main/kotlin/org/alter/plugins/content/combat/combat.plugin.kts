@@ -32,6 +32,17 @@ on_player_option("Attack") {
 
 suspend fun cycle(it: QueueTask): Boolean {
     val pawn = it.pawn
+    if (pawn is Npc) {
+        val home      = pawn.spawnTile
+        val maxFollow = ((pawn.combatDef.followRange) -3)
+
+        if (pawn.tile.getDistance(home) > maxFollow) {
+            Combat.reset(pawn)
+            pawn.resetFacePawn()
+            PawnPathAction.walkTo(it, pawn, home, interactionRange = 0, lineOfSight = false)
+            return false
+        }
+    }
     val target = pawn.attr[COMBAT_TARGET_FOCUS_ATTR]?.get() ?: return false
 
     if (!pawn.lock.canAttack()) {

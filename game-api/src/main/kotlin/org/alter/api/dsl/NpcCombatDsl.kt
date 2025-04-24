@@ -43,6 +43,8 @@ object NpcCombatDsl {
             combatBuilder.setRespawnDelay(builder.respawnDelay)
             combatBuilder.setPoisonChance(builder.poisonChance)
             combatBuilder.setVenomChance(builder.venomChance)
+            combatBuilder.setFollowRange(builder.followRange)
+
         }
 
         fun drops(init: WeightedTable.WeightedTableBuilder.() -> Unit) {
@@ -151,6 +153,8 @@ object NpcCombatDsl {
          * meaning the npc will always inflict venom on damage.
          */
         var venomChance = -1.0
+
+        var followRange = 5
 
         /**
          * The spell an NPC will use if one is set

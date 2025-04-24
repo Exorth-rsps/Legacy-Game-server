@@ -39,6 +39,7 @@ data class NpcCombatDef(
     val venomChance: Double,
     val poisonImmunity: Boolean,
     val venomImmunity: Boolean,
+    val followRange: Int,
     val slayerReq: Int,
     val slayerXp: Double,
     val bonuses: List<Int>,
@@ -81,6 +82,7 @@ data class NpcCombatDef(
 
                 respawnDelay = DEFAULT_RESPAWN_DELAY, poisonChance = 0.0,
                 venomChance = 0.0, poisonImmunity = false, venomImmunity = false,
+                followRange = 0,
                 slayerReq = 1,
                 slayerXp = 0.0,
                 bonuses = emptyList(),
