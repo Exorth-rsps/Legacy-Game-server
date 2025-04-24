@@ -16,15 +16,15 @@ private val TREES = setOf(
     Tree(TreeType.WILLOW, obj = 10829, trunk = 9471), // Willow
     Tree(TreeType.WILLOW, obj = 10831, trunk = 9471), // Willow
     Tree(TreeType.WILLOW, obj = 10833, trunk = 9471), // Willow
-    Tree(TreeType.OAK, obj = 10820, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 4533, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 4540, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 9734, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 8463, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 8464, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 8465, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 8466, trunk = 8468), // Oak
-    Tree(TreeType.OAK, obj = 8467, trunk = 8468), // Oak
+    Tree(TreeType.OAK, obj = 10820, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 4533, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 4540, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 9734, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 8463, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 8464, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 8465, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 8466, trunk = 1356), // Oak
+    Tree(TreeType.OAK, obj = 8467, trunk = 1356), // Oak
     Tree(TreeType.OAK, obj = 1751, trunk = 1356), //Oak
     Tree(TreeType.MAPLE, obj = 10832, trunk = 9712), // Maple
     Tree(TreeType.MAPLE, obj = 36681, trunk = 9712), // Maple
