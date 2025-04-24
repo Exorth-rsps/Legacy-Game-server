@@ -22,6 +22,7 @@ enum class CookingObj(val objId: Int, val animation: Int = 896, val isRange: Boo
     RIMMININGTON_OVEN(objId = 9682, isRange = true),
     COOKING_POT(objId = 26180, isRange = false),
     FIRE(objId = 26185, animation = 897, isRange = false),
+    FIRE2(objId = 43475, animation = 897, isRange = false),
     FALADOR(objId = 40149, isRange = true),
     ;
 
