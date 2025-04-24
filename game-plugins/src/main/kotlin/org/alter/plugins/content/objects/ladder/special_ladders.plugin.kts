@@ -38,6 +38,9 @@ on_obj_option(obj = Objs.LADDER_17385, option = "Climb-Up") {
         11925 -> {
             player.moveTo(x = 2997, z = 3410, height = 0)
         }
+        12184 -> { //Mining Guild
+            player.moveTo(x = 3021, z = 3339, height = 0)
+        }
 
         else -> player.message("Nothing interesting happens.")
     }
@@ -91,4 +94,15 @@ on_obj_option(obj = Objs.LADDER_18990, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.LADDER_30367, option = "Climb-down") {
+    when(player.tile.regionId) {
+        12084 -> { //Mining Guild
+            player.moveTo(x = 3021, z = 9739, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+
+
 
