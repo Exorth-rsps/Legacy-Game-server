@@ -1148,9 +1148,9 @@ object Animation {
     const val HYDRA_POISON_ATTACK = 8263
     const val HYDRA_RANGED_ATTACK = 8261
     const val IBANS_SPELL_CAST = 708
-    const val GIANT_ATTACK = 4672
-    const val GIANT_DEATH = 4673
-    const val GIANT_HIT = 4671
+    const val ICE_GIANT_ATTACK = 4672
+    const val ICE_GIANT_DEATH = 4673
+    const val ICE_GIANT_HIT = 4671
     const val ICE_WARRIOR_ATTACK = 391
     const val ICE_WARRIOR_HIT = 389
     const val ICE_WOLF_ATTACK = 6559
