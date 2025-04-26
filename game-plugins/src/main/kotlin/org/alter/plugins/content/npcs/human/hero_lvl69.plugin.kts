@@ -14,7 +14,7 @@ val droptable =
         }
         main {
             total(512)
-            obj(Items.COINS, quantity = 1, slots = 16)
+            obj(Items.COINS, quantityRange = 1..150, slots = 16)
             obj(Items.GOLD_ORE, quantity = 1, slots = 1)
             obj(Items.UNCUT_DIAMOND, quantity = 1, slots = 1)
             obj(Items.UNCUT_EMERALD, quantity = 1, slots = 1)
@@ -22,12 +22,12 @@ val droptable =
         }
         table("Runes") {
             total(512)
-            obj(Items.AIR_RUNE, quantity = 1, slots = 16)
-            obj(Items.WATER_RUNE, quantity = 1, slots = 16)
-            obj(Items.EARTH_RUNE, quantity = 1, slots = 4)
-            obj(Items.FIRE_RUNE, quantity = 1, slots = 4)
-            obj(Items.DEATH_RUNE, quantity = 1, slots = 1)
-            obj(Items.BLOOD_RUNE, quantity = 1, slots = 1)
+            obj(Items.AIR_RUNE, quantityRange = 1..30, slots = 16)
+            obj(Items.WATER_RUNE, quantityRange = 1..20, slots = 16)
+            obj(Items.EARTH_RUNE, quantityRange = 1..10, slots = 4)
+            obj(Items.FIRE_RUNE, quantityRange = 1..5, slots = 4)
+            obj(Items.DEATH_RUNE, quantityRange = 1..3, slots = 1)
+            obj(Items.BLOOD_RUNE, quantityRange = 1..3, slots = 1)
             nothing(slots = 64)
         }
     }
