@@ -26,11 +26,6 @@ val droptable =
             obj(Items.IRON_2H_SWORD, quantity = 1, slots = 1)
             obj(Items.IRON_SCIMITAR, quantity = 1, slots = 1)
         }
-        table("Herbs") {
-            total(256)
-            obj(Items.GRIMY_GUAM_LEAF, quantity = 1, slots = 1)
-            nothing(slots = 32)
-        }
     }
 
 
