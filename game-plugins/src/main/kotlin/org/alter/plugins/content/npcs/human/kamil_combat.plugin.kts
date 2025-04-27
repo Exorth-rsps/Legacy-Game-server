@@ -66,7 +66,7 @@ fun melee_attack(npc: Npc, target: Pawn, exclude: Int? = null): Int {
         0 -> {
             // Melee attack 1
             val minHit = 2
-            val maxHit = 14
+            val maxHit = 8
             npc.prepareAttack(CombatClass.MELEE, CombatStyle.CRUSH, AttackStyle.ACCURATE)
             npc.animate(395)
             if (MeleeCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
@@ -78,7 +78,7 @@ fun melee_attack(npc: Npc, target: Pawn, exclude: Int? = null): Int {
         1 -> {
             // Melee attack 2
             val minHit = 3
-            val maxHit = 22
+            val maxHit = 8
             npc.prepareAttack(CombatClass.MELEE, CombatStyle.CRUSH, AttackStyle.AGGRESSIVE)
             npc.animate(7054)
             if (MeleeCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
@@ -102,7 +102,7 @@ fun melee_freeze_attack(npc: Npc, target: Pawn) {
     // alleen doorgaan als accuracy-check slaagt
     if (world.randomDouble() <= MeleeCombatFormula.getAccuracy(npc, target)) {
         val minHit = 3
-        val maxHit = 15
+        val maxHit = 8
         npc.prepareAttack(CombatClass.MELEE, CombatStyle.CRUSH, AttackStyle.DEFENSIVE)
         npc.animate(7055)
 
@@ -136,7 +136,7 @@ fun freeze_attack(npc: Npc, target: Pawn) {
     world.spawn(projectile)
     val hit = npc.dealHit(
         target = target,
-        formula = DragonfireFormula(maxHit = 35, minHit = 5),
+        formula = DragonfireFormula(maxHit = 8, minHit = 3),
         delay = RangedCombatStrategy
             .getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
     ) {
