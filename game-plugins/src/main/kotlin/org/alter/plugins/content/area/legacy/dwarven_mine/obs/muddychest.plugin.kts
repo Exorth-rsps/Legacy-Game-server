@@ -16,8 +16,10 @@ enum class KeyChest(
     val attemptMsg: String = "",
     val steals: Array<ChestItem>
 ) {
-    // Voorbeeld: een chest die Cold Key nodig heeft
-    MUDDYCHEST(intArrayOf(Objs.CLOSED_CHEST_375), Items.MUDDY_KEY, 300,
+    MUDDYCHEST(
+        intArrayOf(Objs.CLOSED_CHEST_375),
+        Items.MUDDY_KEY,
+        respawnCycles = 300,
         attemptMsg = "Lock on the muddy chest",
         steals = ChestRewards.muddy_chest
     );
@@ -38,18 +40,40 @@ enum class KeyChest(
         }
         // 3) feedback
         if (attemptMsg.isNotEmpty()) {
-            player.filterableMessage("You attempt to unlock $attemptMsg from the ${chestId.getObjName(player.world.definitions, lowercase = true)}.")
+            player.filterableMessage(
+                "You attempt to unlock $attemptMsg from the ${chestId.getObjName(player.world.definitions, lowercase = true)}."
+            )
         }
-        // 4) pick loot
-        val item = getStolenItem(steals)
+
+        // --- selecteer eerst het ChestItem zodat we de kans kennen ---
+        val stolenChestItem = selectChestItem(steals)
+        val item = Item(stolenChestItem.itemId, stolenChestItem.amount)
+
+        // 4) loot toevoegen
         if (player.inventory.add(item).hasSucceeded()) {
             player.queue {
                 player.lock()
                 wait(1)
                 player.animate(832)
                 player.playSound(2581)
-                player.inventory.remove(Items.MUDDY_KEY, 1)
+                player.inventory.remove(keyItem, 1)
+
+                // berichten naar speler
                 val outMsg = "You retrieve ${Misc.getIndefiniteArticle(item.getName(player.world.definitions).lowercase())}."
+
+                // 4a) globale boodschap voor zeldzame drops (<1% kans)
+                if (stolenChestItem.chance < 1.0) {
+                    val playerName = player.username
+                    val itemName = item.getName(player.world.definitions).lowercase()
+                    val chestName = chestId.getObjName(player.world.definitions, lowercase = true)
+                    player.world.players.forEach { p ->
+                        p.message(
+                            "<col=ff0000>[GLOBAL]</col> $playerName has obtained a $itemName from the $chestName!",
+                            ChatMessageType.CONSOLE
+                        )
+                    }
+                }
+
                 // 5) respawn chest
                 player.world.queue {
                     val obj = player.getInteractingGameObj()
@@ -66,32 +90,30 @@ enum class KeyChest(
         }
     }
 
-    private fun getStolenItem(steals: Array<ChestItem>): Item {
+    /** Helper die de ChestItem selecteert op basis van kans */
+    private fun selectChestItem(steals: Array<ChestItem>): ChestItem {
         val candidates = steals.filter { Math.random() * 100 <= it.chance }
-            .map { Item(it.itemId, it.amount) }
-        return candidates.randomOrNull() ?: Item(steals.first().itemId, steals.first().amount)
+        return candidates.randomOrNull() ?: steals.first()
     }
 
     private fun getEmptyChestId(chestId: Int): Int = when (chestId) {
         Objs.CHEST_2587 -> Objs.CHEST_2588
-        else                -> chestId
+        else            -> chestId
     }
 }
 
-// In je plugin: hook het Open‑option
-on_obj_option(obj = Objs.CHEST_2587, option = "Open", lineOfSightDistance = 1) {
-    KeyChest.MUDDYCHEST.attempt(player, player.getInteractingGameObj().id)
-}
-
 object ChestRewards {
-
     val muddy_chest = arrayOf(
         ChestItem(Items.STEEL_BAR_NOTED, amount = 15, chance = 65.0),
         ChestItem(Items.MITHRIL_BAR_NOTED, amount = 10, chance = 25.0),
-        ChestItem(Items.COINS_995, amount = 2000, chance = 10.0),
-        ChestItem(Items.RUNE_PICKAXE, amount = 1, chance = 0.002),
-        ChestItem(Items.DRAGON_PICKAXE, amount = 1, chance = 0.001),
-        ChestItem(Items.RUNITE_BAR_NOTED, amount = 15, chance = 0.001),
+        ChestItem(Items.COINS_995,        amount = 2000, chance = 10.0),
+        ChestItem(Items.RUNE_PICKAXE,     amount = 1,    chance = 0.002),
+        ChestItem(Items.DRAGON_PICKAXE,   amount = 1,    chance = 0.001),
+        ChestItem(Items.RUNITE_BAR_NOTED, amount = 15,   chance = 0.001)
     )
+}
 
+// Hook the Open–option op de chest
+on_obj_option(obj = Objs.CHEST_2587, option = "Open", lineOfSightDistance = 1) {
+    KeyChest.MUDDYCHEST.attempt(player, player.getInteractingGameObj().id)
 }
