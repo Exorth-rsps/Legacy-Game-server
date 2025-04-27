@@ -77,11 +77,6 @@ ids.forEach {
             block = Animation.HUMAN_DEFEND
             death = Animation.HUMAN_DEATH
         }
-        aggro {
-            aggroMinutes = 30
-            radius = 10
-            searchDelay = 1
-        }
 
         sound {
             attackSound = Sound.HUMAN_ATTACK
