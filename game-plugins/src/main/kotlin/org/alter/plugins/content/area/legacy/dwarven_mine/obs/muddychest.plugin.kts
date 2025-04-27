@@ -86,12 +86,12 @@ on_obj_option(obj = Objs.CHEST_2587, option = "Open", lineOfSightDistance = 1) {
 object ChestRewards {
 
     val muddy_chest = arrayOf(
-        ChestItem(Items.COINS_995, amount = 2000, chance = 65.0),
-        ChestItem(Items.COINS_995, amount = 3000, chance = 25.0),
-        ChestItem(Items.COINS_995, amount = 4000, chance = 10.0),
-        ChestItem(Items.HIGHWAYMAN_MASK, amount = 1, chance = 0.002),
-        ChestItem(Items.WIZARD_BOOTS, amount = 1, chance = 0.001),
-        ChestItem(Items.RANGER_BOOTS, amount = 1, chance = 0.001),
+        ChestItem(Items.STEEL_BAR_NOTED, amount = 15, chance = 65.0),
+        ChestItem(Items.MITHRIL_BAR_NOTED, amount = 10, chance = 25.0),
+        ChestItem(Items.COINS_995, amount = 2000, chance = 10.0),
+        ChestItem(Items.RUNE_PICKAXE, amount = 1, chance = 0.002),
+        ChestItem(Items.DRAGON_PICKAXE, amount = 1, chance = 0.001),
+        ChestItem(Items.RUNITE_BAR_NOTED, amount = 15, chance = 0.001),
     )
 
 }
