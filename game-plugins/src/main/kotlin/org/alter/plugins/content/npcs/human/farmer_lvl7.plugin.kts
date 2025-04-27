@@ -54,7 +54,7 @@ ids.forEach {
 
         anims {
             attack = Animation.HUMAN_SLASH_SWORD_ATTACK
-            block = Animation.HUMAN_SHIELD_DEFEND
+            block = Animation.HUMAN_DEFEND
             death = Animation.HUMAN_DEATH
         }
 
