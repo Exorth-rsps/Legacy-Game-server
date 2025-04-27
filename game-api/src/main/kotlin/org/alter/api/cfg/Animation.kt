@@ -1839,6 +1839,11 @@ object Animation {
     const val ZYGOMITE_DEATH = 3327
     const val ZYGOMITE_HIT = 3325
     const val LIFT_TROPHY = 8537
+    const val ICE_LORD_ATTACK = 5724
+    const val ICE_LORD_ATTACK2 = 5725
+    const val ICE_LORD_RANGED_ATTACK = 8533
+    const val ICE_LORD_HIT = 5723
+    const val ICE_LORD_DEATH = 5726
     // const val 31773 = 31773
     // const val 31774 = 31774
     // const val 31775 = 31775
