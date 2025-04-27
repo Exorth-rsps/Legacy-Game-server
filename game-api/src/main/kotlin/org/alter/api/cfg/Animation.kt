@@ -1844,6 +1844,9 @@ object Animation {
     const val ICE_LORD_RANGED_ATTACK = 8533
     const val ICE_LORD_HIT = 5723
     const val ICE_LORD_DEATH = 5726
+    const val SLAGILITH_ATTACK = 1750
+    const val SLAGILITH_HIT = 1751
+    const val SLAGILITH_DEATH = 1752
     // const val 31773 = 31773
     // const val 31774 = 31774
     // const val 31775 = 31775
