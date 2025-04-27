@@ -3,7 +3,7 @@ package org.alter.plugins.content.npcs.critters;
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.GIANT_RAT_2858
+    Npcs.BRINE_RAT_4501
 )
 
 val table = DropTableFactory
