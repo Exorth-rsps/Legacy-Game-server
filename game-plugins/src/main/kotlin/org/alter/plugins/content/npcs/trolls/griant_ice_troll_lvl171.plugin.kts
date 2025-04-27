@@ -4,7 +4,7 @@ import org.alter.plugins.content.combat.isBeingAttacked
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.ICE_TROLL
+    Npcs.GIANT_ICE_TROLL
 )
 
 val table = DropTableFactory
