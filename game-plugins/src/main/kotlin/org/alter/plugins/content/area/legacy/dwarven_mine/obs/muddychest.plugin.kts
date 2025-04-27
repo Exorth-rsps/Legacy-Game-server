@@ -68,7 +68,7 @@ enum class KeyChest(
                     val chestName = chestId.getObjName(player.world.definitions, lowercase = true)
                     player.world.players.forEach { p ->
                         p.message(
-                            "<col=ff0000>[GLOBAL]</col> $playerName has obtained a $itemName from the $chestName!",
+                            "<col=ff0000>[GLOBAL]</col> $playerName has obtained a $itemName from the Muddychest!",
                             ChatMessageType.CONSOLE
                         )
                     }
