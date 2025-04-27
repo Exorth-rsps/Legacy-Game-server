@@ -2,6 +2,8 @@ package org.alter.plugins.content.npcs.other;
 
 import org.alter.plugins.content.drops.DropTableFactory
 
+set_multi_combat_region(region = 11925)
+set_multi_combat_region(region = 12181)
 val ids = intArrayOf(
     Npcs.ICELORD_855,
 )
