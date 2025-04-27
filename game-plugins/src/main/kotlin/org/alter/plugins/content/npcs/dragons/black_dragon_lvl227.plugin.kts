@@ -3,7 +3,7 @@ package org.alter.plugins.content.npcs.dragons
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.RED_DRAGON,
+    Npcs.BLACK_DRAGON,
 )
 val table = DropTableFactory
 val droptable =

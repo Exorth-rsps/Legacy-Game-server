@@ -9,7 +9,7 @@ import org.alter.plugins.content.combat.formula.MeleeCombatFormula
 import org.alter.plugins.content.combat.strategy.RangedCombatStrategy
 
 on_npc_combat(
-    Npcs.BLUE_DRAGON
+    Npcs.BLACK_DRAGON
 ) {
     npc.queue {
         combat(this)

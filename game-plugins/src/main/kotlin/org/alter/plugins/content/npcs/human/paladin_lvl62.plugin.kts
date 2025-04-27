@@ -3,7 +3,7 @@ package org.alter.plugins.content.npcs.human;
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.GUARD_3269
+    Npcs.PALADIN_3293
 )
 
 val table = DropTableFactory
