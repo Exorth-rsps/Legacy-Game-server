@@ -15,11 +15,11 @@ val droptable =
         }
         main {
             total(512)
-            obj(Items.RAW_SHRIMPS_NOTED, quantity = 1, slots = 4)
-            obj(Items.RAW_TROUT_NOTED, quantity = 1, slots = 4)
-            obj(Items.RAW_TUNA_NOTED, quantity = 1, slots = 2)
-            obj(Items.RAW_LOBSTER_NOTED, quantity = 1, slots = 2)
-            obj(Items.RAW_SWORDFISH_NOTED, quantity = 1, slots = 1)
+            obj(Items.RAW_SHRIMPS_NOTED, quantityRange = 1..25, slots = 4)
+            obj(Items.RAW_TROUT_NOTED, quantityRange = 1..25, slots = 4)
+            obj(Items.RAW_TUNA_NOTED, quantityRange = 1..10, slots = 2)
+            obj(Items.RAW_LOBSTER_NOTED, quantityRange = 1..5, slots = 2)
+            obj(Items.RAW_SWORDFISH_NOTED, quantityRange = 1..3, slots = 1)
             nothing(64)
         }
         }
