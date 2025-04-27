@@ -241,9 +241,9 @@ object Animation {
     const val AVIANSIE_ATTACK = 6956
     const val AVIANSIE_DEATH = 6959
     const val AVIANSIE_DEFEND = 6958
-    const val BABYDRAGON_ATTACK = 25
-    const val BABYDRAGON_DEATH = 28
-    const val BABYDRAGON_HIT = 26
+    const val DRAGON_ATTACK = 25
+    const val DRAGON_DEATH = 28
+    const val DRAGON_HIT = 26
     const val BALANCING = 763
     const val BALFRUG_KREEYATH_ATTACK = 4630
     const val BALLISTA_SPECIAL = 7556
