@@ -23,20 +23,21 @@ object SuperCombatPotion : PotionHandler {
 
     override fun onDrink(player: Player, itemId: Int) {
         val skillsComp = player.getSkills()
-        val baseLevel  = skillsComp.getBaseLevel(Skills.DEFENCE)
 
-        val boost = 5 + (baseLevel * 15) / 100
-
-        skillsComp.incrementCurrentLevel(
-            skill  = Skills.DEFENCE,
-            value  = boost,
-            capped = false
-        )
+        listOf(Skills.ATTACK, Skills.STRENGTH, Skills.DEFENCE).forEach { skillId ->
+            val baseLevel = skillsComp.getBaseLevel(skillId)
+            val boost = 5 + (baseLevel * 15) / 100
+            skillsComp.incrementCurrentLevel(
+                skill  = skillId,
+                value  = boost,
+                capped = false
+            )
+        }
 
         player.animate(829)
 
         player.inventory.remove(itemId, 1)
-        player.inventory.add(replacementMap.getValue(itemId), 1)
+        player.inventory.add(SuperCombatPotion.replacementMap.getValue(itemId), 1)
 
     }
 }
