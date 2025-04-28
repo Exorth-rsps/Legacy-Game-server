@@ -84,8 +84,12 @@ class HighScoresController(
                         lvlList.add(sk.get("lvl").asInt)
                     }
                     val privilege = jo.get("privilege").asInt
-                    val combatLevel = jo.get("combatLvl")?.asInt
-                        ?: jo.get("combatLevel").asInt  // afhankelijk van JSON key
+                    // Safely parse combat level, default to 0 als veld mist
+                    val combatLevel = when {
+                        jo.has("combatLvl") -> jo.get("combatLvl").asInt
+                        jo.has("combatLevel") -> jo.get("combatLevel").asInt
+                        else -> 0
+                    }
 
                     successes.add(PlayerSave(username, xpList, lvlList, privilege, combatLevel))
                 } catch (e: Exception) {
@@ -103,7 +107,7 @@ class HighScoresController(
         }
 
         // 6) Bouw JSON-response
-        val obj = JsonObject().apply {
+        return JsonObject().apply {
             if (skillId in 0 until skillsCount) addProperty("skill", skillId)
             else addProperty("skill", "overall")
 
@@ -111,7 +115,7 @@ class HighScoresController(
             addProperty("countFailed", failed.size)
             add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
 
-            add("highscores", JsonArray().apply {
+            val hsArr = JsonArray().apply {
                 sorted.take(limit).forEachIndexed { idx, ps ->
                     add(JsonObject().apply {
                         addProperty("rank", idx + 1)
@@ -129,9 +133,8 @@ class HighScoresController(
                         }
                     })
                 }
-            })
+            }
+            add("highscores", hsArr)
         }
-
-        return obj
     }
 }
