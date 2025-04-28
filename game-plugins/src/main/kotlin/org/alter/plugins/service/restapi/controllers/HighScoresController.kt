@@ -50,7 +50,7 @@ class HighScoresController(
         // 2) Limiet (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) Vind saves-directory
+        // 3) Vind saves-directory en lees bestanden
         val savesDir = resolveSavesDir().also {
             if (it == null) logger.warn("Geen data/saves-map gevonden, alleen online spelers.")
             else logger.info("Using saves directory: $it")
@@ -93,16 +93,17 @@ class HighScoresController(
 
         // 6) Bouw JSON-response
         val obj = JsonObject()
-        // voeg skill als Number of String in aparte statements
+        // skill-metadata
         if (skillId in 0 until skillsCount) {
-            obj.addProperty("skill", skillId)  // Number
+            obj.addProperty("skill", skillId)
         } else {
-            obj.addProperty("skill", "overall")  // String
+            obj.addProperty("skill", "overall")
         }
         obj.addProperty("countLoaded", successes.size)
         obj.addProperty("countFailed", failed.size)
         obj.add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
 
+        // highscores
         val hsArr = JsonArray().apply {
             sorted.take(limit).forEachIndexed { idx, ps ->
                 add(JsonObject().apply {
@@ -113,6 +114,9 @@ class HighScoresController(
                         addProperty("lvl", ps.lvl[skillId])
                     } else {
                         addProperty("totalXp", ps.xp.sum())
+                        // Voeg total level toe voor overall
+                        val totalLvl = ps.lvl.sum()
+                        addProperty("lvl", totalLvl)
                     }
                 })
             }
