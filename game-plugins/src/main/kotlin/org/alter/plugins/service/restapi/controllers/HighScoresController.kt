@@ -33,10 +33,13 @@ class HighScoresController(
 
     // XP thresholds voor levels 1–99 volgens OSRS
     private val xpTable: List<Double> by lazy {
-        val table = mutableListOf(0.0)
+        val table = mutableListOf<Double>()
+        // level 0 placeholder
+        table.add(0.0)
         var sum = 0.0
-        for (lvl in 1..maxLevel) {
-            val incr = floor(lvl + 300 * 2.0.pow(lvl / 7.0))
+        // levels 1..99
+        for (level in 1..maxLevel) {
+            val incr = floor(level + 300.0 * 2.0.pow(level / 7.0))
             sum += incr
             table.add(floor(sum / 4.0))
         }
@@ -45,16 +48,14 @@ class HighScoresController(
 
     // Converteer xp naar level op basis van xpTable
     private fun xpToLevel(xp: Double): Int {
-        for (lvl in 1 until xpTable.size) {
-            if (xp < xpTable[lvl]) return lvl - 1
+        for (level in maxLevel downTo 1) {
+            if (xp >= xpTable[level]) return level
         }
-        return maxLevel
+        return 1
     }
 
-    // Bereken OSRS combat level uit levels
+    // Bereken OSRS combat level uit display levels
     private fun calcCombatLevel(levels: List<Int>): Int {
-        // Debug logging: show input levels
-        logger.info("calcCombatLevel input levels: $levels")
         val att  = levels.getOrNull(0) ?: 1
         val def  = levels.getOrNull(1) ?: 1
         val str  = levels.getOrNull(2) ?: 1
@@ -110,12 +111,12 @@ class HighScoresController(
         filesStream.filter { Files.isRegularFile(it) }.forEach { path ->
             try {
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
-                val username   = jo.get("username").asString
-                val skillsArr  = jo.getAsJsonArray("skills")
+                val username  = jo.get("username").asString
+                val skillsArr = jo.getAsJsonArray("skills")
 
-                // XP values and display levels
+                // XP values and derived display levels
                 val xpList      = List(skillsArr.size()) { i -> skillsArr[i].asJsonObject.get("xp").asDouble }
-                val dispLvlList = xpList.map { xp -> xpToLevel(xp) }
+                val dispLvlList = xpList.map { xpToLevel(it) }
                 val privilege   = jo.get("privilege").asInt
                 val combatLvl   = calcCombatLevel(dispLvlList)
 
