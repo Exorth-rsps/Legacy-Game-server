@@ -16,6 +16,7 @@ import kotlin.streams.toList
 
 /**
  * HighScoresController leest highscores uit alle speler-savebestanden (offline én online).
+ * Berekent levels op basis van xp volgens OSRS-formule (Experience).
  * Routes: /highscores en /highscores/skill/:skillId
  */
 class HighScoresController(
@@ -27,9 +28,31 @@ class HighScoresController(
     private val logger = KotlinLogging.logger {}
     private val gson = Gson()
     private val skillsCount = 25  // Aantal skills in jouw JSON-structuur
+    private val maxLevel = 99
+    private val xpTable: List<Double> by lazy {
+        // xpTable[i] = XP required for level i
+        val table = mutableListOf<Double>(0.0)
+        var sum = 0.0
+        for (lvl in 1..maxLevel) {
+            val incr = floor(lvl + 300.0 * 2.0.pow(lvl / 7.0))
+            sum += incr
+            table.add(floor(sum / 4.0))
+        }
+        table
+    }
 
     /**
-     * Probeer meerdere paden om de saves map te vinden, met debug-logging per kandidaat.
+     * Converteer xp naar level (1-99) volgens xpTable thresholds
+     */
+    private fun xpToLevel(xp: Double): Int {
+        for (lvl in 1 until xpTable.size) {
+            if (xp < xpTable[lvl]) return lvl - 1
+        }
+        return maxLevel
+    }
+
+    /**
+     * Probeer meerdere paden om de saves map te vinden.
      */
     private fun resolveSavesDir(): Path? {
         val candidates = listOf(
@@ -45,14 +68,6 @@ class HighScoresController(
 
     /**
      * Bereken combat level op basis van skill levels volgens OSRS-formule.
-     * Combat level = floor(
-     *   0.25 * (def + hp + floor(prayer / 2)) +
-     *   0.325 * max(
-     *     attack + strength,
-     *     floor(range * 1.5),
-     *     floor(magic * 1.5)
-     *   )
-     *) clamped at max 126
      */
     private fun calcCombatLevel(lvl: List<Int>): Int {
         val att  = lvl.getOrNull(0) ?: 1
@@ -67,13 +82,14 @@ class HighScoresController(
         val melee  = 0.325 * (att + str)
         val range  = 0.325 * floor(rng * 1.5)
         val magic  = 0.325 * floor(mag * 1.5)
-        val combat = floor(base + max(melee, max(range, magic))).toInt()
-        return combat.coerceAtMost(126)
+        return floor(base + max(melee, max(range, magic))).toInt().coerceAtMost(126)
     }
 
     override fun init(world: World): JsonObject {
-        val skillId = req.params("skillId")?.toIntOrNull() ?: req.queryParams("skill")?.toIntOrNull() ?: -1
-        val limit   = req.queryParams("limit")?.toIntOrNull() ?: 10
+        val skillId = req.params("skillId")?.toIntOrNull()
+            ?: req.queryParams("skill")?.toIntOrNull()
+            ?: -1
+        val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
         val savesDir = resolveSavesDir().also {
             if (it == null) logger.warn("Geen saves-dir gevonden, fallback naar enkel online spelers.")
@@ -96,10 +112,13 @@ class HighScoresController(
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
                 val username  = jo.get("username").asString
                 val skillsJson= jo.getAsJsonArray("skills")
-                val xpList = List(skillsJson.size()) { i -> skillsJson[i].asJsonObject.get("xp").asDouble }
-                val lvlList= List(skillsJson.size()) { i -> skillsJson[i].asJsonObject.get("lvl").asInt }
+
+                // lees xp-waarden en bereken levels
+                val xpList  = List(skillsJson.size()) { i -> skillsJson[i].asJsonObject.get("xp").asDouble }
+                val lvlList = xpList.map { xp -> xpToLevel(xp) }
                 val privilege= jo.get("privilege").asInt
                 val combatLvl= calcCombatLevel(lvlList)
+
                 loaded.add(PlayerSave(username, xpList, lvlList, privilege, combatLvl))
             } catch (e: Exception) {
                 logger.error(e) { "Failed to load save: $path" }
@@ -114,6 +133,7 @@ class HighScoresController(
         return JsonObject().apply {
             if (skillId in 0 until skillsCount) addProperty("skill", skillId)
             else addProperty("skill", "overall")
+
             addProperty("countLoaded", loaded.size)
             addProperty("countFailed", failed.size)
             add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
