@@ -13,12 +13,11 @@ import java.nio.file.Paths
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.pow
-import kotlin.math.pow
 import kotlin.streams.toList
 
 /**
  * HighScoresController leest highscores uit alle speler-savebestanden (offline én online).
- * Berekent display levels op basis van xp en combat level op basis van raw skill levels.
+ * Berekent display levels op basis van xp en combat level op basis van dezelfde display levels.
  * Routes: /highscores en /highscores/skill/:skillId
  */
 class HighScoresController(
@@ -52,17 +51,17 @@ class HighScoresController(
         return maxLevel
     }
 
-    // Bereken OSRS combat level uit raw skill levels
-    private fun calcCombatLevel(rawLevels: List<Int>): Int {
-        val att  = rawLevels.getOrNull(0) ?: 1
-        val def  = rawLevels.getOrNull(1) ?: 1
-        val str  = rawLevels.getOrNull(2) ?: 1
-        val hp   = rawLevels.getOrNull(3) ?: 10
-        val rng  = rawLevels.getOrNull(4) ?: 1
-        val pray = rawLevels.getOrNull(5) ?: 1
-        val mag  = rawLevels.getOrNull(6) ?: 1
+    // Bereken OSRS combat level uit levels
+    private fun calcCombatLevel(levels: List<Int>): Int {
+        val att  = levels.getOrNull(0) ?: 1
+        val def  = levels.getOrNull(1) ?: 1
+        val str  = levels.getOrNull(2) ?: 1
+        val hp   = levels.getOrNull(3) ?: 10
+        val rng  = levels.getOrNull(4) ?: 1
+        val pray = levels.getOrNull(5) ?: 1
+        val mag  = levels.getOrNull(6) ?: 1
 
-        val base = 0.25 * (def + hp + floor(pray / 2.0))
+        val base  = 0.25 * (def + hp + floor(pray / 2.0))
         val melee = 0.325 * (att + str)
         val range = 0.325 * floor(rng * 1.5)
         val magic = 0.325 * floor(mag * 1.5)
@@ -89,10 +88,10 @@ class HighScoresController(
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
         val savesDir = resolveSavesDir().also {
-            if (it == null) logger.warn("Geen saves map gevonden, alleen online players.")
+            if (it == null) logger.warn("Geen saves map gevonden, fallback naar online-only.")
             else logger.info("Using savesDir: $it")
         }
-        val stream = savesDir?.let { Files.list(it) }
+        val filesStream = savesDir?.let { Files.list(it) }
             ?: java.util.stream.Stream.empty<Path>()
 
         data class PlayerSave(
@@ -106,30 +105,24 @@ class HighScoresController(
         val loaded = mutableListOf<PlayerSave>()
         val failed = mutableListOf<String>()
 
-        stream.filter { Files.isRegularFile(it) }
-            .forEach { path ->
-                try {
-                    val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
-                    val username = jo.get("username").asString
-                    val skillsArr = jo.getAsJsonArray("skills")
+        filesStream.filter { Files.isRegularFile(it) }.forEach { path ->
+            try {
+                val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
+                val username   = jo.get("username").asString
+                val skillsArr  = jo.getAsJsonArray("skills")
 
-                    val xpList = List(skillsArr.size()) { i ->
-                        skillsArr[i].asJsonObject.get("xp").asDouble
-                    }
-                    val rawLvlList = List(skillsArr.size()) { i ->
-                        skillsArr[i].asJsonObject.get("lvl").asInt
-                    }
-                    val dispLvlList = xpList.map { xpToLevel(it) }
-                    val privilege = jo.get("privilege").asInt
-                    val combatLevel = calcCombatLevel(rawLvlList)
+                // XP values and display levels
+                val xpList      = List(skillsArr.size()) { i -> skillsArr[i].asJsonObject.get("xp").asDouble }
+                val dispLvlList = xpList.map { xp -> xpToLevel(xp) }
+                val privilege   = jo.get("privilege").asInt
+                val combatLvl   = calcCombatLevel(dispLvlList)
 
-                    loaded.add(PlayerSave(username, xpList, dispLvlList, privilege, combatLevel))
-                } catch (e: Exception) {
-                    logger.error(e) { "Failed to load save: $path" }
-                    failed.add(path.fileName.toString())
-                }
+                loaded.add(PlayerSave(username, xpList, dispLvlList, privilege, combatLvl))
+            } catch (e: Exception) {
+                logger.error(e) { "Failed to load save: $path" }
+                failed.add(path.fileName.toString())
             }
-
+        }
         logger.info("Loaded ${loaded.size} players, failed ${failed.size} files")
 
         val sorted = if (skillId in 0 until skillsCount) {
@@ -153,7 +146,6 @@ class HighScoresController(
                         addProperty("username", ps.username)
                         addProperty("privilege", ps.privilege)
                         addProperty("combatLvl", ps.combatLevel)
-
                         if (skillId in 0 until skillsCount) {
                             addProperty("xp", ps.xp[skillId])
                             addProperty("lvl", ps.displayLvl[skillId])
