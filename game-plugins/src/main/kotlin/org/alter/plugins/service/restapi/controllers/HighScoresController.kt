@@ -53,6 +53,8 @@ class HighScoresController(
 
     // Bereken OSRS combat level uit levels
     private fun calcCombatLevel(levels: List<Int>): Int {
+        // Debug logging: show input levels
+        logger.info("calcCombatLevel input levels: $levels")
         val att  = levels.getOrNull(0) ?: 1
         val def  = levels.getOrNull(1) ?: 1
         val str  = levels.getOrNull(2) ?: 1
