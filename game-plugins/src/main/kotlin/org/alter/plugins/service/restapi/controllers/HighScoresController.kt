@@ -26,7 +26,7 @@ class HighScoresController(
     private val logger = KotlinLogging.logger {}
     private val gson = Gson()
     // Pas dit pad aan naar je directory met player JSON-saves
-    private val savesDir: Path = Paths.get("data/players")
+    private val savesDir: Path = Paths.get("data/saves")
     private val skillsCount = 23
 
     override fun init(world: World): JsonObject {
