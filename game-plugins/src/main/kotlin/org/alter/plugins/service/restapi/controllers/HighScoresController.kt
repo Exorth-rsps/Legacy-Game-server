@@ -24,16 +24,16 @@ class HighScoresController(
 
     private val logger = KotlinLogging.logger {}
     private val gson = Gson()
-    private val skillsCount = 23
+    private val skillsCount = 25  // Aantal skills in je JSON
 
     /**
      * Probeer meerdere paden om de saves map te vinden, met debug-logging per kandidaat.
      */
     private fun resolveSavesDir(): Path? {
         val candidates = listOf(
-            Paths.get("data", "saves"),
-            Paths.get("..", "data", "saves"),
-            Paths.get("..", "..", "data", "saves")
+            Paths.get("data", "saves"),          // project root
+            Paths.get("..", "data", "saves"),   // één niveau omhoog
+            Paths.get("..", "..", "data", "saves") // twee niveaus omhoog
         )
         candidates.forEach { path ->
             logger.info("Checking savesDir candidate: $path (exists=${Files.exists(path)}, isDir=${Files.isDirectory(path)})")
@@ -50,17 +50,22 @@ class HighScoresController(
         // 2) Limiet (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) Vind saves-directory
+        // 3) Vind saves-directory en lees bestanden
         val savesDir = resolveSavesDir()
         if (savesDir == null) {
             logger.warn("Geen data/saves-map gevonden op bekende paden, alleen online spelers worden meegenomen.")
         } else {
             logger.info("Using saves directory: $savesDir")
         }
-        val filesStream
-                .filter { path ->
-            Files.isRegularFile(path)
-        }
+        val stream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
+
+        // 4) Lees alle player-save JSON-bestanden
+        data class PlayerSave(val username: String, val xp: List<Double>)
+
+        val allPlayers = stream
+            .filter { path ->
+                Files.isRegularFile(path)
+            }
             .map { path ->
                 logger.info("Loading save file: $path")
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
@@ -72,6 +77,7 @@ class HighScoresController(
                 PlayerSave(username, xpList)
             }
             .toList()
+
         logger.info("Total save files loaded: ${'$'}{allPlayers.size}")
 
         // 5) Sorteer op skill of totaal XP
@@ -98,6 +104,7 @@ class HighScoresController(
                         addProperty("username", ps.username)
                         if (skillId in 0 until skillsCount) {
                             addProperty("xp", ps.xp[skillId])
+                            // lvl niet beschikbaar in save, gebruik xp-only of lees lvl uit JSON
                         } else {
                             addProperty("totalXp", ps.xp.sum())
                         }
