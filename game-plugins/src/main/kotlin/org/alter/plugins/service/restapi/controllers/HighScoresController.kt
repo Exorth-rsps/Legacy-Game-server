@@ -58,7 +58,13 @@ class HighScoresController(
         val stream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
 
         // 4) Lees en parse bestanden met foutafhandeling
-        data class PlayerSave(val username: String, val xp: List<Double>, val lvl: List<Int>)
+        data class PlayerSave(
+            val username: String,
+            val xp: List<Double>,
+            val lvl: List<Int>,
+            val privilege: Int,
+            val combatLevel: Int
+        )
         val successes = mutableListOf<PlayerSave>()
         val failed = mutableListOf<String>()
 
@@ -69,6 +75,7 @@ class HighScoresController(
                     val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
                     val username = jo.get("username").asString
                     val skillsJson = jo.getAsJsonArray("skills")
+
                     val xpList = mutableListOf<Double>()
                     val lvlList = mutableListOf<Int>()
                     for (i in 0 until skillsJson.size()) {
@@ -76,13 +83,17 @@ class HighScoresController(
                         xpList.add(sk.get("xp").asDouble)
                         lvlList.add(sk.get("lvl").asInt)
                     }
-                    successes.add(PlayerSave(username, xpList, lvlList))
+                    val privilege = jo.get("privilege").asInt
+                    val combatLevel = jo.get("combatLvl")?.asInt
+                        ?: jo.get("combatLevel").asInt  // afhankelijk van JSON key
+
+                    successes.add(PlayerSave(username, xpList, lvlList, privilege, combatLevel))
                 } catch (e: Exception) {
                     logger.error(e) { "Failed to load save file: $path" }
                     failed.add(path.fileName.toString())
                 }
             }
-        logger.info("Save files loaded: ${'$'}{successes.size}, failed: ${'$'}{failed.size}")
+        logger.info("Save files loaded: ${successes.size}, failed: ${failed.size}")
 
         // 5) Sorteer op skill of totaal XP
         val sorted = if (skillId in 0 until skillsCount) {
@@ -92,36 +103,35 @@ class HighScoresController(
         }
 
         // 6) Bouw JSON-response
-        val obj = JsonObject()
-        // skill-metadata
-        if (skillId in 0 until skillsCount) {
-            obj.addProperty("skill", skillId)
-        } else {
-            obj.addProperty("skill", "overall")
-        }
-        obj.addProperty("countLoaded", successes.size)
-        obj.addProperty("countFailed", failed.size)
-        obj.add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
+        val obj = JsonObject().apply {
+            if (skillId in 0 until skillsCount) addProperty("skill", skillId)
+            else addProperty("skill", "overall")
 
-        // highscores
-        val hsArr = JsonArray().apply {
-            sorted.take(limit).forEachIndexed { idx, ps ->
-                add(JsonObject().apply {
-                    addProperty("rank", idx + 1)
-                    addProperty("username", ps.username)
-                    if (skillId in 0 until skillsCount) {
-                        addProperty("xp", ps.xp[skillId])
-                        addProperty("lvl", ps.lvl[skillId])
-                    } else {
-                        addProperty("totalXp", ps.xp.sum())
-                        // Voeg total level toe voor overall
-                        val totalLvl = ps.lvl.sum()
-                        addProperty("lvl", totalLvl)
-                    }
-                })
-            }
+            addProperty("countLoaded", successes.size)
+            addProperty("countFailed", failed.size)
+            add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
+
+            add("highscores", JsonArray().apply {
+                sorted.take(limit).forEachIndexed { idx, ps ->
+                    add(JsonObject().apply {
+                        addProperty("rank", idx + 1)
+                        addProperty("username", ps.username)
+                        addProperty("privilege", ps.privilege)
+                        addProperty("combatLvl", ps.combatLevel)
+
+                        if (skillId in 0 until skillsCount) {
+                            addProperty("xp", ps.xp[skillId])
+                            addProperty("lvl", ps.lvl[skillId])
+                        } else {
+                            addProperty("totalXp", ps.xp.sum())
+                            val totalLvl = ps.lvl.sum()
+                            addProperty("lvl", totalLvl)
+                        }
+                    })
+                }
+            })
         }
-        obj.add("highscores", hsArr)
+
         return obj
     }
 }
