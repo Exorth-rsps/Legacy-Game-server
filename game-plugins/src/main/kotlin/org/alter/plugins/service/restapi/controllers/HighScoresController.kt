@@ -25,16 +25,17 @@ class HighScoresController(
 
     private val logger = KotlinLogging.logger {}
     private val gson = Gson()
-    // Pas dit pad aan naar je directory met player JSON-saves
-    private val savesDir: Path = Paths.get("data/saves")
-    private val skillsCount = 23
+    // Bouw een pad vanaf de werkdirectory: ${'$'}{user.dir}/data/saves
+    // Relative path vanuit werkdirectory (project root tijdens run): data/saves
+    private val savesDir: Path = Paths.get("data", "saves")
+    private val skillsCount = 23 = 23
 
     override fun init(world: World): JsonObject {
         // Controleer of savesDir bestaat; anders fallback naar alleen online spelers
         val saveDirStream = if (Files.exists(savesDir) && Files.isDirectory(savesDir)) {
             Files.list(savesDir)
         } else {
-            logger.warn("Save directory $savesDir bestaat niet, gebruik alleen online spelers als fallback.")
+            logger.warn("Save directory $savesDir bestaat niet of is geen map, gebruik alleen online spelers als fallback.")
             java.util.stream.Stream.empty<Path>()
         }
 
@@ -49,7 +50,7 @@ class HighScoresController(
         // 3) Lees alle player-save JSON-bestanden
         data class PlayerSave(val username: String, val xp: List<Double>)
         val allPlayers = saveDirStream
-            .filter { it.toString().endsWith(".json") }
+            .filter { it.fileName.toString().endsWith(".json") }
             .map { path ->
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
                 val username = jo.get("username").asString
