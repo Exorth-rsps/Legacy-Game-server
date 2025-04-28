@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch
 import org.alter.game.model.World
 import org.alter.plugins.service.restapi.controllers.OnlinePlayersController
 import org.alter.plugins.service.restapi.controllers.PlayerController
+import org.alter.plugins.service.restapi.controllers.HighScoresController
 import spark.Spark.*
 
 class RestApiRoutes {
@@ -56,6 +57,22 @@ class RestApiRoutes {
             res.type("application/json")
             Gson().toJson(
                 PlayerController(req, res, auth).init(world)
+            )
+        }
+
+        // Highscores - overall
+        get("/highscores") { req, res ->
+            res.type("application/json")
+            Gson().toJson(
+                HighScoresController(req, res, auth).init(world)
+            )
+        }
+
+        // Highscores - per skill
+        get("/highscores/skill/:skillId") { req, res ->
+            res.type("application/json")
+            Gson().toJson(
+                HighScoresController(req, res, auth).init(world)
             )
         }
     }
