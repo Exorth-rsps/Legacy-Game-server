@@ -11,7 +11,7 @@ import spark.Response
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.streams.toList  // voor Stream<Path>.toList()
+import kotlin.streams.toList
 
 /**
  * HighScoresController haalt de highscores uit alle player-save bestanden (offline én online).
@@ -30,6 +30,14 @@ class HighScoresController(
     private val skillsCount = 23
 
     override fun init(world: World): JsonObject {
+        // Controleer of savesDir bestaat; anders fallback naar alleen online spelers
+        val saveDirStream = if (Files.exists(savesDir) && Files.isDirectory(savesDir)) {
+            Files.list(savesDir)
+        } else {
+            logger.warn("Save directory $savesDir bestaat niet, gebruik alleen online spelers als fallback.")
+            java.util.stream.Stream.empty<Path>()
+        }
+
         // 1) Skill-id uit path of query (?skill=…)
         val skillId = req.params("skillId")?.toIntOrNull()
             ?: req.queryParams("skill")?.toIntOrNull()
@@ -40,7 +48,7 @@ class HighScoresController(
 
         // 3) Lees alle player-save JSON-bestanden
         data class PlayerSave(val username: String, val xp: List<Double>)
-        val allPlayers = Files.list(savesDir)
+        val allPlayers = saveDirStream
             .filter { it.toString().endsWith(".json") }
             .map { path ->
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
