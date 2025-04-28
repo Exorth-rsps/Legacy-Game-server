@@ -50,7 +50,7 @@ class HighScoresController(
         // 2) Limiet (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) Vind saves-directory en lees bestanden
+        // 3) Vind saves-directory
         val savesDir = resolveSavesDir().also {
             if (it == null) logger.warn("Geen data/saves-map gevonden, alleen online spelers.")
             else logger.info("Using saves directory: $it")
@@ -92,28 +92,32 @@ class HighScoresController(
         }
 
         // 6) Bouw JSON-response
-        return JsonObject().apply {
-            addProperty("skill", if (skillId in 0 until skillsCount) skillId else "overall")
-            addProperty("countLoaded", successes.size)
-            addProperty("countFailed", failed.size)
-
-            add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
-
-            val hsArr = JsonArray().apply {
-                sorted.take(limit).forEachIndexed { idx, ps ->
-                    add(JsonObject().apply {
-                        addProperty("rank", idx + 1)
-                        addProperty("username", ps.username)
-                        if (skillId in 0 until skillsCount) {
-                            addProperty("xp", ps.xp[skillId])
-                            addProperty("lvl", ps.lvl[skillId])
-                        } else {
-                            addProperty("totalXp", ps.xp.sum())
-                        }
-                    })
-                }
-            }
-            add("highscores", hsArr)
+        val obj = JsonObject()
+        // voeg skill als Number of String in aparte statements
+        if (skillId in 0 until skillsCount) {
+            obj.addProperty("skill", skillId)  // Number
+        } else {
+            obj.addProperty("skill", "overall")  // String
         }
+        obj.addProperty("countLoaded", successes.size)
+        obj.addProperty("countFailed", failed.size)
+        obj.add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
+
+        val hsArr = JsonArray().apply {
+            sorted.take(limit).forEachIndexed { idx, ps ->
+                add(JsonObject().apply {
+                    addProperty("rank", idx + 1)
+                    addProperty("username", ps.username)
+                    if (skillId in 0 until skillsCount) {
+                        addProperty("xp", ps.xp[skillId])
+                        addProperty("lvl", ps.lvl[skillId])
+                    } else {
+                        addProperty("totalXp", ps.xp.sum())
+                    }
+                })
+            }
+        }
+        obj.add("highscores", hsArr)
+        return obj
     }
 }
