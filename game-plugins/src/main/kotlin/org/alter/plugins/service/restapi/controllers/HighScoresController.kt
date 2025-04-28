@@ -27,7 +27,7 @@ class HighScoresController(
     private val skillsCount = 23
 
     /**
-     * Probeer meerdere paden om de saves map te vinden.
+     * Probeer meerdere paden om de saves map te vinden, met debug-logging per kandidaat.
      */
     private fun resolveSavesDir(): Path? {
         val candidates = listOf(
@@ -35,6 +35,9 @@ class HighScoresController(
             Paths.get("..", "data", "saves"),
             Paths.get("..", "..", "data", "saves")
         )
+        candidates.forEach { path ->
+            logger.info("Checking savesDir candidate: $path (exists=${Files.exists(path)}, isDir=${Files.isDirectory(path)})")
+        }
         return candidates.firstOrNull { Files.isDirectory(it) }
     }
 
@@ -54,16 +57,10 @@ class HighScoresController(
         } else {
             logger.info("Using saves directory: $savesDir")
         }
-        val filesStream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
-
-        // 4) Lees alle player-save JSON-bestanden met logging
-        data class PlayerSave(val username: String, val xp: List<Double>)
-        val allPlayers = filesStream
-            .filter { path ->
-                val isJson = path.fileName.toString().endsWith(".json")
-                if (!isJson) logger.debug("Skipping non-JSON file: $path")
-                isJson
-            }
+        val filesStream
+                .filter { path ->
+            Files.isRegularFile(path)
+        }
             .map { path ->
                 logger.info("Loading save file: $path")
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
@@ -75,7 +72,7 @@ class HighScoresController(
                 PlayerSave(username, xpList)
             }
             .toList()
-        logger.info("Total save files loaded: ${allPlayers.size}")
+        logger.info("Total save files loaded: ${'$'}{allPlayers.size}")
 
         // 5) Sorteer op skill of totaal XP
         val sorted = if (skillId in 0 until skillsCount) {
