@@ -5,7 +5,6 @@ import com.google.gson.JsonObject
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.alter.game.model.World
-import org.alter.game.model.entity.Player
 import spark.Request
 import spark.Response
 import java.nio.file.Files
@@ -14,8 +13,8 @@ import java.nio.file.Paths
 import kotlin.streams.toList
 
 /**
- * HighScoresController haalt de highscores uit alle player-save bestanden (offline én online).
- * Endpoints blijven hetzelfde: /highscores en /highscores/skill/:skillId
+ * HighScoresController leest highscores uit alle speler-savebestanden (offline én online).
+ * Routes: /highscores en /highscores/skill/:skillId
  */
 class HighScoresController(
     private val req: Request,
@@ -25,31 +24,38 @@ class HighScoresController(
 
     private val logger = KotlinLogging.logger {}
     private val gson = Gson()
-    // Bouw een pad vanaf de werkdirectory: ${'$'}{user.dir}/data/saves
-    // Relative path vanuit werkdirectory (project root tijdens run): data/saves
-    private val savesDir: Path = Paths.get("data", "saves")
-    private val skillsCount = 23 = 23
+    private val skillsCount = 23
+
+    /**
+     * Probeer meerdere paden om de saves map te vinden.
+     */
+    private fun resolveSavesDir(): Path? {
+        val candidates = listOf(
+            Paths.get("data", "saves"),          // project root
+            Paths.get("..", "data", "saves"),    // één niveau omhoog
+            Paths.get("..", "..", "data", "saves") // twee niveaus omhoog
+        )
+        return candidates.firstOrNull { Files.isDirectory(it) }
+    }
 
     override fun init(world: World): JsonObject {
-        // Controleer of savesDir bestaat; anders fallback naar alleen online spelers
-        val saveDirStream = if (Files.exists(savesDir) && Files.isDirectory(savesDir)) {
-            Files.list(savesDir)
-        } else {
-            logger.warn("Save directory $savesDir bestaat niet of is geen map, gebruik alleen online spelers als fallback.")
-            java.util.stream.Stream.empty<Path>()
-        }
-
         // 1) Skill-id uit path of query (?skill=…)
         val skillId = req.params("skillId")?.toIntOrNull()
             ?: req.queryParams("skill")?.toIntOrNull()
             ?: -1
 
-        // 2) Hoeveel topscores (default 10)
+        // 2) Limiet (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) Lees alle player-save JSON-bestanden
+        // 3) Vind saves-directory en lees alle JSON-bestanden
+        val savesDir = resolveSavesDir()
+        if (savesDir == null) {
+            logger.warn("Geen data/saves-map gevonden op bekende paden, alleen online spelers worden meegenomen.")
+        }
+        val filesStream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
+
         data class PlayerSave(val username: String, val xp: List<Double>)
-        val allPlayers = saveDirStream
+        val allPlayers = filesStream
             .filter { it.fileName.toString().endsWith(".json") }
             .map { path ->
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
@@ -62,14 +68,14 @@ class HighScoresController(
             }
             .toList()
 
-        // 4) Sorteer op skill of overall
+        // 4) Sorteer op skill of totaal XP
         val sorted = if (skillId in 0 until skillsCount) {
             allPlayers.sortedByDescending { it.xp[skillId] }
         } else {
             allPlayers.sortedByDescending { it.xp.sum() }
         }
 
-        // 5) Bouw response JSON
+        // 5) Bouw JSON-response
         return JsonObject().apply {
             if (skillId in 0 until skillsCount) {
                 addProperty("skill", skillId)
