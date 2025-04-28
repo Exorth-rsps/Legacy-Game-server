@@ -10,6 +10,8 @@ import spark.Response
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.streams.toList
 
 /**
@@ -36,28 +38,49 @@ class HighScoresController(
             Paths.get("..", "..", "data", "saves")
         )
         candidates.forEach { path ->
-            logger.info("Checking savesDir candidate: $path (exists=${Files.exists(path)}, isDir=${Files.isDirectory(path)})")
+            logger.info("Checking savesDir: $path (exists=${Files.exists(path)}, dir=${Files.isDirectory(path)})")
         }
         return candidates.firstOrNull { Files.isDirectory(it) }
     }
 
+    /**
+     * Bereken combat level op basis van skill levels volgens OSRS-formule.
+     * Combat level = floor(
+     *   0.25 * (def + hp + floor(prayer / 2)) +
+     *   0.325 * max(
+     *     attack + strength,
+     *     floor(range * 1.5),
+     *     floor(magic * 1.5)
+     *   )
+     *) clamped at max 126
+     */
+    private fun calcCombatLevel(lvl: List<Int>): Int {
+        val att  = lvl.getOrNull(0) ?: 1
+        val def  = lvl.getOrNull(1) ?: 1
+        val str  = lvl.getOrNull(2) ?: 1
+        val hp   = lvl.getOrNull(3) ?: 10
+        val rng  = lvl.getOrNull(4) ?: 1
+        val pray = lvl.getOrNull(5) ?: 1
+        val mag  = lvl.getOrNull(6) ?: 1
+
+        val base   = 0.25 * (def + hp + floor(pray / 2.0))
+        val melee  = 0.325 * (att + str)
+        val range  = 0.325 * floor(rng * 1.5)
+        val magic  = 0.325 * floor(mag * 1.5)
+        val combat = floor(base + max(melee, max(range, magic))).toInt()
+        return combat.coerceAtMost(126)
+    }
+
     override fun init(world: World): JsonObject {
-        // 1) Skill-id uit path of query (?skill=…)
-        val skillId = req.params("skillId")?.toIntOrNull()
-            ?: req.queryParams("skill")?.toIntOrNull()
-            ?: -1
+        val skillId = req.params("skillId")?.toIntOrNull() ?: req.queryParams("skill")?.toIntOrNull() ?: -1
+        val limit   = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 2) Limiet (default 10)
-        val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
-
-        // 3) Vind saves-directory en lees bestanden
         val savesDir = resolveSavesDir().also {
-            if (it == null) logger.warn("Geen data/saves-map gevonden, alleen online spelers.")
-            else logger.info("Using saves directory: $it")
+            if (it == null) logger.warn("Geen saves-dir gevonden, fallback naar enkel online spelers.")
+            else logger.info("Using savesDir: $it")
         }
-        val stream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
+        val files = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
 
-        // 4) Lees en parse bestanden met foutafhandeling
         data class PlayerSave(
             val username: String,
             val xp: List<Double>,
@@ -65,76 +88,53 @@ class HighScoresController(
             val privilege: Int,
             val combatLevel: Int
         )
-        val successes = mutableListOf<PlayerSave>()
+        val loaded = mutableListOf<PlayerSave>()
         val failed = mutableListOf<String>()
 
-        stream.filter { Files.isRegularFile(it) }
-            .forEach { path ->
-                try {
-                    logger.info("Loading save file: $path")
-                    val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
-                    val username = jo.get("username").asString
-                    val skillsJson = jo.getAsJsonArray("skills")
-
-                    val xpList = mutableListOf<Double>()
-                    val lvlList = mutableListOf<Int>()
-                    for (i in 0 until skillsJson.size()) {
-                        val sk = skillsJson[i].asJsonObject
-                        xpList.add(sk.get("xp").asDouble)
-                        lvlList.add(sk.get("lvl").asInt)
-                    }
-                    val privilege = jo.get("privilege").asInt
-                    // Safely parse combat level, default to 0 als veld mist
-                    val combatLevel = when {
-                        jo.has("combatLvl") -> jo.get("combatLvl").asInt
-                        jo.has("combatLevel") -> jo.get("combatLevel").asInt
-                        else -> 0
-                    }
-
-                    successes.add(PlayerSave(username, xpList, lvlList, privilege, combatLevel))
-                } catch (e: Exception) {
-                    logger.error(e) { "Failed to load save file: $path" }
-                    failed.add(path.fileName.toString())
-                }
+        files.filter { Files.isRegularFile(it) }.forEach { path ->
+            try {
+                val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
+                val username  = jo.get("username").asString
+                val skillsJson= jo.getAsJsonArray("skills")
+                val xpList = List(skillsJson.size()) { i -> skillsJson[i].asJsonObject.get("xp").asDouble }
+                val lvlList= List(skillsJson.size()) { i -> skillsJson[i].asJsonObject.get("lvl").asInt }
+                val privilege= jo.get("privilege").asInt
+                val combatLvl= calcCombatLevel(lvlList)
+                loaded.add(PlayerSave(username, xpList, lvlList, privilege, combatLvl))
+            } catch (e: Exception) {
+                logger.error(e) { "Failed to load save: $path" }
+                failed.add(path.fileName.toString())
             }
-        logger.info("Save files loaded: ${successes.size}, failed: ${failed.size}")
-
-        // 5) Sorteer op skill of totaal XP
-        val sorted = if (skillId in 0 until skillsCount) {
-            successes.sortedByDescending { it.xp[skillId] }
-        } else {
-            successes.sortedByDescending { it.xp.sum() }
         }
+        logger.info("Loaded ${loaded.size} players, failed ${failed.size} files")
 
-        // 6) Bouw JSON-response
+        val sorted = if (skillId in 0 until skillsCount) loaded.sortedByDescending { it.xp[skillId] }
+        else loaded.sortedByDescending { it.xp.sum() }
+
         return JsonObject().apply {
             if (skillId in 0 until skillsCount) addProperty("skill", skillId)
             else addProperty("skill", "overall")
-
-            addProperty("countLoaded", successes.size)
+            addProperty("countLoaded", loaded.size)
             addProperty("countFailed", failed.size)
             add("failedFiles", JsonArray().apply { failed.forEach { add(it) } })
 
-            val hsArr = JsonArray().apply {
+            add("highscores", JsonArray().apply {
                 sorted.take(limit).forEachIndexed { idx, ps ->
                     add(JsonObject().apply {
                         addProperty("rank", idx + 1)
                         addProperty("username", ps.username)
                         addProperty("privilege", ps.privilege)
                         addProperty("combatLvl", ps.combatLevel)
-
                         if (skillId in 0 until skillsCount) {
                             addProperty("xp", ps.xp[skillId])
                             addProperty("lvl", ps.lvl[skillId])
                         } else {
                             addProperty("totalXp", ps.xp.sum())
-                            val totalLvl = ps.lvl.sum()
-                            addProperty("lvl", totalLvl)
+                            addProperty("lvl", ps.lvl.sum())
                         }
                     })
                 }
-            }
-            add("highscores", hsArr)
+            })
         }
     }
 }
