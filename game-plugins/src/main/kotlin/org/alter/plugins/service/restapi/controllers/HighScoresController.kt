@@ -31,9 +31,9 @@ class HighScoresController(
      */
     private fun resolveSavesDir(): Path? {
         val candidates = listOf(
-            Paths.get("data", "saves"),          // project root
-            Paths.get("..", "data", "saves"),    // één niveau omhoog
-            Paths.get("..", "..", "data", "saves") // twee niveaus omhoog
+            Paths.get("data", "saves"),
+            Paths.get("..", "data", "saves"),
+            Paths.get("..", "..", "data", "saves")
         )
         return candidates.firstOrNull { Files.isDirectory(it) }
     }
@@ -47,17 +47,25 @@ class HighScoresController(
         // 2) Limiet (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) Vind saves-directory en lees alle JSON-bestanden
+        // 3) Vind saves-directory
         val savesDir = resolveSavesDir()
         if (savesDir == null) {
             logger.warn("Geen data/saves-map gevonden op bekende paden, alleen online spelers worden meegenomen.")
+        } else {
+            logger.info("Using saves directory: $savesDir")
         }
         val filesStream = savesDir?.let { Files.list(it) } ?: java.util.stream.Stream.empty<Path>()
 
+        // 4) Lees alle player-save JSON-bestanden met logging
         data class PlayerSave(val username: String, val xp: List<Double>)
         val allPlayers = filesStream
-            .filter { it.fileName.toString().endsWith(".json") }
+            .filter { path ->
+                val isJson = path.fileName.toString().endsWith(".json")
+                if (!isJson) logger.debug("Skipping non-JSON file: $path")
+                isJson
+            }
             .map { path ->
+                logger.info("Loading save file: $path")
                 val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
                 val username = jo.get("username").asString
                 val skillsJson = jo.getAsJsonArray("skills")
@@ -67,15 +75,16 @@ class HighScoresController(
                 PlayerSave(username, xpList)
             }
             .toList()
+        logger.info("Total save files loaded: ${allPlayers.size}")
 
-        // 4) Sorteer op skill of totaal XP
+        // 5) Sorteer op skill of totaal XP
         val sorted = if (skillId in 0 until skillsCount) {
             allPlayers.sortedByDescending { it.xp[skillId] }
         } else {
             allPlayers.sortedByDescending { it.xp.sum() }
         }
 
-        // 5) Bouw JSON-response
+        // 6) Bouw JSON-response
         return JsonObject().apply {
             if (skillId in 0 until skillsCount) {
                 addProperty("skill", skillId)
