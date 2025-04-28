@@ -2,12 +2,21 @@ package org.alter.plugins.service.restapi.controllers
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.alter.game.model.World
-import org.alter.game.model.entity.Player            // ← juiste Player
+import org.alter.game.model.entity.Player
 import spark.Request
 import spark.Response
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.streams.toList  // voor Stream<Path>.toList()
 
+/**
+ * HighScoresController haalt de highscores uit alle player-save bestanden (offline én online).
+ * Endpoints blijven hetzelfde: /highscores en /highscores/skill/:skillId
+ */
 class HighScoresController(
     private val req: Request,
     private val resp: Response,
@@ -15,6 +24,10 @@ class HighScoresController(
 ) : Controller(req, resp, auth) {
 
     private val logger = KotlinLogging.logger {}
+    private val gson = Gson()
+    // Pas dit pad aan naar je directory met player JSON-saves
+    private val savesDir: Path = Paths.get("data/players")
+    private val skillsCount = 23
 
     override fun init(world: World): JsonObject {
         // 1) Skill-id uit path of query (?skill=…)
@@ -25,51 +38,49 @@ class HighScoresController(
         // 2) Hoeveel topscores (default 10)
         val limit = req.queryParams("limit")?.toIntOrNull() ?: 10
 
-        // 3) PawnList → gewone Kotlin List<Player>
-        val playerList = mutableListOf<Player>().apply {
-            world.players.forEach(this::add)
-        }
-
-        // 4) Sorteren: per-skill xp of total xp
-        val sorted = if (skillId in 0..22) {
-            playerList.sortedByDescending { p ->
-                p.getSkills().get(skillId).xp
+        // 3) Lees alle player-save JSON-bestanden
+        data class PlayerSave(val username: String, val xp: List<Double>)
+        val allPlayers = Files.list(savesDir)
+            .filter { it.toString().endsWith(".json") }
+            .map { path ->
+                val jo = gson.fromJson(Files.newBufferedReader(path), JsonObject::class.java)
+                val username = jo.get("username").asString
+                val skillsJson = jo.getAsJsonArray("skills")
+                val xpList = (0 until skillsJson.size()).map { idx ->
+                    skillsJson[idx].asJsonObject.get("xp").asDouble
+                }
+                PlayerSave(username, xpList)
             }
+            .toList()
+
+        // 4) Sorteer op skill of overall
+        val sorted = if (skillId in 0 until skillsCount) {
+            allPlayers.sortedByDescending { it.xp[skillId] }
         } else {
-            playerList.sortedByDescending { p ->
-                // som van alle xp's
-                (0..22).sumOf { idx -> p.getSkills().get(idx).xp }
-            }
+            allPlayers.sortedByDescending { it.xp.sum() }
         }
 
-        // 5) JSON-response opbouwen
+        // 5) Bouw response JSON
         return JsonObject().apply {
-            addProperty(
-                "skill",
-                if (skillId in 0..22) skillId.toString() else "overall"
-            )
-            addProperty("count", playerList.size)
+            if (skillId in 0 until skillsCount) {
+                addProperty("skill", skillId)
+            } else {
+                addProperty("skill", "overall")
+            }
+            addProperty("count", allPlayers.size)
             addProperty("limit", limit)
 
             val hsArr = JsonArray().apply {
-                sorted.take(limit).forEachIndexed { idx, p ->
-                    add(
-                        JsonObject().apply {
-                            addProperty("rank", idx + 1)
-                            addProperty("username", p.username)
-
-                            if (skillId in 0..22) {
-                                val sk = p.getSkills().get(skillId)
-                                addProperty("xp", sk.xp)
-                                addProperty("lvl", sk.currentLevel)
-                            } else {
-                                val totalXp = (0..22).sumOf { i ->
-                                    p.getSkills().get(i).xp
-                                }
-                                addProperty("totalXp", totalXp)
-                            }
+                sorted.take(limit).forEachIndexed { idx, ps ->
+                    add(JsonObject().apply {
+                        addProperty("rank", idx + 1)
+                        addProperty("username", ps.username)
+                        if (skillId in 0 until skillsCount) {
+                            addProperty("xp", ps.xp[skillId])
+                        } else {
+                            addProperty("totalXp", ps.xp.sum())
                         }
-                    )
+                    })
                 }
             }
             add("highscores", hsArr)
