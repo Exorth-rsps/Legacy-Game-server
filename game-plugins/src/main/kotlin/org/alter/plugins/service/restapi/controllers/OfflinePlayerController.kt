@@ -30,12 +30,12 @@ class OfflinePlayerController(
         val userArr = JsonArray()
         val username = req.params("name") ?: return obj
 
-        // Zoek saves directory
+        // Zoek data/saves directory
         val savesDir = resolveSavesDir()
             ?: throw RuntimeException("Saves directory niet gevonden")
 
         // Ondersteun bestandsnaam met en zonder .json
-        val fileJson  = savesDir.resolve("$username")
+        val fileJson  = savesDir.resolve("$username.json")
         val filePlain = savesDir.resolve(username)
         val saveFile = when {
             Files.exists(fileJson)  -> fileJson
@@ -50,8 +50,15 @@ class OfflinePlayerController(
                     addProperty("username", jo.get("username").asString)
                     addProperty("privilege", jo.get("privilege").asInt)
                     addProperty("gameMode", jo.get("displayMode")?.asInt ?: 0)
-                    addProperty("combatLvl", jo.get("combatLvl")?.asInt
-                        ?: jo.get("combatLevel").asInt)
+
+                    // Bepaal combat level veilig
+                    val combatLvl = when {
+                        jo.has("combatLvl")    -> jo.get("combatLvl").asInt
+                        jo.has("combatLevel")  -> jo.get("combatLevel").asInt
+                        else                     -> 0
+                    }
+                    addProperty("combatLvl", combatLvl)
+
                     addProperty("isOnline", false)
                     addProperty("xpRate", jo.get("xpRate")?.asInt ?: 0)
                     addProperty("UID", jo.get("username").asString)
