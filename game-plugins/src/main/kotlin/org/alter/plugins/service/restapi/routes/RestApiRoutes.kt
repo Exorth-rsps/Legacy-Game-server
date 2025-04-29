@@ -78,9 +78,7 @@ class RestApiRoutes {
         }
         get("/offline-player/:name") { req, res ->
             res.type("application/json")
-            Gson().toJson(
-                OfflinePlayerController(req, res, auth).init(world)
-            )
+            Gson().toJson(OfflinePlayerController(req, res, auth).init(world))
         }
 
     }
