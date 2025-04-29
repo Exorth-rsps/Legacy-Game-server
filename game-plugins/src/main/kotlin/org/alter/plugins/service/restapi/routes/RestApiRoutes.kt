@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch
 import org.alter.game.model.World
 import org.alter.plugins.service.restapi.controllers.OnlinePlayersController
 import org.alter.plugins.service.restapi.controllers.PlayerController
+import org.alter.plugins.service.restapi.controllers.OfflinePlayerController
 import org.alter.plugins.service.restapi.controllers.HighScoresController
 import spark.Spark.*
 
@@ -75,5 +76,12 @@ class RestApiRoutes {
                 HighScoresController(req, res, auth).init(world)
             )
         }
+        get("/offline-player/:name") { req, res ->
+            res.type("application/json")
+            Gson().toJson(
+                OfflinePlayerController(req, res, auth).init(world)
+            )
+        }
+
     }
 }
