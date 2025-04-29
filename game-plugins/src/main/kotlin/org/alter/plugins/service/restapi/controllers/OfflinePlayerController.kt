@@ -35,7 +35,7 @@ class OfflinePlayerController(
             ?: throw RuntimeException("Saves directory niet gevonden")
 
         // Ondersteun bestandsnaam met en zonder .json
-        val fileJson  = savesDir.resolve("$username.json")
+        val fileJson  = savesDir.resolve("$username")
         val filePlain = savesDir.resolve(username)
         val saveFile = when {
             Files.exists(fileJson)  -> fileJson
