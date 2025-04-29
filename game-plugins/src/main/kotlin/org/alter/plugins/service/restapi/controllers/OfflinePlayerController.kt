@@ -4,6 +4,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.alter.api.Skills
 import org.alter.game.model.World
 import spark.Request
 import spark.Response
@@ -29,19 +30,26 @@ class OfflinePlayerController(
         val userArr = JsonArray()
         val username = req.params("name") ?: return obj
 
-        // Vind directory
+        // Zoek saves directory
         val savesDir = resolveSavesDir()
             ?: throw RuntimeException("Saves directory niet gevonden")
-        val saveFile = savesDir.resolve("${'$'}username.json")
 
-        if (Files.exists(saveFile)) {
+        // Ondersteun bestandsnaam met en zonder .json
+        val fileJson  = savesDir.resolve("$username.json")
+        val filePlain = savesDir.resolve(username)
+        val saveFile = when {
+            Files.exists(fileJson)  -> fileJson
+            Files.exists(filePlain) -> filePlain
+            else -> null
+        }
+
+        if (saveFile != null) {
             try {
                 val jo = gson.fromJson(Files.newBufferedReader(saveFile), JsonObject::class.java)
-                // Bouw JSON-response
                 val pObj = JsonObject().apply {
                     addProperty("username", jo.get("username").asString)
                     addProperty("privilege", jo.get("privilege").asInt)
-                    addProperty("gameMode", jo.get("displayMode").asInt)
+                    addProperty("gameMode", jo.get("displayMode")?.asInt ?: 0)
                     addProperty("combatLvl", jo.get("combatLvl")?.asInt
                         ?: jo.get("combatLevel").asInt)
                     addProperty("isOnline", false)
@@ -52,10 +60,11 @@ class OfflinePlayerController(
                     val skillArr = JsonArray()
                     jo.getAsJsonArray("skills").forEach { elem ->
                         val sk = elem.asJsonObject
+                        val skillId = sk.get("skill").asInt
+                        val skillName = Skills.getSkillName(world, skillId)
                         val skillObj = JsonObject().apply {
-                            addProperty("skillId", sk.get("skill").asInt)
-                            addProperty("xp", sk.get("xp").asDouble)
-                            addProperty("lvl", sk.get("lvl").asInt)
+                            addProperty("name", skillName)
+                            addProperty("currentLevel", sk.get("lvl").asInt)
                         }
                         skillArr.add(skillObj)
                     }
@@ -73,15 +82,16 @@ class OfflinePlayerController(
         return obj
     }
 
-    /**
-     * Zoek de 'data/saves' directory via relative paden
-     */
+    /** Vind de data/saves directory via relative paden */
     private fun resolveSavesDir(): Path? {
         val candidates = listOf(
             Paths.get("data", "saves"),
             Paths.get("..", "data", "saves"),
             Paths.get("..", "..", "data", "saves")
         )
+        candidates.forEach { path ->
+            logger.info("Checking savesDir: $path (exists=${Files.exists(path)}, dir=${Files.isDirectory(path)})")
+        }
         return candidates.firstOrNull { Files.isDirectory(it) }
     }
 }
