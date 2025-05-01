@@ -1,8 +1,30 @@
+// Bovenin je bestand, buiten de handler:
+private val lastYellTime = mutableMapOf<Player, Long>()
+
 on_command("yell", description = "Yell to everyone") {
 
+    val now = System.currentTimeMillis()
+
+    // Bepaal cooldown: 15s voor gewone spelers (id 0), 30s voor alle anderen
+    val cooldownMs = if (player.privilege.id == 0) 15_000L else 30_000L
+    val last = lastYellTime[player] ?: 0L
+
+    // Cooldown-check
+    if (now - last < cooldownMs) {
+        val secondsLeft = ((cooldownMs - (now - last)) / 1000) + 1
+        player.message(
+            "Je moet nog $secondsLeft seconde${if (secondsLeft > 1) "n" else ""} wachten voordat je weer kunt yell'en.",
+            ChatMessageType.CONSOLE
+        )
+        return@on_command
+    }
+
+    // Update timestamp
+    lastYellTime[player] = now
+
+    // Bepaal rank en kleur
     val rank: String
     val color: String
-
     when (player.privilege.id) {
         0 -> {
             rank = "Player"
@@ -37,7 +59,7 @@ on_command("yell", description = "Yell to everyone") {
     // Haal de raw username op
     val rawName = player.username
 
-    // Vervang elke spatie door een zichtbaarmiddelpunt (·) in wit,
+    // Vervang elke spatie door een zichtbaar middelpunt (·) in wit,
     // en ga daarna weer terug naar de default kleur
     val visibleName = rawName.replace(" ", "<col=ffffff>·<col=>")
 
