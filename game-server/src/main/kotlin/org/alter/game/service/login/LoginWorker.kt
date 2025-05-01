@@ -8,14 +8,13 @@ import gg.rsmod.net.codec.login.LoginResponse
 import gg.rsmod.net.codec.login.LoginResultType
 import gg.rsmod.util.io.IsaacRandom
 import io.netty.channel.ChannelFutureListener
-
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.net.InetSocketAddress
+import java.nio.file.Paths
 
 /**
  * A worker for the [LoginService] that is responsible for handling the most
  * recent, non-handled [LoginServiceRequest] from its [boss].
- *
- * @author Tom <rspsmods@gmail.com>
  */
 class LoginWorker(
     private val boss: LoginService,
@@ -26,6 +25,22 @@ class LoginWorker(
         while (true) {
             val request = boss.requests.take()
             try {
+                // --- IP-ban check before any further login logic ---
+                val remoteAddress = request.login.channel.remoteAddress()
+                if (remoteAddress is InetSocketAddress) {
+                    val ip = remoteAddress.address.hostAddress
+                    val bannedFile = Paths.get("data", "bannedip").toFile()
+                    if (bannedFile.exists()) {
+                        val bannedList = bannedFile.readLines()
+                        if (ip in bannedList) {
+                            request.login.channel.writeAndFlush(LoginResultType.ACCOUNT_BANNED)
+                                .addListener(ChannelFutureListener.CLOSE)
+                            logger.info("Login attempt from banned IP '{}' denied.", ip)
+                            continue
+                        }
+                    }
+                }
+
                 val world = request.world
                 val client = Client.fromRequest(world, request.login)
                 val loadResult: PlayerLoadResult = boss.serializer.loadClientData(client, request.login)
