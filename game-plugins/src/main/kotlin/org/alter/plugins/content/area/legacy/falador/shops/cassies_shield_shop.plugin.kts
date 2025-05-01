@@ -13,4 +13,5 @@ create_shop("Cassie's Shield Shop", CoinCurrency(), purchasePolicy = PurchasePol
     items[5] = ShopItem(Items.BRONZE_KITESHIELD, 3, 64, 32, 1, 100)
     items[6] = ShopItem(Items.IRON_KITESHIELD, 2, 224, 112, 1, 200)
     items[7] = ShopItem(Items.STEEL_KITESHIELD, 1, 1200, 400, 1, 300)
+    items[8] = ShopItem(Items.ANTIDRAGON_SHIELD, 5, 555, 100, 1, 300)
 }
