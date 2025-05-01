@@ -13,7 +13,7 @@ on_command("yell", description = "Yell to everyone") {
     if (now - last < cooldownMs) {
         val secondsLeft = ((cooldownMs - (now - last)) / 1000) + 1
         player.message(
-            "Je moet nog $secondsLeft seconde${if (secondsLeft > 1) "n" else ""} wachten voordat je weer kunt yell'en.",
+            "You need to wait $secondsLeft second${if (secondsLeft > 1) "s" else ""} before your next yell!.",
             ChatMessageType.CONSOLE
         )
         return@on_command
@@ -61,7 +61,7 @@ on_command("yell", description = "Yell to everyone") {
 
     // Vervang elke spatie door een zichtbaar middelpunt (·) in wit,
     // en ga daarna weer terug naar de default kleur
-    val visibleName = rawName.replace(" ", "<col=ffffff>·<col=>")
+    val visibleName = rawName.replace(" ", "<col=ffffff>·</col>")
 
     // Combineer alle argumenten in één string
     val args = player.getCommandArgs()
