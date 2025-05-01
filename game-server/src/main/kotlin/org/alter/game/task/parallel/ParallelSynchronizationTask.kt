@@ -12,91 +12,89 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Phaser
 
 /**
- * A [GameTask] that is responsible for sending [Pawn]
- * data to [Pawn]s in parallel, using a Phaser to
- * coordinate synchronization stages.
+ * A [GameTask] that is responsible for sending [org.alter.game.model.entity.Pawn]
+ * data to [org.alter.game.model.entity.Pawn]s.
+ *
+ * @author Tom <rspsmods@gmail.com>
  */
 class ParallelSynchronizationTask(private val executor: ExecutorService) : GameTask {
 
     /**
-     * Phaser to wait for all parties at each synchronization phase.
+     * The [Phaser] responsible for waiting on every [org.alter.game.model.entity.Player]
+     * to finish a stage in the synchronization process before beginning the next stage.
      */
     private val phaser = Phaser(1)
 
     override fun execute(world: World, service: GameService) {
-        // Freeze collections to avoid concurrent modification issues
-        val players = world.players.toList()
-        val playerCount = players.size
-        val npcs = world.npcs.entries.toList()
-        val npcCount = npcs.size
+        val worldPlayers = world.players
+        val playerCount = worldPlayers.count()
+        val worldNpcs = world.npcs
+        val rawNpcs = world.npcs.entries
+        val npcCount = worldNpcs.count()
 
-        val npcSync = NpcSynchronizationTask(npcs)
+        val npcSync = NpcSynchronizationTask(rawNpcs)
 
-        // Player Pre-Synchronization
         phaser.bulkRegister(playerCount)
-        players.forEach { player ->
-            submit(phaser, executor, player, PlayerPreSynchronizationTask)
+        worldPlayers.forEach { p ->
+            submit(phaser, executor, p, PlayerPreSynchronizationTask)
         }
         phaser.arriveAndAwaitAdvance()
 
-        // NPC Pre-Synchronization
         phaser.bulkRegister(npcCount)
-        npcs.forEach { entry ->
-            submit(phaser, executor, entry, NpcPreSynchronizationTask)
+        worldNpcs.forEach { n ->
+            submit(phaser, executor, n, NpcPreSynchronizationTask)
         }
         phaser.arriveAndAwaitAdvance()
 
-        // Player Synchronization
         phaser.bulkRegister(playerCount)
-        players.forEach { player ->
-            if (player.entityType.isHumanControlled && player.initiated) {
-                submit(phaser, executor, player, PlayerSynchronizationTask)
+        worldPlayers.forEach { p ->
+            /*
+             * Non-human [org.alter.game.model.entity.Player]s do not need this
+             * to send any synchronization data to their game-client as they do
+             * not have one.
+             */
+            if (p.entityType.isHumanControlled && p.initiated) {
+                submit(phaser, executor, p, PlayerSynchronizationTask)
             } else {
                 phaser.arriveAndDeregister()
             }
         }
         phaser.arriveAndAwaitAdvance()
 
-        // NPC Synchronization per player
         phaser.bulkRegister(playerCount)
-        players.forEach { player ->
-            if (player.entityType.isHumanControlled && player.initiated) {
-                submit(phaser, executor, player, npcSync)
+        worldPlayers.forEach { p ->
+            /*
+             * Non-human [org.alter.game.model.entity.Player]s do not need this
+             * to send any synchronization data to their game-client as they do
+             * not have one.
+             */
+            if (p.entityType.isHumanControlled && p.initiated) {
+                submit(phaser, executor, p, npcSync)
             } else {
                 phaser.arriveAndDeregister()
             }
         }
         phaser.arriveAndAwaitAdvance()
 
-        // Player Post-Synchronization
         phaser.bulkRegister(playerCount)
-        players.forEach { player ->
-            submit(phaser, executor, player, PlayerPostSynchronizationTask)
+        worldPlayers.forEach { p ->
+            submit(phaser, executor, p, PlayerPostSynchronizationTask)
         }
         phaser.arriveAndAwaitAdvance()
 
-        // NPC Post-Synchronization
         phaser.bulkRegister(npcCount)
-        npcs.forEach { entry ->
-            submit(phaser, executor, entry, NpcPostSynchronizationTask)
+        worldNpcs.forEach { n ->
+            submit(phaser, executor, n, NpcPostSynchronizationTask)
         }
         phaser.arriveAndAwaitAdvance()
     }
 
-    private fun <T : Pawn> submit(
-        phaser: Phaser,
-        executor: ExecutorService,
-        pawn: T,
-        task: SynchronizationTask<T>
-    ) {
+    private fun <T : Pawn> submit(phaser: Phaser, executor: ExecutorService, pawn: T, task: SynchronizationTask<T>) {
         executor.execute {
             try {
                 task.run(pawn)
-            } catch (e: ArrayIndexOutOfBoundsException) {
-                logger.error(e) { "OOB in ${task::class.java.simpleName} for pawn $pawn: ${e.message}" }
-                throw e
             } catch (e: Exception) {
-                logger.error(e) { "Error in ${task::class.java.simpleName} for pawn $pawn: ${e.message}" }
+                logger.error(e) { "Error with task ${this::class.java.simpleName} for $pawn." }
             } finally {
                 phaser.arriveAndDeregister()
             }
@@ -104,6 +102,6 @@ class ParallelSynchronizationTask(private val executor: ExecutorService) : GameT
     }
 
     companion object {
-        private val logger = KotlinLogging.logger {}
+        private val logger = KotlinLogging.logger{}
     }
 }
