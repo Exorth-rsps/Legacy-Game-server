@@ -57,6 +57,9 @@ on_login {
         // Game-related logic.
         sendRunEnergy(player.runEnergy.toInt())
         message("Welcome to ${world.gameContext.name}.", ChatMessageType.GAME_MESSAGE)
+        if (world.gameContext.doublexp) {
+            message("Double XP is activated!", ChatMessageType.GAME_MESSAGE)
+        }
         player.social.pushFriends(player)
         player.social.pushIgnores(player)
         //player.social.dummyList(player)
