@@ -40,6 +40,8 @@ data class Privilege(val id: Int, val icon: Int, val name: String, val powers: S
          */
         const val ADMIN_POWER = "admin"
 
+        const val MOD_POWER = "mod"
+
         /**
          * The global identifier used for owners. This identifier should be
          * used globally to identify a player with owner privileges.
