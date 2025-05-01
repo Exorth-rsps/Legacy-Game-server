@@ -68,7 +68,10 @@ fun Player.openShop(shopId: Int) {
     }
 }
 
-fun Player.message(message: String, type: ChatMessageType = ChatMessageType.CONSOLE, username: String? = null) {
+fun Player.message(
+    message: String,
+    type: ChatMessageType = ChatMessageType.GAME_MESSAGE,
+    username: String? = null) {
     write(MessageGameMessage(type = type.id, message = message, username = username))
 }
 
