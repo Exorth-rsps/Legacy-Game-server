@@ -41,9 +41,15 @@ class LoginWorker(
                 val world = request.world
                 val client = Client.fromRequest(world, request.login)
 
+                // --- Username sanitization ---
+                // Verwijder spaties uit de username
+                val sanitizedUsername = client.username.replace(" ", "")
+                client.username = sanitizedUsername
+                logger.debug { "Sanitized username, removed spaces: '${client.username}'" }
+
                 // --- Username character validation ---
-                // Alleen ASCII letters, cijfers, spaties, '-' en '_' zijn toegestaan
-                val usernamePattern = Regex("^[A-Za-z0-9 _-]+$")
+                // Alleen ASCII letters, cijfers, '-' en '_' zijn toegestaan (spaties zijn verwijderd)
+                val usernamePattern = Regex("^[A-Za-z0-9_-]+$")
                 if (!usernamePattern.matches(client.username)) {
                     request.login.channel
                         .writeAndFlush(LoginResultType.INVALID_CREDENTIALS)
