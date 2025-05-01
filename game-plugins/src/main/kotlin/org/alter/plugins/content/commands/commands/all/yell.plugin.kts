@@ -34,13 +34,19 @@ on_command("yell", description = "Yell to everyone") {
         }
     }
 
+    // Haal de raw username op
+    val rawName = player.username
+
+    // Vervang elke spatie door een zichtbaarmiddelpunt (·) in wit,
+    // en ga daarna weer terug naar de default kleur
+    val visibleName = rawName.replace(" ", "<col=ffffff>·<col=>")
+
     // Combineer alle argumenten in één string
     val args = player.getCommandArgs()
-    val name = player.username
-    val text = args.joinToString(" ") // Voegt alle woorden samen met een spatie ertussen
+    val text = args.joinToString(" ")
 
     // Stuur het yell-bericht naar alle spelers
     player.world.players.forEach {
-        it.message("${color}[${rank}] ${name}: ${text}", ChatMessageType.CONSOLE)
+        it.message("${color}[${rank}] ${visibleName}: ${text}", ChatMessageType.CONSOLE)
     }
 }
