@@ -6,8 +6,12 @@ import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
 
 on_command("ban", Privilege.ADMIN_POWER) {
     val args = player.getCommandArgs()
-    tryWithUsage(player, args, "ban <player_name>") { values ->
-        val targetName = values[0]
+    if (args.isEmpty()) {
+    tryWithUsage(player, args, "ban <player_name>")
+        return@on_command
+    }
+
+        val targetName = args.joinToString(" ")
         val target = world.getPlayerForName(targetName)
 
         if (target != null) {
