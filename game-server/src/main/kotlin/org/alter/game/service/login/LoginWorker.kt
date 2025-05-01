@@ -17,14 +17,16 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  *
  * @author Tom <rspsmods@gmail.com>
  */
-class LoginWorker(private val boss: LoginService, private val verificationService: WorldVerificationService) : Runnable {
+class LoginWorker(
+    private val boss: LoginService,
+    private val verificationService: WorldVerificationService
+) : Runnable {
 
     override fun run() {
         while (true) {
             val request = boss.requests.take()
             try {
                 val world = request.world
-
                 val client = Client.fromRequest(world, request.login)
                 val loadResult: PlayerLoadResult = boss.serializer.loadClientData(client, request.login)
 
@@ -33,17 +35,34 @@ class LoginWorker(private val boss: LoginService, private val verificationServic
                     val encodeRandom = IsaacRandom(IntArray(request.login.xteaKeys.size) { request.login.xteaKeys[it] + 50 })
 
                     world.getService(GameService::class.java)?.submitGameThreadJob {
-                        val interceptedLoginResult = verificationService.interceptLoginResult(world, client.uid, client.username, client.loginUsername)
-                        val loginResult: LoginResultType = interceptedLoginResult ?: if (client.register()) {
-                            LoginResultType.ACCEPTABLE
-                        } else {
-                            LoginResultType.COULD_NOT_COMPLETE_LOGIN
+                        // Early-exit for banned accounts
+                        if (client.privilege.id == -1) {
+                            request.login.channel.writeAndFlush(LoginResultType.ACCOUNT_BANNED)
+                                .addListener(ChannelFutureListener.CLOSE)
+                            logger.info("User '{}' login denied: banned account.", client.username)
+                            return@submitGameThreadJob
                         }
+
+                        // Intercept or register flow
+                        val interceptedLoginResult = verificationService.interceptLoginResult(
+                            world,
+                            client.uid,
+                            client.username,
+                            client.loginUsername
+                        )
+                        val loginResult: LoginResultType = interceptedLoginResult
+                            ?: if (client.register()) {
+                                LoginResultType.ACCEPTABLE
+                            } else {
+                                LoginResultType.COULD_NOT_COMPLETE_LOGIN
+                            }
+
                         if (loginResult == LoginResultType.ACCEPTABLE) {
                             client.channel.write(LoginResponse(index = client.index, privilege = client.privilege.id))
                             boss.successfulLogin(client, world, encodeRandom, decodeRandom)
                         } else {
-                            request.login.channel.writeAndFlush(loginResult).addListener(ChannelFutureListener.CLOSE)
+                            request.login.channel.writeAndFlush(loginResult)
+                                .addListener(ChannelFutureListener.CLOSE)
                             logger.info("User '{}' login denied with code {}.", client.username, loginResult)
                         }
                     }
@@ -54,8 +73,14 @@ class LoginWorker(private val boss: LoginService, private val verificationServic
                         PlayerLoadResult.MALFORMED -> LoginResultType.ACCOUNT_LOCKED
                         else -> LoginResultType.COULD_NOT_COMPLETE_LOGIN
                     }
-                    request.login.channel.writeAndFlush(errorCode).addListener(ChannelFutureListener.CLOSE)
-                    logger.info("User '{}' login denied with code {} and channel {}.", client.username, loadResult, client.channel)
+                    request.login.channel.writeAndFlush(errorCode)
+                        .addListener(ChannelFutureListener.CLOSE)
+                    logger.info(
+                        "User '{}' login denied with code {} and channel {}.",
+                        client.username,
+                        loadResult,
+                        client.channel
+                    )
                 }
             } catch (e: Exception) {
                 logger.error("Error when handling request from ${request.login.channel}.", e)
