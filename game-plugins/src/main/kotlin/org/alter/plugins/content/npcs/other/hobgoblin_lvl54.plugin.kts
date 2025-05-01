@@ -25,7 +25,7 @@ val droptable =
             obj(Items.IRON_ARROW, quantityRange = 25..50, slots = 2)
             obj(Items.STEEL_ARROW, quantityRange = 10..25, slots = 2)
             obj(Items.MITHRIL_ARROWTIPS, quantityRange = 1..50, slots = 1)
-            obj(Items.COINS, quantityRange = 25..150, slots = 16)
+            obj(Items.COINS_995, quantityRange = 25..150, slots = 16)
             obj(Items.GOBLIN_MAIL, quantity = 1, slots = 16)
             obj(Items.LIMPWURT_ROOT, quantity = 1, slots = 2)
             nothing(16)

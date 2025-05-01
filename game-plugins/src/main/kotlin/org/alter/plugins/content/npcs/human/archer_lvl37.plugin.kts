@@ -19,7 +19,7 @@ val droptable =
             obj(Items.SHORTBOW, quantity = 1, slots = 4)
             obj(Items.OAK_SHORTBOW, quantity = 1, slots = 4)
             obj(Items.STEEL_SWORD, quantity = 1, slots = 4)
-            obj(Items.COINS, quantity = 25, slots = 16)
+            obj(Items.COINS_995, quantity = 25, slots = 16)
             nothing(slots = 64)
         }
     }

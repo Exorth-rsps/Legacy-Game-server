@@ -26,7 +26,7 @@ val droptable =
             obj(Items.RAW_RAT_MEAT_NOTED, quantityRange = 1..18, slots = 40)
             obj(Items.RAW_TUNA_NOTED, quantityRange = 1..12, slots = 40)
             obj(Items.RAW_SHARK_NOTED, quantityRange = 1..3, slots = 2)
-            obj(Items.COINS, quantityRange = 150..950, slots = 80)
+            obj(Items.COINS_995, quantityRange = 150..950, slots = 80)
             obj(Items.BRINE_SABRE, quantity = 1, slots = 1)
             nothing(1280)
         }

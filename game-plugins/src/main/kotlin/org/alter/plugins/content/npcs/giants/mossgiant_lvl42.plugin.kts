@@ -26,7 +26,7 @@ val droptable =
             obj(Items.MIND_RUNE, quantityRange = 10..75, slots = 8)
             obj(Items.CHAOS_RUNE, quantityRange = 10..50, slots = 4)
             obj(Items.DEATH_RUNE, quantityRange = 1..25, slots = 2)
-            obj(Items.COINS, quantityRange = 100..250, slots = 4)
+            obj(Items.COINS_995, quantityRange = 100..250, slots = 4)
             obj(Items.UNCUT_SAPPHIRE, quantity = 1, slots = 4)
             obj(Items.UNCUT_EMERALD, quantity = 1, slots = 2)
             obj(Items.UNCUT_RUBY, quantity = 1, slots = 2)
