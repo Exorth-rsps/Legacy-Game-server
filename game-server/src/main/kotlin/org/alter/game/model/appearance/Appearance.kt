@@ -13,47 +13,52 @@ import org.alter.game.model.appearance.Looks.getTorsos
  */
 data class Appearance(val looks: IntArray, val colors: IntArray, var gender: Gender) {
     var renderAnim = -1
+
     /**
-     * @param option - the specified look to select from the [Appearance]'s [looks]
-     *      with valid options explicitly as follows:
-     *      0 -> HEAD
-     *      1 -> JAW
-     *      2 -> TORSO
-     *      3 -> ARMS
-     *      4 -> HANDS
-     *      5 -> LEGS
-     *      6 -> FEET
-     * Note| the JAW option is currently not provided for [Gender.FEMALE]
-     *
-     * @returns the appropriate look model value for current appearance
-     *      based on the supplies option
+     * Definieer de onderdelen die we ondersteunen (HEAD t/m FEET).
+     */
+    private enum class Part(val slotIndex: Int) {
+        HEAD(0),
+        JAW(1),
+        TORSO(2),
+        ARMS(3),
+        HANDS(4),
+        LEGS(5),
+        FEET(6)
+    }
+
+    /**
+     * Haal de model-ID op van het gekozen onderdeel, of -1 bij een ongeldige index.
      */
     fun getLook(option: Int): Int {
-        return when(gender) {
-            Gender.MALE -> {
-                when(option) {
-                    0 -> getHeads(gender)[looks[0]]
-                    1 -> getJaws(gender)[looks[1]]
-                    2 -> getTorsos(gender)[looks[2]]
-                    3 -> getArms(gender)[looks[3]]
-                    4 -> getHands(gender)[looks[4]]
-                    5 -> getLegs(gender)[looks[5]]
-                    6 -> getFeets(gender)[looks[6]]
-                    else -> -1
-                }
+        // Bepaal welk model-array en welke slotIndex we nodig hebben
+        val (models, slot) = when (gender) {
+            Gender.MALE -> when (option) {
+                Part.HEAD.slotIndex  -> getHeads(gender)  to Part.HEAD.slotIndex
+                Part.JAW.slotIndex   -> getJaws(gender)   to Part.JAW.slotIndex
+                Part.TORSO.slotIndex -> getTorsos(gender) to Part.TORSO.slotIndex
+                Part.ARMS.slotIndex  -> getArms(gender)   to Part.ARMS.slotIndex
+                Part.HANDS.slotIndex -> getHands(gender)  to Part.HANDS.slotIndex
+                Part.LEGS.slotIndex  -> getLegs(gender)   to Part.LEGS.slotIndex
+                Part.FEET.slotIndex  -> getFeets(gender)  to Part.FEET.slotIndex
+                else -> return -1
             }
-            Gender.FEMALE -> {
-                when(option) {
-                    0 -> getHeads(gender)[looks[0]]
-                    2 -> getTorsos(gender)[looks[1]]
-                    3 -> getArms(gender)[looks[2]]
-                    4 -> getHands(gender)[looks[3]]
-                    5 -> getLegs(gender)[looks[4]]
-                    6 -> getFeets(gender)[looks[5]]
-                    else -> -1
-                }
+            Gender.FEMALE -> when (option) {
+                Part.HEAD.slotIndex  -> getHeads(gender)  to Part.HEAD.slotIndex
+                Part.TORSO.slotIndex -> getTorsos(gender) to Part.JAW.slotIndex    // torso staat in looks[1]
+                Part.ARMS.slotIndex  -> getArms(gender)   to Part.TORSO.slotIndex // arms in looks[2]
+                Part.HANDS.slotIndex -> getHands(gender)  to Part.ARMS.slotIndex  // hands in looks[3]
+                Part.LEGS.slotIndex  -> getLegs(gender)   to Part.HANDS.slotIndex // legs in looks[4]
+                Part.FEET.slotIndex  -> getFeets(gender)  to Part.LEGS.slotIndex  // feet in looks[5]
+                else -> return -1
             }
         }
+
+        // 1) Veilig het gekozen model-slot lezen
+        val lookIndex = looks.getOrNull(slot) ?: return -1
+
+        // 2) Veilig de master-array indexeren
+        return models.getOrNull(lookIndex) ?: -1
     }
 
     override fun equals(other: Any?): Boolean {
@@ -79,11 +84,10 @@ data class Appearance(val looks: IntArray, val colors: IntArray, var gender: Gen
     companion object {
         private val DEFAULT_COLORS = intArrayOf(0, 27, 9, 0, 0)
 
-        private val DEFAULT_MALE_LOOKS = intArrayOf(15, 9, 3, 8, 0, 3, 1) // 133, 113, 21, 86, 33, 39, 43
+        private val DEFAULT_MALE_LOOKS = intArrayOf(15, 9, 3, 8, 0, 3, 1)
         val DEFAULT_MALE = Appearance(DEFAULT_MALE_LOOKS, DEFAULT_COLORS, Gender.MALE)
 
-        private val DEFAULT_FEMALE_LOOKS = intArrayOf(0, 0, 0, 0, 0, 0) // 45, 56, 61, 67, 70, 79
+        private val DEFAULT_FEMALE_LOOKS = intArrayOf(0, 0, 0, 0, 0, 0)
         val DEFAULT_FEMALE = Appearance(DEFAULT_FEMALE_LOOKS, DEFAULT_COLORS, Gender.FEMALE)
-
     }
 }
