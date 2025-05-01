@@ -10,32 +10,37 @@ set_level_up_logic {
     val skill = player.attr[LEVEL_UP_SKILL_ID]!!
     val increment = player.attr[LEVEL_UP_INCREMENT]!!
 
-    /*
-     * Calculate the combat level for the player if they leveled up a combat
-     * skill.
-     */
+    // Bestaande combat- en interface-logica
     if (Skills.isCombat(skill)) {
         player.calculateAndSetCombatLevel()
     }
 
-    /*
-     * Show the level-up chatbox interface.
-     */
     player.queue {
         if(player.getSkills()[skill].currentLevel == 99) {
             player.graphic(Graphic.FINAL_LEVEL_UP)
         } else {
-            /**
-             @TODO Each skill has it's own jingle -> Also diff sound when a player unlocks something new.
-             @TODO https://oldschool.runescape.wiki/w/Jingles
-             @TODO Also iirc when unlocking a new skill item it shows it on the message.
-             */
-            var levelupJingles = listOf(29, 67, 50)
+            val levelupJingles = listOf(29, 67, 50)
             player.playJingle(levelupJingles[Random.nextInt(levelupJingles.size)])
             player.graphic(Graphic.LEVEL_UP, 124)
             player.message("Congratulations, you've just advanced your ${Skills.getSkillName(world, skill)} level. You are now level ${player.getSkills().getBaseLevel(skill)}.")
             world.spawn(AreaSound(player.tile, 2396, 1, 1))
         }
+
+        // Toon standaard level-up messagebox
         levelUpMessageBox(skill, increment)
+
+        // **Nieuw: globale broadcast bij level 90–99**
+        val newLevel = player.getSkills().getBaseLevel(skill)
+        if (newLevel in 90..99) {
+            val skillName = Skills.getSkillName(world, skill)
+            val playerName = player.username
+
+            world.players.forEach { other ->
+                other.message(
+                    "<col=FF0000>[GLOBAL]</col> $playerName heeft level $newLevel bereikt in $skillName!",
+                    ChatMessageType.CONSOLE
+                )
+            }
+        }
     }
 }
