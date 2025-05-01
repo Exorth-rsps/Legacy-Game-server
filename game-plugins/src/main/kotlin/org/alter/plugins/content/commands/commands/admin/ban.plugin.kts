@@ -7,7 +7,7 @@ import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
 on_command("ban", Privilege.ADMIN_POWER) {
     val args = player.getCommandArgs()
     if (args.isEmpty()) {
-    tryWithUsage(player, args, "ban <player_name>")
+        player.message("ban <player_name>")
         return@on_command
     }
 
