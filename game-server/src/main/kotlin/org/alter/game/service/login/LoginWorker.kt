@@ -10,11 +10,11 @@ import gg.rsmod.util.io.IsaacRandom
 import io.netty.channel.ChannelFutureListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.InetSocketAddress
-import java.nio.file.Paths
+import org.alter.plugins.content.IpBanService
 
 /**
- * A worker for the [LoginService] that is responsible for handling the most
- * recent, non-handled [LoginServiceRequest] from its [boss].
+ * A worker for the [LoginService] dat inkomende
+ * [LoginServiceRequest]s afhandelt.
  */
 class LoginWorker(
     private val boss: LoginService,
@@ -25,19 +25,16 @@ class LoginWorker(
         while (true) {
             val request = boss.requests.take()
             try {
-                // --- IP-ban check before any further login logic ---
+                // --- IP-ban check vóór alle overige login logic ---
                 val remoteAddress = request.login.channel.remoteAddress()
                 if (remoteAddress is InetSocketAddress) {
                     val ip = remoteAddress.address.hostAddress
-                    val bannedFile = Paths.get("data", "bannedip").toFile()
-                    if (bannedFile.exists()) {
-                        val bannedList = bannedFile.readLines()
-                        if (ip in bannedList) {
-                            request.login.channel.writeAndFlush(LoginResultType.ACCOUNT_BANNED)
-                                .addListener(ChannelFutureListener.CLOSE)
-                            logger.info("Login attempt from banned IP '{}' denied.", ip)
-                            continue
-                        }
+                    if (IpBanService.isBanned(ip)) {
+                        request.login.channel
+                            .writeAndFlush(LoginResultType.ACCOUNT_BANNED)
+                            .addListener(ChannelFutureListener.CLOSE)
+                        logger.info("Login attempt from banned IP '{}' denied.", ip)
+                        continue
                     }
                 }
 
@@ -50,15 +47,16 @@ class LoginWorker(
                     val encodeRandom = IsaacRandom(IntArray(request.login.xteaKeys.size) { request.login.xteaKeys[it] + 50 })
 
                     world.getService(GameService::class.java)?.submitGameThreadJob {
-                        // Early-exit for banned accounts
+                        // Early-exit voor gebande accounts
                         if (client.privilege.id == -1) {
-                            request.login.channel.writeAndFlush(LoginResultType.ACCOUNT_BANNED)
+                            request.login.channel
+                                .writeAndFlush(LoginResultType.ACCOUNT_BANNED)
                                 .addListener(ChannelFutureListener.CLOSE)
                             logger.info("User '{}' login denied: banned account.", client.username)
                             return@submitGameThreadJob
                         }
 
-                        // Intercept or register flow
+                        // Intercept of register flow
                         val interceptedLoginResult = verificationService.interceptLoginResult(
                             world,
                             client.uid,
@@ -73,8 +71,18 @@ class LoginWorker(
                             }
 
                         if (loginResult == LoginResultType.ACCEPTABLE) {
+                            // 1) Stuur accept en registreer in wereld
                             client.channel.write(LoginResponse(index = client.index, privilege = client.privilege.id))
                             boss.successfulLogin(client, world, encodeRandom, decodeRandom)
+
+                            // 2) Haal het IP uit de oorspronkelijke login-channel
+                            val remote = request.login.channel.remoteAddress()
+                            val ip = (remote as? InetSocketAddress)?.address?.hostAddress
+                            if (ip != null) {
+                                // 3) Sla username→IP op in IpBanService
+                                IpBanService.recordLogin(client.username, ip)
+                                logger.debug { "Recorded login IP '$ip' for user '${client.username}'" }
+                            }
                         } else {
                             request.login.channel.writeAndFlush(loginResult)
                                 .addListener(ChannelFutureListener.CLOSE)
@@ -83,10 +91,10 @@ class LoginWorker(
                     }
                 } else {
                     val errorCode = when (loadResult) {
-                        PlayerLoadResult.INVALID_CREDENTIALS -> LoginResultType.INVALID_CREDENTIALS
-                        PlayerLoadResult.INVALID_RECONNECTION -> LoginResultType.BAD_SESSION_ID
-                        PlayerLoadResult.MALFORMED -> LoginResultType.ACCOUNT_LOCKED
-                        else -> LoginResultType.COULD_NOT_COMPLETE_LOGIN
+                        PlayerLoadResult.INVALID_CREDENTIALS     -> LoginResultType.INVALID_CREDENTIALS
+                        PlayerLoadResult.INVALID_RECONNECTION    -> LoginResultType.BAD_SESSION_ID
+                        PlayerLoadResult.MALFORMED               -> LoginResultType.ACCOUNT_LOCKED
+                        else                                     -> LoginResultType.COULD_NOT_COMPLETE_LOGIN
                     }
                     request.login.channel.writeAndFlush(errorCode)
                         .addListener(ChannelFutureListener.CLOSE)
