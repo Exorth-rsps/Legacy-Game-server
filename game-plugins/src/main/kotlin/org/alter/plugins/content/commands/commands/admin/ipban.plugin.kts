@@ -5,7 +5,7 @@ import org.alter.game.model.priv.Privilege
 import org.alter.plugins.content.IpBanService
 import java.net.InetSocketAddress
 
-on_command("ipban", Privilege.ADMIN_POWER) {
+on_command("ipban", Privilege.MOD_POWER) {
     val args = player.getCommandArgs()
     if (args.isEmpty()) {
         player.message("Usage: ::ipban <player_name>")

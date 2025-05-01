@@ -3,7 +3,7 @@ package org.alter.plugins.content.commands
 import org.alter.game.message.impl.LogoutFullMessage
 import org.alter.game.model.priv.Privilege
 
-on_command("ban", Privilege.ADMIN_POWER) {
+on_command("ban", Privilege.MOD_POWER) {
     val args = player.getCommandArgs()
     if (args.isEmpty()) {
         player.message("Usage: ::ban <player_name>")
