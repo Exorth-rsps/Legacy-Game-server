@@ -61,7 +61,7 @@ on_command("yell", description = "Yell to everyone") {
 
     // Vervang elke spatie door een zichtbaar middelpunt (·) in wit,
     // en ga daarna weer terug naar de default kleur
-    val visibleName = rawName.replace(" ", "<col=ffffff>·</col>")
+    val visibleName = rawName.replace(" ", "<col=ffffff>+</col>")
 
     // Combineer alle argumenten in één string
     val args = player.getCommandArgs()
