@@ -31,7 +31,7 @@ class LoginWorker(
                     val ip = remoteAddress.address.hostAddress
                     if (IpBanService.isBanned(ip)) {
                         request.login.channel
-                            .writeAndFlush(LoginResultType.ACCOUNT_BANNED)
+                            .writeAndFlush(LoginResultType.IP_BAN)
                             .addListener(ChannelFutureListener.CLOSE)
                         logger.info("Login attempt from banned IP '{}' denied.", ip)
                         continue
@@ -40,6 +40,18 @@ class LoginWorker(
 
                 val world = request.world
                 val client = Client.fromRequest(world, request.login)
+
+                // --- Username character validation ---
+                // Alleen ASCII letters, cijfers, spaties, '-' en '_' zijn toegestaan
+                val usernamePattern = Regex("^[A-Za-z0-9 _-]+$")
+                if (!usernamePattern.matches(client.username)) {
+                    request.login.channel
+                        .writeAndFlush(LoginResultType.INVALID_CREDENTIALS)
+                        .addListener(ChannelFutureListener.CLOSE)
+                    logger.info("User '{}' login denied: invalid characters in username.", client.username)
+                    continue
+                }
+
                 val loadResult: PlayerLoadResult = boss.serializer.loadClientData(client, request.login)
 
                 if (loadResult == PlayerLoadResult.LOAD_ACCOUNT || loadResult == PlayerLoadResult.NEW_ACCOUNT) {
@@ -106,7 +118,7 @@ class LoginWorker(
                     )
                 }
             } catch (e: Exception) {
-                logger.error("Error when handling request from ${request.login.channel}.", e)
+                logger.error("Error when handling request from ${'$'}{request.login.channel}.", e)
             }
         }
     }
