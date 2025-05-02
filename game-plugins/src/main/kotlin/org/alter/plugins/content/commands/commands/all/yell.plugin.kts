@@ -1,15 +1,16 @@
-// Bovenin je bestand, buiten de handler:
+package gg.rsmod.plugins.content.commands
+
+// Houdt voor elke speler het tijdstip van de laatste 'yell' bij
 private val lastYellTime = mutableMapOf<Player, Long>()
 
 on_command("yell", description = "Yell to everyone") {
-
     val now = System.currentTimeMillis()
 
-    // Bepaal cooldown: 15s voor gewone spelers (id 0), 30s voor alle anderen
-    val cooldownMs = if (player.privilege.id == 0) 15_000L else 30_000L
+    // Alleen voor gewone spelers (privilege.id == 0) een cooldown van 15s, voor anderen geen cooldown
+    val cooldownMs = if (player.privilege.id == 0) 15_000L else 0L
     val last = lastYellTime[player] ?: 0L
 
-    // Cooldown-check
+    // Cooldown-check (zal voor admins e.d. nooit triggeren omdat cooldownMs == 0)
     if (now - last < cooldownMs) {
         val secondsLeft = ((cooldownMs - (now - last)) / 1000) + 1
         player.message(
@@ -22,53 +23,23 @@ on_command("yell", description = "Yell to everyone") {
     // Update timestamp
     lastYellTime[player] = now
 
-    // Bepaal rank en kleur
-    val rank: String
-    val color: String
-    when (player.privilege.id) {
-        0 -> {
-            rank = "Player"
-            color = ""
-        }
-        1 -> {
-            rank = "<img=0>Moderator"
-            color = "<col=8900331>"
-        }
-        2 -> {
-            rank = "<img=1>Admin"
-            color = "<col=8900331>"
-        }
-        3 -> {
-            rank = "<img=1>Developer"
-            color = "<col=8900331>"
-        }
-        4 -> {
-            rank = "<img=1>Owner"
-            color = "<col=8900331>"
-        }
-        5 -> {
-            rank = "<img=8>Donator"
-            color = "<col=8900331>"
-        }
-        else -> {
-            rank = "unidentified"
-            color = ""
-        }
+    // Bepaal rank en kleur aan de hand van privilege.id
+    val (rank, color) = when (player.privilege.id) {
+        0 -> "Player" to ""
+        1 -> "<img=0>Moderator" to "<col=8900331>"
+        2 -> "<img=1>Admin" to "<col=8900331>"
+        3 -> "<img=1>Admin" to "<col=8900331>"
+        else -> "unidentified" to ""
     }
 
-    // Haal de raw username op
-    val rawName = player.username
+    // Maak de gebruikersnaam zichtbaar met middelpunt in plaats van spatie
+    val visibleName = player.username.replace(" ", "<col=ffffff>·</col>")
 
-    // Vervang elke spatie door een zichtbaar middelpunt (·) in wit,
-    // en ga daarna weer terug naar de default kleur
-    val visibleName = rawName.replace(" ", "<col=ffffff>+</col>")
+    // Combineer alle argumenten tot één string
+    val text = player.getCommandArgs().joinToString(" ")
 
-    // Combineer alle argumenten in één string
-    val args = player.getCommandArgs()
-    val text = args.joinToString(" ")
-
-    // Stuur het yell-bericht naar alle spelers
+    // Stuur het bericht naar alle spelers in de wereld
     player.world.players.forEach {
-        it.message("${color}[${rank}] ${visibleName}: ${text}", ChatMessageType.CONSOLE)
+        it.message("$color[$rank] $visibleName: $text", ChatMessageType.CONSOLE)
     }
 }
