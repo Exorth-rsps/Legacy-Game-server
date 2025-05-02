@@ -32,3 +32,4 @@ first-launch-example
 data/inter.txt
 data/inter-share.txt
 data/bannedip
+game-server/data/bannedip
