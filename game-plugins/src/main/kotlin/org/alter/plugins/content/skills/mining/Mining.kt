@@ -14,86 +14,68 @@ import org.alter.api.ext.*
 import kotlin.math.min
 import kotlin.random.Random
 
-// Attribute key to prevent essence-rock spam-clicking
-private val IS_MINING_ESSENCE = Attr.key<Boolean>("isMiningEssence")
-
 object Mining {
 
     private const val MINING_ANIMATION_TIME = 16
 
+
     suspend fun mineRock(it: QueueTask, obj: GameObject, rock: RockType) {
         val player = it.player
-
-        // === Essence-spam-prevention ===
-        if (rock == RockType.ESSENCE) {
-            if (player.attr[IS_MINING_ESSENCE] == true) {
-                player.filterableMessage("You are already mining that essence rock, please wait…")
-                return
-            }
-            player.attr[IS_MINING_ESSENCE] = true
+        if (!canMine(it, player, obj, rock)) {
+            return
         }
-
-        try {
-            if (!canMine(it, player, obj, rock)) {
-                return
-            }
-            val oreName = player.world.definitions.get(ItemDef::class.java, rock.reward)
-                .name.lowercase()
-            var animations = 0
-            val pick = PickaxeType.values.reversed().firstOrNull {
-                player.getSkills().getMaxLevel(Skills.MINING) >= it.level &&
+        val oreName = player.world.definitions.get(ItemDef::class.java, rock.reward).name.lowercase()
+        var animations = 0
+        val pick =
+            PickaxeType.values.reversed().firstOrNull {
+                player.getSkills()
+                    .getMaxLevel(Skills.MINING) >= it.level &&
                         (player.equipment.contains(it.item) || player.inventory.contains(it.item))
             }!!
-
-            player.filterableMessage("You swing your pick at the rock.")
-            var ticks = 0
-
-            while (canMine(it, player, obj, rock)) {
-                val animationWait = if (animations < 2) MINING_ANIMATION_TIME + 1 else MINING_ANIMATION_TIME
-                if (ticks % animationWait == 0) {
-                    player.animate(pick.animation, delay = 30)
-                    animations++
-                }
-
-                if (ticks % pick.ticksBetweenRolls == 0) {
-                    val level = player.getSkills().getCurrentLevel(Skills.MINING)
-                    val baseChance = interpolate(rock.lowChance, rock.highChance, level)
-
-                    if (pick == PickaxeType.DRAGON) {
-                        player.miningAccumulator += 0.2
-                    }
-
-                    if (baseChance > RANDOM.nextInt(255)) {
-                        onSuccess(player, oreName, rock, obj)
-                    }
-                }
-
-                if (player.miningAccumulator >= 1 && pick == PickaxeType.DRAGON) {
-                    val level = player.getSkills().getCurrentLevel(Skills.MINING)
-                    val baseChance = interpolate(rock.lowChance, rock.highChance, level) * 1.12
-
-                    if (baseChance > RANDOM.nextInt(255)) {
-                        onSuccess(player, oreName, rock, obj)
-                    }
-
-                    player.miningAccumulator -= 1
-                }
-
-                val time = min(
-                    animationWait - ticks % animationWait,
-                    pick.ticksBetweenRolls - ticks % pick.ticksBetweenRolls
-                )
-                it.wait(time)
-                ticks += time
+        player.filterableMessage("You swing your pick at the rock.")
+        var ticks = 0
+        while (canMine(it, player, obj, rock)) {
+            val animationWait = if (animations < 2) MINING_ANIMATION_TIME + 1 else MINING_ANIMATION_TIME
+            if (ticks % animationWait == 0) {
+                player.animate(pick.animation, delay = 30)
+                animations++
             }
 
-            player.animate(-1)
-        } finally {
-            // Reset the essence-spam flag when mining finishes or is interrupted
-            if (rock == RockType.ESSENCE) {
-                player.removeAttr(IS_MINING_ESSENCE)
+            if (ticks % pick.ticksBetweenRolls == 0) {
+                val level = player.getSkills().getCurrentLevel(Skills.MINING)
+                val baseChance = interpolate(rock.lowChance, rock.highChance, level)
+
+                if (pick == PickaxeType.DRAGON) {
+                    player.miningAccumulator += 0.2 // Add the deficit for DRAGON pickaxe
+                }
+
+                if (baseChance > RANDOM.nextInt(255)) {
+                    onSuccess(player, oreName, rock, obj)
+                }
             }
+
+            // Check if accumulated extra roll is due for DRAGON pickaxe
+            if (player.miningAccumulator >= 1 && pick == PickaxeType.DRAGON) {
+                val level = player.skillSet.getCurrentLevel(Skills.MINING)
+                val baseChance = interpolate(rock.lowChance, rock.highChance, level) * 1.12
+
+                if (baseChance > RANDOM.nextInt(255)) {
+                    onSuccess(player, oreName, rock, obj)
+                }
+
+                player.miningAccumulator -= 1 // Subtract the accumulated extra roll
+            }
+
+            // Calculate the wait time for the next iteration
+            val time = min(
+                animationWait - ticks % animationWait,
+                pick.ticksBetweenRolls - ticks % pick.ticksBetweenRolls
+            )
+            it.wait(time)
+            ticks += time
         }
+
+        player.animate(-1) // Reset animation at the end of mining
     }
 
     private fun onSuccess(player: Player, oreName: String, rock: RockType, obj: GameObject) {
@@ -122,15 +104,14 @@ object Mining {
         } else {
             player.world.random(256)
         }
-
         if (chanceOfGem == 1 && rock != RockType.ESSENCE) {
             player.inventory.add(Items.UNCUT_DIAMOND + (player.world.random(0..3) * 2))
         }
-
         if (rock.isGemRock) {
             rock.drop(player)
             return
         }
+
 
         if (player.hasEquipped(
                 EquipmentType.CHEST,
@@ -144,11 +125,9 @@ object Mining {
                 player.inventory.add(rock.reward)
             }
         }
-
         val reward = if (rock == RockType.ESSENCE && player.skillSet
                 .getCurrentLevel(Skills.MINING) >= 30
         ) Items.PURE_ESSENCE else rock.reward
-
         val depletedRockId = player.world.definitions.get(ObjectDef::class.java, obj.id).depleted
         if (depletedRockId != -1) {
             world.queue {
@@ -161,10 +140,8 @@ object Mining {
             }
             player.playSound(Sound.MINE_ORE)
         }
-
         player.inventory.add(reward)
         player.addXp(Skills.MINING, rock.experience)
-
         val level = player.getSkills().getCurrentLevel(Skills.MINING)
         if (Random.nextInt(5) == 0) {
             val bonusItemId = Items.UNIDENTIFIED_MINERALS
@@ -173,7 +150,6 @@ object Mining {
             player.inventory.add(bonusItemId, randomAmount)
             player.filterableMessage("You also get $randomAmount unidentified minerals.")
         }
-
         player.filterableMessage("You manage to mine some $oreName.")
     }
 
@@ -181,26 +157,26 @@ object Mining {
         if (!p.world.isSpawned(obj)) {
             return false
         }
-        val pick = PickaxeType.values.reversed().firstOrNull {
-            p.getSkills().getMaxLevel(Skills.MINING) >= it.level &&
-                    (p.equipment.contains(it.item) || p.inventory.contains(it.item))
-        }
+        val pick =
+            PickaxeType.values.reversed().firstOrNull {
+                p.getSkills()
+                    .getMaxLevel(Skills.MINING) >= it.level &&
+                        (p.equipment.contains(it.item) || p.inventory.contains(it.item))
+            }
         if (pick == null) {
-            it.messageBox(
-                "You need a pickaxe to mine this rock. " +
-                        "You do not have a pickaxe that you have the Mining level to use."
-            )
+            it.messageBox("You need a pickaxe to mine this rock. You do not have a pickaxe<br>which you have the Mining level to use.")
             return false
         }
-        if (p.getSkills().getBaseLevel(Skills.MINING) < rock.level) {
+        if (p.getSkills().getBaseLevel
+                (Skills.MINING) < rock.level) {
             it.messageBox("You need a Mining level of ${rock.level} to mine this rock.")
             return false
         }
         if (p.inventory.isFull) {
-            val what = if (rock == RockType.ESSENCE) "essence" else "ores"
-            it.messageBox("Your inventory is too full to hold any more $what.")
+            it.messageBox("Your inventory is too full to hold any more ${if (rock == RockType.ESSENCE) "essence" else "ores"}.")
             return false
         }
         return true
     }
+
 }
