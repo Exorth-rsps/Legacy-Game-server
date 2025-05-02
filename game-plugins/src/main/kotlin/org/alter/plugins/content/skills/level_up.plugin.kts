@@ -37,7 +37,7 @@ set_level_up_logic {
 
             world.players.forEach { other ->
                 other.message(
-                    "<col=FF0000>[GLOBAL]</col> $playerName heeft level $newLevel bereikt in $skillName!",
+                    "<col=FF0000>[GLOBAL]</col> $playerName has reached level $newLevel in $skillName!",
                     ChatMessageType.CONSOLE
                 )
             }
