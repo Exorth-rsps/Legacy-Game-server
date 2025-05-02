@@ -67,5 +67,5 @@ fun getPickpocketSuccess(playerThievingLvl: Int, npc: PickpocketNpc, player: Pla
     val bonus = if (player.hasEquipped(EquipmentType.GLOVES, Items.GLOVES_OF_SILENCE)) GLOVES_OF_SILENCE_BONUS else 0
 
     //applies the interpolate function. selects a chance from 55% to 95% based on thieving level
-    return playerThievingLvl.interpolate(55, 95, npc.reqLevel, 99, 100 - bonus)
+    return playerThievingLvl.interpolate(35, 95, npc.reqLevel, 99, 100 - bonus)
 }

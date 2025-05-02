@@ -20,7 +20,7 @@ enum class RockType(
         level = 1,
         experience = 5.0,
         reward = Items.RUNE_ESSENCE,
-        respawnDelay = -1,
+        respawnDelay = 0,
         varrockArmourAffected = -1,
         lowChance = 255,
         highChance = 392,
