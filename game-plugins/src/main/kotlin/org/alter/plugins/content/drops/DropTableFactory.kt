@@ -6,10 +6,7 @@ import org.alter.game.model.entity.GroundItem
 import org.alter.game.model.entity.Pawn
 import org.alter.game.model.entity.Player
 import org.alter.game.model.item.Item
-import org.alter.api.ext.player
 import java.security.SecureRandom
-import java.util.*
-import kotlin.collections.set
 
 /**
  * The name of a table that always drops all of its items
@@ -20,113 +17,105 @@ const val GUARANTEED_TABLE_NAME = "guaranteed"
  * A utility class that assists with building dynamic drop tables.
  */
 object DropTableFactory {
-    /**
-     * The drop tables for each npc.
-     */
-    private val tables =
-        DropTableType.values().associateWith {
-            HashMap<Int, DropTableBuilder.() -> Unit>()
-        }
 
-    /**
-     * The PRNG for selecting an entry.
-     */
-    var prng = SecureRandom()
-
-    /**
-     * Registers a drop table.
-     * @param init  The builder instance.
-     */
-    fun build(init: DropTableBuilder.() -> Unit): DropTableBuilder.() -> Unit {
-        return init
+    /** De drop-tabellen per npc. */
+    private val tables = DropTableType.values().associateWith {
+        HashMap<Int, DropTableBuilder.() -> Unit>()
     }
 
-    /**
-     * Registers a drop table for an npc.
-     * @param table The drop table.
-     * @param npcs  The list of npc ids.
-     */
+    /** PRNG voor willekeur. */
+    var prng = SecureRandom()
+
+    /** Helper om een DSL-block door te geven. */
+    fun build(init: DropTableBuilder.() -> Unit): DropTableBuilder.() -> Unit = init
+
+    /** Registreert een drop-table voor één of meerdere NPC-IDs. */
     fun register(
         table: DropTableBuilder.() -> Unit,
         vararg ids: Int,
-        type: DropTableType = DropTableType.KILL,
+        type: DropTableType = DropTableType.KILL
     ) {
         ids.forEach { tables[type]!![it] = table }
     }
 
     /**
-     * Gets a drop for a player killing an NPC.
+     * Roept de drop af bij het sterven van een NPC.
+     * We klonen de tile hier direct, zodat latere mutaties niet doorsijpelen.
      */
     fun getDrop(
         world: World,
         player: Player,
         npcId: Int,
         tile: Tile,
-        type: DropTableType = DropTableType.KILL,
+        type: DropTableType = DropTableType.KILL
     ) {
         try {
-            getDrop(player, npcId, type)?.forEach { createDrop(world, it, tile, player) }
+            val dropTile = Tile(tile.x, tile.z, tile.height)
+            getDrop(player, npcId, type)
+                ?.forEach { createDrop(world, it, dropTile, player) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     /**
-     * Creates a drop but only returns the values
+     * Maakt alleen de lijst met Item-objecten aan.
      */
     fun getDrop(
         player: Player,
         tableId: Int,
-        type: DropTableType = DropTableType.KILL,
+        type: DropTableType = DropTableType.KILL
     ): MutableList<Item>? {
         val items = mutableListOf<Item>()
-
         val bldr = tables[type]!![tableId] ?: return null
+
         try {
             val table = DropTableBuilder(player, prng).apply(bldr)
+            val subtables = table.tables.values.toList()
 
-            val tables = table.tables.entries.map { it.value }
+            // eerst guaranteed
+            subtables
+                .firstOrNull { it.name == GUARANTEED_TABLE_NAME }
+                ?.entries
+                ?.mapNotNull { (it.drop as? DropEntry.ItemDrop)?.item }
+                ?.let { items.addAll(it) }
 
-            val guaranteed = tables.firstOrNull { it.name == GUARANTEED_TABLE_NAME }
-            val remaining = tables.filterNot { it.name == GUARANTEED_TABLE_NAME }
-            if (guaranteed != null) {
-                items.addAll(
-                    guaranteed.entries
-                        .map { it.drop }
-                        .filterIsInstance<DropEntry.ItemDrop>()
-                        .map { it.item },
-                )
-            }
+            // daarna één item per andere tabel
+            subtables
+                .filterNot { it.name == GUARANTEED_TABLE_NAME }
+                .map { DropEntry.TableDrop(it) }
+                .flatMap { it.getDrop() }
+                .let { items.addAll(it) }
 
-            val remainingTables = remaining.map { DropEntry.TableDrop(it) }
-            items.addAll(remainingTables.flatMap { it.getDrop() })
             return items
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
         return null
     }
 
     /**
-     * Gets a drop from a table and adds to the players inventory
+     * Probeer in je inventory te stoppen, anders op de grond.
      */
     fun createDropInventory(
         player: Player,
         tableId: Int,
-        type: DropTableType = DropTableType.KILL,
+        type: DropTableType = DropTableType.KILL
     ): MutableList<Item>? {
         return try {
             val drops = getDrop(player, tableId, type)
             drops?.forEach { item ->
-                if (player.inventory.hasFreeSpace() ||
-                    player.inventory.contains(item.id) &&
-                    item.getDef(player.world.definitions).stackable
+                if (
+                    player.inventory.hasFreeSpace() ||
+                    (player.inventory.contains(item.id)
+                            && item.getDef(player.world.definitions).stackable)
                 ) {
                     player.inventory.add(item)
-                    return@forEach
+                } else {
+                    val groundItem = GroundItem(item.id, item.amount, player.tile, player)
+                    player.world.spawn(groundItem)
                 }
-                val groundItem = GroundItem(item.id, item.amount, player.tile, player)
-                player.world.spawn(groundItem)
             }
             drops
         } catch (e: Exception) {
@@ -138,14 +127,15 @@ object DropTableFactory {
     fun hasInventorySpaceForAnyDrop(
         player: Player,
         tableId: Int,
-        type: DropTableType,
+        type: DropTableType
     ): Boolean? {
         val bldr = tables[type]!![tableId] ?: return null
         return try {
             val table = DropTableBuilder(player, prng).apply(bldr)
-            val tables = table.tables.entries.map { it.value }
-            val count = tables.sumOf { requiredInventorySpacesToReceiveDrop(player, it) }
-            count <= player.inventory.freeSlotCount
+            val totalRequired = table.tables.values.sumOf {
+                requiredInventorySpacesToReceiveDrop(player, it)
+            }
+            totalRequired <= player.inventory.freeSlotCount
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -154,11 +144,9 @@ object DropTableFactory {
 
     private fun requiredInventorySpacesToReceiveDrop(
         player: Player,
-        table: DropTable,
+        table: DropTable
     ): Int {
         if (table.name == GUARANTEED_TABLE_NAME) {
-            // For every drop in the guaranteed table, count the items that are not stackable, and the items
-            // that are stackable but not yet in the inventory
             return table.entries
                 .map { it.drop }
                 .filterIsInstance<DropEntry.ItemDrop>()
@@ -166,234 +154,128 @@ object DropTableFactory {
                 .count(player.inventory::requiresFreeSlotToAdd)
         }
 
-        // For the non-guaranteed tables, at most one item can be dropped. As soon as one item is found that
-        // requires inventory space, 1 can be returned
         for (entry in table.entries) {
-            val required =
-                when (val drop = entry.drop) {
-                    is DropEntry.NothingDrop -> 0
-                    is DropEntry.MultiDrop -> {
-                        drop.items
-                            .map {
-                                if (player.inventory.requiresFreeSlotToAdd(it.id)) {
-                                    1
-                                } else {
-                                    0
-                                }
-                            }.sum()
-                    }
-                    is DropEntry.ItemRangeDrop -> if (player.inventory.requiresFreeSlotToAdd(drop.item.id)) 1 else 0
-                    is DropEntry.ItemDrop -> if (player.inventory.requiresFreeSlotToAdd(drop.item.id)) 1 else 0
-                    is DropEntry.TableDrop -> requiredInventorySpacesToReceiveDrop(player, drop.table)
+            val needed = when (val drop = entry.drop) {
+                is DropEntry.NothingDrop -> 0
+
+                // **Aangepast**: gebruik count in plaats van sumOf om int-ambiguïteit te voorkomen
+                is DropEntry.MultiDrop -> drop.items.count {
+                    player.inventory.requiresFreeSlotToAdd(it.id)
                 }
 
-            if (required > 0) {
-                return required
-            }
-        }
+                is DropEntry.ItemRangeDrop ->
+                    if (player.inventory.requiresFreeSlotToAdd(drop.item.id)) 1 else 0
 
+                is DropEntry.ItemDrop ->
+                    if (player.inventory.requiresFreeSlotToAdd(drop.item.id)) 1 else 0
+
+                is DropEntry.TableDrop ->
+                    requiredInventorySpacesToReceiveDrop(player, drop.table)
+
+                else -> 0
+            }
+            if (needed > 0) return needed
+        }
         return 0
     }
 
     /**
-     * Gets a drop from a table. This operates recursively on
-     * nested tables.
+     * Recursieve drop uit geneste tables. Met een default-`else` om 'exhaustive' te maken.
      */
     private fun DropEntry.TableDrop.getDrop(): List<Item> {
         val entries = table.entries
         val idx = prng.nextInt(entries.last().index)
-
-        return when (val drop = entries.first { it.index > idx }.drop) {
-            is DropEntry.NothingDrop -> emptyList()
-            is DropEntry.ItemDrop -> listOf(drop.item)
-            is DropEntry.MultiDrop -> drop.getDrop()
-            is DropEntry.TableDrop -> drop.getDrop()
+        val drop = entries.first { it.index > idx }.drop
+        return when (drop) {
+            is DropEntry.NothingDrop   -> emptyList()
+            is DropEntry.ItemDrop      -> listOf(drop.item)
+            is DropEntry.MultiDrop     -> drop.getDrop()
+            is DropEntry.TableDrop     -> drop.getDrop()
             is DropEntry.ItemRangeDrop -> listOf(drop.getDrop())
+            else                       -> emptyList()
         }
     }
 
     /**
-     * Creates a dropped item.
-     *
-     * @param item   The item to drop.
-     * @param player The player getting the loot (or null).
-     * @param l      The location of the NPC dropping the loot.
+     * Lange levende veiligheid: klonen we de tile nogmaals vlak voor spawn.
      */
     private fun createDrop(
         world: World,
         item: Item,
         tile: Tile,
-        owner: Pawn,
+        owner: Pawn
     ) {
-        val ground = GroundItem(item.id, item.amount, tile, owner as Player)
+        val safeTile = Tile(tile.x, tile.z, tile.height)
+        val ground = GroundItem(item.id, item.amount, safeTile, owner as Player)
         world.spawn(ground)
     }
 }
 
-/**
- * Marks a builder.
- */
 @DslMarker
 private annotation class BuilderDslMarker
 
-/**
- * A DSL that assists in creating drop tables.
- * @param player    The player who killed the NPC.
- * @param npc       The NPC instance.
- * @param prng      The PRNG instance.
- */
 @BuilderDslMarker
 class DropTableBuilder(
     val player: Player,
-    private val prng: SecureRandom,
+    private val prng: SecureRandom
 ) {
-    /**
-     * The tables that have been constructed.
-     */
     val tables = hashMapOf<String, DropTable>()
 
-    /**
-     * Builds a table where items inside will *always* be dropped.
-     */
     fun guaranteed(builder: TableBuilder.() -> Unit) = table(GUARANTEED_TABLE_NAME, builder)
+    fun main(builder: TableBuilder.() -> Unit)       = table("main", builder)
 
-    /**
-     * A helper function for building a singular table.
-     */
-    fun main(builder: TableBuilder.() -> Unit) = table("main", builder)
-
-    /**
-     * Builds a table with a specified name.
-     * @param name  The name of the table.
-     */
-    fun table(
-        name: String,
-        builder: TableBuilder.() -> Unit,
-    ) {
-        val bldr = TableBuilder(player, prng, name).apply(builder)
-        val table = bldr.build()
-        tables[name.lowercase()] = table
+    fun table(name: String, builder: TableBuilder.() -> Unit) {
+        val built = TableBuilder(player, prng, name).apply(builder).build()
+        tables[name.lowercase()] = built
     }
 
-    /**
-     * Builds the drop tables.
-     */
-    internal fun build(): List<DropTable> {
-        return tables.values.toList()
-    }
+    internal fun build(): List<DropTable> = tables.values.toList()
 }
 
-/**
- * A DSL that assists in creating drop tables.
- * @param player    The player who killed the NPC.
- * @param npc       The NPC instance.
- * @param prng      The PRNG instance.
- * @param name      The name of the table.
- */
 @BuilderDslMarker
 class TableBuilder(
-    val player: Player,
-    val prng: SecureRandom,
-    val name: String? = null,
+    private val player: Player,
+    private val prng: SecureRandom,
+    val name: String
 ) {
-    /**
-     * The total number of slots.
-     */
     private var totalSlots = if (name == GUARANTEED_TABLE_NAME) 128 else 0
-
-    /**
-     * The number of occupied slots.
-     */
     private var occupiedSlots = 0
+    private val entries = mutableListOf<Entry>()
 
-    /**
-     * The drop entries for this table.
-     */
-    private var entries = mutableListOf<Entry>()
+    fun total(total: Int) { totalSlots = total }
 
-    /**
-     * Specifies the total number of slots for this drop table.
-     * @param total The total number of slots.
-     */
-    fun total(total: Int) {
-        totalSlots = total
-    }
-
-    /**
-     * Adds an item to be dropped.
-     * @param name      The name of the item.
-     * @param quantity  The quantity of the item to drop.
-     * @param slots     The number of slots this drop should occupy in the table.
-     */
-    fun obj(
-        id: Int,
-        quantity: Int = 1,
-        slots: Int = 1,
-    ) {
+    fun obj(id: Int, quantity: Int = 1, slots: Int = 1) {
         val item = Item(id, quantity)
-
         occupiedSlots += slots
         entries.add(Entry(occupiedSlots, DropEntry.ItemDrop(item)))
     }
 
-    fun obj(
-        id: Int,
-        quantityRange: IntRange,
-        slots: Int = 1,
-    ) {
+    fun obj(id: Int, quantityRange: IntRange, slots: Int = 1) {
         val item = Item(id, quantityRange.first)
-
         occupiedSlots += slots
         entries.add(Entry(occupiedSlots, DropEntry.ItemRangeDrop(item, quantityRange)))
     }
 
-    fun objs(
-        vararg item: Item,
-        slots: Int = 1,
-    ) {
+    fun objs(vararg items: Item, slots: Int = 1) {
         occupiedSlots += slots
-        entries.add(Entry(occupiedSlots, DropEntry.MultiDrop(*item)))
+        entries.add(Entry(occupiedSlots, DropEntry.MultiDrop(*items)))
     }
 
-    /**
-     * Adds a table to be dropped.
-     * @param table The table.
-     * @param slots The number of slots this table occupies.
-     */
-    fun table(
-        table: DropTableBuilder.() -> Unit,
-        slots: Int = 1,
-    ) {
-        val tab =
-            DropTableBuilder(player, prng)
-                .apply(table)
-                .build()
-                .first()
-
+    fun table(builder: DropTableBuilder.() -> Unit, slots: Int = 1) {
+        val sub = DropTableBuilder(player, prng).apply(builder).build().first()
         occupiedSlots += slots
-        entries.add(Entry(occupiedSlots, DropEntry.TableDrop(tab)))
+        entries.add(Entry(occupiedSlots, DropEntry.TableDrop(sub)))
     }
 
-    /**
-     * Adds a chance to drop nothing.
-     * @param slots The number of slots.
-     */
     fun nothing(slots: Int) {
         occupiedSlots += slots
         entries.add(Entry(occupiedSlots, DropEntry.NothingDrop))
     }
 
-    /**
-     * Builds this drop table.
-     */
-    internal fun build(): DropTable {
-
-        return DropTable(name, entries.toTypedArray())
-    }
+    internal fun build(): DropTable = DropTable(name, entries.toTypedArray())
 
     data class Entry(
         val index: Int,
-        val drop: DropEntry,
+        val drop: DropEntry
     )
-
 }
