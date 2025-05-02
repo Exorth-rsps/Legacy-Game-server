@@ -38,7 +38,7 @@ val droptable =
             obj(Items.XERICIAN_TOP, quantity = 1, slots = 1)
             obj(Items.XERICIAN_ROBE, quantity = 1, slots = 1)
             obj(Items.SNAKESKIN_BANDANA, quantity = 1, slots = 1)
-            obj(Items.SNAKESKIN_BODY, quantity = 1, slots = 320)
+            obj(Items.SNAKESKIN_BODY, quantity = 1, slots = 1)
             obj(Items.SNAKESKIN_BOOTS, quantity = 1, slots = 2)
             obj(Items.SNAKESKIN_CHAPS, quantity = 1, slots = 1)
             obj(Items.SNAKESKIN_VAMBRACES, quantity = 1, slots = 2)
