@@ -97,7 +97,7 @@ class Server {
         val autoBanMs = gameProperties.getOrDefault("autoBanIntervalMs", 1000).toLong()
         val autoIPBanOn = gameProperties.getOrDefault("autoIPBanEnabled", false)
 
-        println("🔧 Auto-ban: enabled=$autoBanOn, ipBanEnabled=$autoIPBanOn, intervalMs=$autoBanMs")
+        logger.info(" Auto-ban: enabled=$autoBanOn, ipBanEnabled=$autoIPBanOn, intervalMs=$autoBanMs")
 
         val gameContext = GameContext(
             initialLaunch = initialLaunch,

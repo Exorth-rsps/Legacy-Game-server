@@ -1,6 +1,6 @@
-// File: src/main/kotlin/org/alter/game/message/handler/MessagePublicHandler.kt
 package org.alter.game.message.handler
 
+import org.alter.game.Server.Companion.logger
 import org.alter.game.message.MessageHandler
 import org.alter.game.message.impl.MessagePublicMessage
 import org.alter.game.model.ChatMessage
@@ -21,14 +21,14 @@ class MessagePublicHandler : MessageHandler<MessagePublicMessage> {
         // 2) globale config uit GameContext
         val cfg = world.gameContext
         val now = System.currentTimeMillis()
-        println("🔥 [DEBUG] autoBan=${cfg.autoBanEnabled}, autoIPBan=${cfg.autoIPBanEnabled}, prev='${client.lastPublicMessage}', delta=${now - client.lastPublicMessageTime}ms")
+        logger.info("autoBan=${cfg.autoBanEnabled}, autoIPBan=${cfg.autoIPBanEnabled}, prev='${client.lastPublicMessage}', delta=${now - client.lastPublicMessageTime}ms")
 
         // 3) flood‐check + autoban (+ optioneel auto‐IP‐ban)
         if (cfg.autoBanEnabled &&
             unpacked == client.lastPublicMessage &&
             now - client.lastPublicMessageTime < cfg.autoBanIntervalMs) {
 
-            println("🔥 [DEBUG] AUTO‐BAN triggered for ${client.username}")
+            //println("🔥 [DEBUG] AUTO‐BAN triggered for ${client.username}")
 
             // 3.1) account‐ban
             client.privilege = world.privileges.get(-1)!!
@@ -38,7 +38,7 @@ class MessagePublicHandler : MessageHandler<MessagePublicMessage> {
                 IpBanService.getIpForUser(client.username)?.let { ip ->
                     IpBanService.add(ip)
                     IpBanService.load()
-                    println("🔥 [DEBUG] AUTO‐IP‐BAN: $ip")
+                    logger.info("AUTO‐IP‐BAN: $ip")
                 }
             }
 
