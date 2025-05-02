@@ -52,4 +52,7 @@ data class GameContext(var initialLaunch: Boolean,
                        val runEnergy: Boolean,
                        val gItemPublicDelay: Int,
                        val gItemDespawnDelay: Int,
-                       val preloadMaps: Boolean)
+                       val preloadMaps: Boolean,
+                       val autoBanEnabled: Boolean,
+                       val autoIPBanEnabled: Boolean,
+                       val autoBanIntervalMs: Long)

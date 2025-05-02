@@ -108,6 +108,10 @@ class Client(val channel: Channel, world: World) : Player(world) {
     override fun channelClose() {
         gameSystem.close()
     }
+    /** Vorige public chat-inhoud */
+    var lastPublicMessage: String? = null
+    /** Timestamp (ms) van het vorige bericht */
+    var lastPublicMessageTime: Long = 0L
 
     override fun toString(): String = MoreObjects.toStringHelper(this)
             .add("login_username", loginUsername)

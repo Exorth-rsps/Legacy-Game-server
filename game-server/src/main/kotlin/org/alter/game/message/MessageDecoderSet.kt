@@ -3,6 +3,7 @@ package org.alter.game.message
 import org.alter.game.message.decoder.*
 import org.alter.game.message.handler.*
 import org.alter.game.message.impl.*
+import org.alter.game.service.log.PublicChatLoggerService
 
 /**
  * Stores all the [MessageDecoder]s that are used on the
