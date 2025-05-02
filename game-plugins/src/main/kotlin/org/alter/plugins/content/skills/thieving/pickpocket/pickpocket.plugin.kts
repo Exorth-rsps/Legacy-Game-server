@@ -61,11 +61,37 @@ suspend fun QueueTask.pickpocket(npcId: Int, npc: PickpocketNpc) {
     }
 }
 
-fun getPickpocketSuccess(playerThievingLvl: Int, npc: PickpocketNpc, player: Player): Boolean{
+fun getPickpocketSuccess(
+    playerThievingLvl: Int,
+    npc: PickpocketNpc,
+    player: Player
+): Boolean {
+    // 1) Basis-kans van 55% → 95%, lineair oplopend tussen npc.reqLevel en max level 99
+    val BASE_CHANCE_MIN = 75.0
+    val BASE_CHANCE_MAX = 95.0
+    val MAX_THIEVING_LEVEL = 99
 
-    //gets whether the player has Gloves of Silence equipped, and gives the 5% bonus if they do
-    val bonus = if (player.hasEquipped(EquipmentType.GLOVES, Items.GLOVES_OF_SILENCE)) GLOVES_OF_SILENCE_BONUS else 0
+    // Clamp het niveau binnen [reqLevel..MAX_THIEVING_LEVEL]
+    val effectiveLvl = playerThievingLvl.coerceIn(npc.reqLevel, MAX_THIEVING_LEVEL)
 
-    //applies the interpolate function. selects a chance from 55% to 95% based on thieving level
-    return playerThievingLvl.interpolate(35, 95, npc.reqLevel, 99, 100 + bonus)
+    // t = verhouding 0.0 (op reqLevel) → 1.0 (op MAX_THIEVING_LEVEL)
+    val t = (effectiveLvl - npc.reqLevel).toDouble() / (MAX_THIEVING_LEVEL - npc.reqLevel)
+
+    // Basis-kans berekenen
+    val baseChance = BASE_CHANCE_MIN + t * (BASE_CHANCE_MAX - BASE_CHANCE_MIN)
+
+    // 2) Bonus vanuit Gloves of Silence
+    val glovesBonus = if (
+        player.hasEquipped(EquipmentType.GLOVES, Items.GLOVES_OF_SILENCE)
+    ) GLOVES_OF_SILENCE_BONUS.toDouble() else 0.0
+
+    // 3) Bonus per level boven het vereiste level (bijv. +1% per level)
+    val surplusLevels = (playerThievingLvl - npc.reqLevel).coerceAtLeast(0)
+    val levelBonus    = surplusLevels.toDouble()
+
+    // 4) Totale kans en clamp op maximaal 100%
+    val totalChance = (baseChance + glovesBonus + levelBonus).coerceAtMost(100.0)
+
+    // 5) Roll: slaag als een random getal 0.0–100.0 onder totalChance valt
+    return kotlin.random.Random.nextDouble(0.0, 100.0) < totalChance
 }
