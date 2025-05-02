@@ -35,3 +35,4 @@ data/bannedip
 game-server/data/bannedip
 game-server/game-server/data/public_chat.log
 game-server/data/public_chat.log
+game-server/data/ipban.log
