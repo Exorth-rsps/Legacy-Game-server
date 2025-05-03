@@ -44,7 +44,7 @@ enum class RockType(
         varrockArmourAffected = Items.VARROCK_ARMOUR_1,
         lowChance = 102,
         highChance = 379,
-        objectIds = arrayOf(Objs.COPPER_ROCKS_11161)
+        objectIds = arrayOf(Objs.COPPER_ROCKS_11161, Objs.COPPER_ROCKS_10943)
     ),
     TIN(
         level = 1,
@@ -84,7 +84,7 @@ enum class RockType(
         varrockArmourAffected = Items.VARROCK_ARMOUR_1,
         lowChance = 15,
         highChance = 100,
-        objectIds = arrayOf(Objs.COAL_ROCKS_11366)
+        objectIds = arrayOf(Objs.COAL_ROCKS_11366, Objs.COAL_ROCKS_11367)
     ),
     GOLD(
         level = 40,
