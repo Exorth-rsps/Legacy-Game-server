@@ -2,48 +2,88 @@ package org.alter.game.model.combat
 
 import org.alter.game.model.EntityType
 import org.alter.game.model.entity.Pawn
-import java.util.*
 
 /**
- * Represents a map of hits from different [Pawn]s and their information.
- *
- * @author Tom <rspsmods@gmail.com>
+ * Represents a map of hits from different [Pawn]s and their information,
+ * met automatische eviction van oude entries na een TTL (standaard 10 minuten).
  */
-class DamageMap {
+class DamageMap(
+    /** Time‐to‐live in milliseconden; standaard: 10 min = 600_000 ms */
+    private val ttlMs: Long = 10 * 60 * 1000L,
+    /** Initieel capaciteit, afgestemd op kleine aantallen attackers */
+    initialCapacity: Int = 4
+) {
 
-    private val map = WeakHashMap<Pawn, DamageStack>(0)
+    // Gewone HashMap, vullen we zelf en evicten we handmatig
+    private val map = HashMap<Pawn, DamageStack>(initialCapacity)
 
-    operator fun get(pawn: Pawn): DamageStack? = map[pawn]
+    /** Hulp om te kijken of een entry nog binnen de TTL valt */
+    private fun isValid(stack: DamageStack): Boolean =
+        System.currentTimeMillis() - stack.lastHit <= ttlMs
 
-    fun add(pawn: Pawn, damage: Int) {
-        val total = (map[pawn]?.totalDamage ?: 0) + damage
-        map[pawn] = DamageStack(total, System.currentTimeMillis())
+    /** Verwijder alle entries ouder dan `ttlMs` */
+    private fun evictExpired() {
+        val cutoff = System.currentTimeMillis() - ttlMs
+        map.entries.removeIf { it.value.lastHit < cutoff }
+    }
+
+    /** Haal de DamageStack voor [pawn], mits die nog niet vervallen is */
+    operator fun get(pawn: Pawn): DamageStack? {
+        evictExpired()
+        val stack = map[pawn]
+        return if (stack != null && isValid(stack)) stack else null
     }
 
     /**
-     * Get all [DamageStack]s dealt by [Pawn]s whom meets the criteria
-     * [Pawn.entityType] == [type].
+     * Voeg [damage] toe voor [pawn],
+     * en evict eerst oude entries.
      */
-    fun getAll(type: EntityType, timeFrameMs: Long? = null): Collection<DamageStack> = map.filter { it.key.entityType == type && (timeFrameMs == null || System.currentTimeMillis() - it.value.lastHit < timeFrameMs) }.values
+    fun add(pawn: Pawn, damage: Int) {
+        evictExpired()
+        val current = map[pawn]?.totalDamage ?: 0
+        map[pawn] = DamageStack(current + damage, System.currentTimeMillis())
+    }
+
+    /** Maak de hele map in één keer leeg */
+    fun clear() {
+        map.clear()
+    }
 
     /**
-     * Get the total damage from a [pawn].
-     *
-     * @return
-     * 0 if [pawn] has not dealt any damage.
+     * Geef alle DamageStacks van Pawns van het gegeven [type],
+     * zonder vervallen entries.
      */
-    fun getDamageFrom(pawn: Pawn): Int = map[pawn]?.totalDamage ?: 0
+    fun getAll(type: EntityType): Collection<DamageStack> {
+        evictExpired()
+        return map
+            .filter { it.key.entityType == type }
+            .values
+    }
+
+    /** Totaal damage door [pawn], of 0 als verlopen/geen entry */
+    fun getDamageFrom(pawn: Pawn): Int {
+        evictExpired()
+        return map[pawn]?.totalDamage ?: 0
+    }
+
+    /** Pawn met de meeste damage, na evict van verlopen entries */
+    fun getMostDamage(): Pawn? {
+        evictExpired()
+        return map.maxByOrNull { it.value.totalDamage }?.key
+    }
 
     /**
-     * Gets the [Pawn] that has dealt the most damage in this map.
+     * Pawn van het gegeven [type] met de meeste damage,
+     * na evict van verlopen entries.
      */
-    fun getMostDamage(): Pawn? = map.maxByOrNull { it.value.totalDamage }?.key
+    fun getMostDamage(type: EntityType): Pawn? {
+        evictExpired()
+        return map
+            .filter { it.key.entityType == type }
+            .maxByOrNull { it.value.totalDamage }
+            ?.key
+    }
 
-    /**
-     * Gets the most damage dealt by a [Pawn] in our map whom meets the criteria
-     * [Pawn.entityType] == [type].
-     */
-    fun getMostDamage(type: EntityType, timeFrameMs: Long? = null): Pawn? = map.filter { it.key.entityType == type && (timeFrameMs == null || System.currentTimeMillis() - it.value.lastHit < timeFrameMs) }.maxByOrNull { it.value.totalDamage }?.key
-
+    /** Data‐klasse met cumulatieve damage en tijd van laatste hit */
     data class DamageStack(val totalDamage: Int, val lastHit: Long)
 }
