@@ -56,7 +56,7 @@ object Woodcutting {
                 p.inventory.add(tree.log)
                 if (Random.nextInt(5) == 0) {
                     val bonusItemId = Items.ANIMAINFUSED_BARK
-                    val maxAmount = ((level / 10) * 5).coerceAtLeast(1)
+                    val maxAmount = ((level / 50) * 3).coerceAtLeast(1)
                     val randomAmount = Random.nextInt(1, maxAmount + 1)
                     p.inventory.add(bonusItemId, randomAmount)
                     p.filterableMessage("You also get $randomAmount x anima-infused bark.")
