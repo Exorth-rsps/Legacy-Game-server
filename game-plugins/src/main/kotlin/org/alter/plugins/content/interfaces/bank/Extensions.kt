@@ -8,3 +8,6 @@ import org.alter.game.model.entity.Player
 fun Player.openBank() {
     Bank.open(this)
 }
+fun Player.openDeposit() {
+    Bank.open(this)
+}
