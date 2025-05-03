@@ -53,10 +53,20 @@ class DamageMap(
      * Geef alle DamageStacks van Pawns van het gegeven [type],
      * zonder vervallen entries.
      */
-    fun getAll(type: EntityType): Collection<DamageStack> {
+    fun getAll(
+        type: EntityType,
+        timeFrameMs: Long? = null
+    ): Collection<DamageStack> {
+        // eerst verouderde entries eruit
         evictExpired()
+
+        // filter op entity-type en (optioneel) op timeframe
         return map
-            .filter { it.key.entityType == type }
+            .filter { (key, stack) ->
+                key.entityType == type
+                        && (timeFrameMs == null
+                        || System.currentTimeMillis() - stack.lastHit < timeFrameMs)
+            }
             .values
     }
 
