@@ -37,6 +37,7 @@ val smithingInterface = 312
  */
 val smithingCurrentBarVarbit = 3216
 
+
 /**
  * A map used as a cache. This cache maps bar to a map containing
  * the possible child ids, and the meta data for the child id
@@ -47,7 +48,8 @@ val itemCache : HashMap<Bar, HashMap<Int, SmithingMetaData?>> = HashMap()
  * The set of 'standard' anvils in the game
  */
 private val standardAnvils = setOf(
-    Objs.ANVIL_2097
+    Objs.ANVIL_2097,
+    Objs.ANVIL
 )
 
 /**
@@ -160,16 +162,13 @@ smithingInterfaceComponents.forEach { child ->
             player.queue(TaskPriority.STRONG) {
 
                 // The number of items to smith
-                val amount = when (player.attr[INTERACTING_OPT_ATTR]) {
-                    0 -> 1
-                    1 -> 5
-                    2 -> 10
-                    3 -> inputInt("Enter amount:")
-                    4 -> player.inventory.capacity
-                    else -> {
-                        world.sendExamine(player, item.id, ExamineEntityType.ITEM)
-                        return@queue
-                    }
+                val qty = player.getVarp(Varp.SMITHING_INTERFACE_QUANTITY)
+                val amount = when (qty) {
+                    1 -> 1
+                    5 -> 5
+                    10 -> 10
+                    28 -> player.inventory.capacity
+                    else -> inputInt("Enter amount:")
                 }
 
                 // Close the smithing interface
