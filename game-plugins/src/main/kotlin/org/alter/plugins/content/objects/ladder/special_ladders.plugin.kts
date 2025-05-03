@@ -95,12 +95,17 @@ on_obj_option(obj = Objs.LADDER_18990, option = "Climb-Up") {
     }
 }
 on_obj_option(obj = Objs.LADDER_30367, option = "Climb-down") {
-    when(player.tile.regionId) {
-        12084 -> { //Mining Guild
+    when (player.tile.regionId) {
+        12084 -> { // Mining Guild ladder
+            if (player.getSkills().getCurrentLevel(Skills.MINING) < 60) {
+                player.message("You need at least level 60 Mining to enter the Guild.")
+                return@on_obj_option
+            }
             player.moveTo(x = 3021, z = 9739, height = 0)
         }
-
-        else -> player.message("Nothing interesting happens.")
+        else -> {
+            player.message("Nothing interesting happens.")
+        }
     }
 }
 
