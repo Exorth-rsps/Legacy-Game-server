@@ -44,12 +44,31 @@ enum class Food(val item: Int, val heal: Int = 0, val overheal: Boolean = false,
      * Pastries.
      */
     BREAD(item = Items.BREAD, heal = 5),
+    CAKE(item = Items.CAKE, heal = 4, replacement = Items._23_CAKE),
+    CAKE23(item = Items._23_CAKE, heal = 4, replacement = Items.SLICE_OF_CAKE),
+    SLICEOFCAKE(item = Items.SLICE_OF_CAKE, heal = 4),
+    CHOCOLATECAKE(item = Items.CHOCOLATE_CAKE, heal = 5, replacement = Items._23_CHOCOLATE_CAKE),
+    CHOCOLATECAKE23(item = Items._23_CHOCOLATE_CAKE, heal = 5, replacement = Items.CHOCOLATE_SLICE),
+    CHOCOLATESLICEOFCAKE(item = Items.CHOCOLATE_SLICE, heal = 5),
 
+    /**
+     * Pizza.
+     */
+    PLAIN_PIZZA(item = Items.PLAIN_PIZZA, heal = 7, replacement = Items.HALF_PLAIN_PIZZA),
+    HALF_PLAIN_PIZZA(item = Items.HALF_PLAIN_PIZZA, heal = 7),
+    MEAT_PIZZA(item = Items.MEAT_PIZZA, heal = 8, replacement = Items.HALF_MEAT_PIZZA),
+    HALF_MEAT_PIZZA(item = Items.HALF_PLAIN_PIZZA, heal = 8),
+    ANCHOVY_PIZZA(item = Items.ANCHOVY_PIZZA, heal = 9, replacement = Items.HALF_ANCHOVY_PIZZA),
+    HALF_ANCHOVY_PIZZA(item = Items.HALF_ANCHOVY_PIZZA, heal = 9),
+    PINEAPPLE_PIZZA(item = Items.PINEAPPLE_PIZZA, heal = 11, replacement = Items.HALF_PINEAPPLE_PIZZA),
+    HALF_PINEAPPLE_PIZZA(item = Items.HALF_PINEAPPLE_PIZZA, heal = 11),
     /**
      * Other.
      */
     ONION(item = Items.ONION, heal = 1),
-    CABBAGE(item = Items.CABBAGE, heal = 1);
+    CABBAGE(item = Items.CABBAGE, heal = 1),
+    POTATO(item = Items.BAKED_POTATO, heal = 4),
+    ;
     companion object {
         val values = enumValues<Food>()
     }
