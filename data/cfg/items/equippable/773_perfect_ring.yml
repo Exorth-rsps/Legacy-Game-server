@@ -13,19 +13,19 @@ equipment:
   prayer: 0
   equipSlot: "ring"
   weaponType: -1
-  attackSpeed: 0
-  attackStab: 0
-  attackSlash: 0
-  attackCrush: 0
-  attackMagic: 0
-  attackRanged: 0
+  attackSpeed: 99
+  attackStab: 99999
+  attackSlash: 99999
+  attackCrush: 99999
+  attackMagic: 99999
+  attackRanged: 99999
   defenceStab: 0
   defenceSlash: 0
   defenceCrush: 0
   defenceMagic: 0
   defenceRanged: 0
-  meleeStrength: 0
-  rangedStrength: 0
-  magicDamage: 0
+  meleeStrength: 99999
+  rangedStrength: 99999
+  magicDamage: 99999
   renderAnimations: null
   skillReqs: null
