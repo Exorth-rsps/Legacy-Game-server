@@ -1,11 +1,12 @@
+package org.alter.plugins.content.commands.commands.developer
+
 import org.alter.game.model.priv.Privilege
-import org.alter.plugins.content.commands.Commands_plugin
 import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
 
 val OpenShopCommands = listOf("openshop", "shop", "store")
 
 OpenShopCommands.forEach {
-    on_command(it, Privilege.ADMIN_POWER, description = "Open shop , use: ::listshop for shop id's") {
+    on_command(it, Privilege.DEV_POWER, description = "Open shop , use: ::listshop for shop id's") {
         val args = player.getCommandArgs()
         tryWithUsage(player, args, "Invalid format! Example of proper command <col=801700>::openshop Gem Trader.</col>") {
             try {
@@ -20,7 +21,7 @@ OpenShopCommands.forEach {
 }
 
 
-on_command("listshop", Privilege.ADMIN_POWER) {
+on_command("listshop", Privilege.DEV_POWER) {
     player.message("Shop List: ")
     var id = 0
     getPluginRepository().shops.forEach {

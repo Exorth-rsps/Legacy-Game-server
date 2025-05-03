@@ -7,7 +7,7 @@ import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
 /**
  *  Kick command: dwingt een speler uit te loggen zonder verdere wijzigingen.
  */
-on_command("kick", Privilege.MOD_POWER) {
+on_command("kick", Privilege.ADMIN_POWER) {
     val args = player.getCommandArgs()
     tryWithUsage(player, args, "kick <player_name>") { values ->
         val targetName = values[0]

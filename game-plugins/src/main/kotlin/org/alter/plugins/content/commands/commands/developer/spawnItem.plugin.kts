@@ -1,6 +1,8 @@
+package org.alter.plugins.content.commands.commands.developer
+
 import org.alter.game.model.priv.Privilege
 
-on_command("spawn", Privilege.ADMIN_POWER, description = "Spawn items with ui") {
+on_command("spawn", Privilege.DEV_POWER, description = "Spawn items with ui") {
     player.queue(TaskPriority.STRONG) {
         val item = spawn() ?: return@queue
         if (item.amount > 0) {
@@ -11,7 +13,7 @@ on_command("spawn", Privilege.ADMIN_POWER, description = "Spawn items with ui") 
     }
 }
 
-on_command("spawn2", Privilege.ADMIN_POWER, description = "Spawn untradable items with ui") {
+on_command("spawn2", Privilege.DEV_POWER, description = "Spawn untradable items with ui") {
     player.queue(TaskPriority.STRONG) {
         val item = spawn2() ?: return@queue
         if (item.amount > 0) {

@@ -1,3 +1,5 @@
+package org.alter.plugins.content.commands.commands.admin
+
 import org.alter.game.model.priv.Privilege
 
 /**

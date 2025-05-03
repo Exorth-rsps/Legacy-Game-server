@@ -1,6 +1,7 @@
 import org.alter.game.model.priv.Privilege
 import org.alter.game.plugin.PluginRepository
 
+private val commandPermissions = mutableMapOf<String, String>()
 on_command(command = "cmds", powerRequired = Privilege.ADMIN_POWER, description = "Display commands") {
     player.setInterfaceUnderlay(color = -1, transparency = -1)
     player.openInterface(187, dest = InterfaceDestination.MAIN_SCREEN)
@@ -20,6 +21,7 @@ fun getCommands(r: PluginRepository): List<String> {
             value += " = [ ${r.getDescription(t)} ]"
         }
         str_list.add(value)
+
     }
     return str_list
 }

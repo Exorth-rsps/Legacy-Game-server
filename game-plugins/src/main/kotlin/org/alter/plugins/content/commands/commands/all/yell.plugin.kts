@@ -21,7 +21,7 @@ on_command("yell", description = "Yell to everyone") {
     val now = System.currentTimeMillis()
 
     // Cooldown logic…
-    val cooldownMs = if (player.privilege.id == 0) 15_000L else 0L
+    val cooldownMs = if (player.privilege.id == 0) 5_000L else 0L
     val last = lastYellTime[player] ?: 0L
     if (now - last < cooldownMs) {
         val secondsLeft = ((cooldownMs - (now - last)) / 1000) + 1

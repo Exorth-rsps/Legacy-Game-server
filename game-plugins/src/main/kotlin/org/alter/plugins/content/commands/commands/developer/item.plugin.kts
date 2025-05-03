@@ -1,8 +1,10 @@
+package org.alter.plugins.content.commands.commands.developer
+
 import org.alter.game.model.priv.Privilege
 import org.alter.plugins.content.commands.Commands_plugin.Command.tryWithUsage
 import java.text.DecimalFormat
 
-on_command("item", Privilege.ADMIN_POWER, description = "Spawn items") {
+on_command("item", Privilege.DEV_POWER, description = "Spawn items") {
     val args = player.getCommandArgs()
     tryWithUsage(player, args, "Invalid format! Example of proper command <col=801700>::item 4151 1</col> or <col=801700>::item 4151</col>") { values ->
         try {
