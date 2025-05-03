@@ -2,9 +2,6 @@ package org.alter.plugins.content.interfaces.bank
 
 import org.alter.game.model.priv.Privilege
 
-on_command("obank", Privilege.ADMIN_POWER) {
-    player.openBank()
-}
 
 /**
  * Clears all bank tab varbits for the player, effectively
