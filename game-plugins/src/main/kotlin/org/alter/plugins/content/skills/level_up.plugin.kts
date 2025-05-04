@@ -16,18 +16,25 @@ set_level_up_logic {
     }
 
     player.queue {
-        if(player.getSkills()[skill].currentLevel == 99) {
+        if (player.getSkills()[skill].currentLevel == 99) {
             player.graphic(Graphic.FINAL_LEVEL_UP)
         } else {
             val levelupJingles = listOf(29, 67, 50)
             player.playJingle(levelupJingles[Random.nextInt(levelupJingles.size)])
             player.graphic(Graphic.LEVEL_UP, 124)
-            player.message("Congratulations, you've just advanced your ${Skills.getSkillName(world, skill)} level. You are now level ${player.getSkills().getBaseLevel(skill)}.")
+            player.message(
+                "Congratulations, you've just advanced your ${
+                    Skills.getSkillName(
+                        world,
+                        skill
+                    )
+                } level. You are now level ${player.getSkills().getBaseLevel(skill)}."
+            )
             world.spawn(AreaSound(player.tile, 2396, 1, 1))
         }
 
         // Toon standaard level-up messagebox
-        levelUpMessageBox(skill, increment)
+        //levelUpMessageBox(skill, increment)
 
         // **Nieuw: globale broadcast bij level 90–99**
         val newLevel = player.getSkills().getBaseLevel(skill)

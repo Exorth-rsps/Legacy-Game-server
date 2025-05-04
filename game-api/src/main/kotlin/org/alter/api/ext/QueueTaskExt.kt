@@ -349,7 +349,7 @@ fun QueueTask.selectAppearance() {
     player.openInterface(APPEARANCE_INTERFACE_ID, InterfaceDestination.MAIN_SCREEN)
 }
 
-suspend fun QueueTask.levelUpMessageBox(skill: Int, levelIncrement: Int) {
+suspend fun QueueTask.levelUpMessageBox(skill: Int, levelIncrement: Int ) {
     if (skill != Skills.HUNTER) {
         val children = mapOf(
                 Skills.AGILITY to 4,
