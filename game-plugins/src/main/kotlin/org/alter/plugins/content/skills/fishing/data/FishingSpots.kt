@@ -26,7 +26,7 @@ enum class FishingSpots(val spotEntityId: Int, val option: String, val toolId: I
     LURE2(Npcs.ROD_FISHING_SPOT_1526, "lure", Items.FLY_FISHING_ROD, Items.FEATHER, Animation.FISHING_ROD, Fish.TROUT, Fish.SALMON, Fish.RAINBOWFISH),
     BIG_NET(Npcs.FISHING_SPOT_1511, "net", Items.BIG_FISHING_NET, -1, Animation.FISHING_NET, Fish.MACKEREL, Fish.COD, Fish.BASS),
     BIG_NET2(Npcs.FISHING_SPOT_1520, "big net", Items.BIG_FISHING_NET, -1, Animation.FISHING_NET, Fish.MACKEREL, Fish.COD, Fish.BASS),
-    BIG_NET3(Npcs.FISHING_SPOT_1511, "big net", Items.BIG_FISHING_NET, -1, Animation.FISHING_NET, Fish.MACKEREL, Fish.COD, Fish.BASS),
+    BIG_NET3(Npcs.FISHING_SPOT_1511, "net", Items.BIG_FISHING_NET, -1, Animation.FISHING_NET, Fish.MACKEREL, Fish.COD, Fish.BASS),
     CAGE(Npcs.FISHING_SPOT_1522, "cage", Items.LOBSTER_POT, -1, Animation.FISHING_LOBSTER_POT, Fish.LOBSTER),
     HARPOON(Npcs.FISHING_SPOT_1522, "harpoon", Items.HARPOON, -1, Animation.FISHING_HARPOON, Fish.TUNA, Fish.SWORDFISH),
     HARPOON2(Npcs.FISHING_SPOT_5821, "harpoon", Items.HARPOON, -1, Animation.FISHING_HARPOON, Fish.SHARK),
