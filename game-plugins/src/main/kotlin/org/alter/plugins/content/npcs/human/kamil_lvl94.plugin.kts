@@ -13,7 +13,7 @@ val droptable =
             obj(Items.BONES, quantity = 1)
         }
         main {
-            total(10240)
+            total(4096)
             obj(Items.COINS_995, quantityRange = 250..1500, slots = 80)
             obj(Items.AIR_RUNE, quantityRange = 1..200, slots = 80)
             obj(Items.MIND_RUNE, quantityRange = 1..200, slots = 80)
@@ -50,7 +50,7 @@ val droptable =
             obj(Items.RUNE_MACE, quantity = 1, slots = 2)
             obj(Items.RUNE_LONGSWORD, quantity = 1, slots = 2)
             obj(Items.COLD_KEY, quantity = 1, slots = 1)
-            nothing(1280)
+            nothing(512)
         }
     }
 
