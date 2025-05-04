@@ -54,13 +54,13 @@ suspend fun QueueTask.bartenderDialogue() {
                 }
                 4 -> {
                     chatPlayer("Do you know where I can get some good equipment?")
-                    chatNpc("Well, there are some shop across the Yanille square.")
+                    chatNpc("Well, there are some shop across Falador.")
                 }
             }
         }
         3 -> {
             chatPlayer("Do you know where I can get some good equipment?")
-            chatNpc("Well, there are some shop across the Yanille square.")
+            chatNpc("Well, there are some shop across Falador.")
         }
     }
 }
