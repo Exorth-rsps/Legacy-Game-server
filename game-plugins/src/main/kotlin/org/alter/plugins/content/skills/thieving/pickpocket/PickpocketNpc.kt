@@ -98,7 +98,7 @@ enum class PickpocketNpc(val npcIds: IntArray, val experience: Double, val reqLe
         npcIds = intArrayOf(
             Npcs.PALADIN_3293
         ),
-        experience = 163.3,
+        experience = 131.8,
         reqLevel = 80,
         rewards = arrayOf(
             WeightItem(item = Items.COINS_995, amount = 1..200, weight = COMMON),
