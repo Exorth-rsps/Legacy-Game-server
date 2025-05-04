@@ -28,7 +28,7 @@ val kbd =
             obj(Items.ADAMANT_FULL_HELM, quantity = 1, slots = 80)
             obj(Items.DRAGON_MED_HELM, quantity = 1, slots = 40)
             obj(Items.DRAGON_PLATELEGS, quantity = 1, slots = 20)
-            obj(Items.DRAGON_CHAINBODY, quantity = 1, slots = 20)
+            obj(Items.DRAGON_CHAINBODY_3140, quantity = 1, slots = 20)
             obj(Items.DRAGON_PLATESKIRT, quantity = 1, slots = 20)
             obj(Items.DRAGON_BOOTS, quantity = 1, slots = 2)
             obj(Items.AIR_RUNE, quantityRange = 100..300, slots = 365)
