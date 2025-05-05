@@ -13,6 +13,13 @@ fun Player.canTeleport(type: TeleportType): Boolean {
     val currWildLvl = tile.getWildernessLevel()
     val wildLvlRestriction = type.wildLvlRestriction
 
+    // Voorbeeld: blokkeer regio 14867 en 12345
+    val forbiddenRegions = setOf(10070)
+    if (tile.regionId in forbiddenRegions) {
+        message("You can teleport form here!")
+        return false
+    }
+
     if (!lock.canTeleport()) {
         return false
     }
@@ -25,6 +32,7 @@ fun Player.canTeleport(type: TeleportType): Boolean {
 
     return true
 }
+
 
 fun Pawn.prepareForTeleport() {
     resetInteractions()
