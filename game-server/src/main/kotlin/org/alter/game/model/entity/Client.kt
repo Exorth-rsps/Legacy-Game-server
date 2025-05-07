@@ -112,6 +112,11 @@ class Client(val channel: Channel, world: World) : Player(world) {
     var lastPublicMessage: String? = null
     /** Timestamp (ms) van het vorige bericht */
     var lastPublicMessageTime: Long = 0L
+    var floodMessageCount: Int = 0            // Aantal dezelfde berichten in het venster
+    var floodWindowStart: Long = 0L           // Starttijd van het venster (ms)
+    var floodWarned: Boolean = false          // Heeft de speler al een waarschuwing gekregen?
+    var floodSinceWarningCount: Int = 0       // Aantal berichten sinds de waarschuwing
+    var floodBanThreshold: Int = 0
 
     override fun toString(): String = MoreObjects.toStringHelper(this)
             .add("login_username", loginUsername)

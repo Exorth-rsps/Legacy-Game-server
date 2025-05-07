@@ -43,8 +43,9 @@ on_command("yell", description = "Yell to everyone") {
             val (rank, color) = when (player.privilege.id) {
                 -1 -> "Banned" to ""
                 0  -> "Player" to ""
-                1  -> "<img=0>Moderator" to "<col=8900331>"
-                2, 3 -> "<img=1>Admin"     to "<col=8900331>"
+                1  -> "<img=0>Moderator" to "<col=003507>"
+                2 -> "<img=1>Admin"     to "<col=2a4d7e>"
+                3 -> "<img=1>Developer"     to "<col=5b209a>"
                 else -> "unidentified"   to ""
             }
 

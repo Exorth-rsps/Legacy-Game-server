@@ -21,44 +21,83 @@ class MessagePublicHandler : MessageHandler<MessagePublicMessage> {
         // 2) globale config uit GameContext
         val cfg = world.gameContext
         val now = System.currentTimeMillis()
-        logger.info("autoBan=${cfg.autoBanEnabled}, autoIPBan=${cfg.autoIPBanEnabled}, prev='${client.lastPublicMessage}', delta=${now - client.lastPublicMessageTime}ms")
 
-        // 3) flood‐check + autoban (+ optioneel auto‐IP‐ban)
-        if (cfg.autoBanEnabled &&
-            unpacked == client.lastPublicMessage &&
-            now - client.lastPublicMessageTime < cfg.autoBanIntervalMs) {
+        // ===== Flood‐controle + waarschuwing/banner =================================
+        val windowDuration = 30_000L // 30 seconden
 
-            //println("🔥 [DEBUG] AUTO‐BAN triggered for ${client.username}")
-
-            // 3.1) account‐ban
-            client.privilege = world.privileges.get(-1)!!
-
-            // 3.2) optioneel IP‐ban
-            if (cfg.autoIPBanEnabled) {
-                IpBanService.getIpForUser(client.username)?.let { ip ->
-                    IpBanService.add(ip)
-                    IpBanService.load()
-                    logger.info("AUTO‐IP‐BAN: $ip")
-                }
+        if (unpacked == client.lastPublicMessage) {
+            // Zelfde bericht binnen hetzelfde venster?
+            if (now - client.floodWindowStart > windowDuration) {
+                // Nieuw venster starten
+                client.floodMessageCount = 1
+                client.floodWindowStart = now
+                client.floodWarned = false
+                client.floodSinceWarningCount = 0
+            } else {
+                // Binnen venster, teller omhoog
+                client.floodMessageCount++
             }
-
-            // 3.3) kick/logout
-            client.requestLogout()
-            client.channel.close()
-
-            // 3.4) log auto‐ban (account + mogelijk IP)
-            val suffix = if (cfg.autoIPBanEnabled) " (account+IP banned)" else " (account banned)"
-            world.getService(PublicChatLoggerService::class.java, true)
-                ?.logPublicChat(client, "[AUTO‐BAN flood] \"$unpacked\"$suffix")
-
-            return
+        } else {
+            // Verschillend bericht: reset trackers
+            client.lastPublicMessage = unpacked
+            client.lastPublicMessageTime = now
+            client.floodMessageCount = 1
+            client.floodWindowStart = now
+            client.floodWarned = false
+            client.floodSinceWarningCount = 0
         }
 
-        // 4) sla laatste bericht/tijd op
+        if (cfg.autoBanEnabled) {
+            // 5 keer hetzelfde bericht binnen 30s → waarschuwing
+            if (!client.floodWarned && client.floodMessageCount >= 5) {
+                // Verstuur waarschuwing via chat-block
+                client.blockBuffer.publicChat = ChatMessage(
+                    "Hi, im a Spammer, with seconds away form my ban!",
+                    client.privilege.icon,
+                    ChatMessage.ChatType.NONE,
+                    ChatMessage.ChatEffect.NONE,
+                    ChatMessage.ChatColor.NONE
+                )
+                client.addBlock(UpdateBlockType.PUBLIC_CHAT)
+                client.floodWarned = true
+                client.floodBanThreshold = (5..15).random()
+                return
+            }
+
+
+            // Na waarschuwing: random tussen 5–15 verdere berichten → ban
+            if (client.floodWarned && unpacked == client.lastPublicMessage) {
+                client.floodSinceWarningCount++
+                if (client.floodSinceWarningCount >= client.floodBanThreshold) {
+                    // ==== Ban‐logica (hergebruikt uit bestaande auto‐ban) ====
+                    // 1) Account‐ban
+                    client.privilege = world.privileges.get(-1)!!
+                    // 2) Optioneel IP‐ban
+                    if (cfg.autoIPBanEnabled) {
+                        IpBanService.getIpForUser(client.username)?.let { ip ->
+                            IpBanService.add(ip)
+                            IpBanService.load()
+                            logger.info("AUTO‐IP‐BAN: $ip")
+                        }
+                    }
+                    // 3) Kick/logout
+                    client.requestLogout()
+                    client.channel.close()
+                    // 4) Log auto‐ban
+                    val suffix = if (cfg.autoIPBanEnabled) " (account+IP banned)" else " (account banned)"
+                    world.getService(PublicChatLoggerService::class.java, true)
+                        ?.logPublicChat(client, "[AUTO‐BAN flood after warning] \"$unpacked\"$suffix")
+                    return
+                }
+            }
+        }
+        // =============================================================================
+
+        // 3) sla laatste bericht/tijd op
         client.lastPublicMessage     = unpacked
         client.lastPublicMessageTime = now
 
-        // 5) normale chat‐flow
+        // 4) normale chat‐flow
         val type = ChatMessage.ChatType.values.firstOrNull { it.id == message.type }
             ?: ChatMessage.ChatType.NONE
         val effect = ChatMessage.ChatEffect.values.firstOrNull { it.id == message.effect }
@@ -69,7 +108,7 @@ class MessagePublicHandler : MessageHandler<MessagePublicMessage> {
         client.blockBuffer.publicChat = ChatMessage(unpacked, client.privilege.icon, type, effect, color)
         client.addBlock(UpdateBlockType.PUBLIC_CHAT)
 
-        // 6) log het bericht
+        // 5) log het bericht
         world.getService(PublicChatLoggerService::class.java, true)
             ?.logPublicChat(client, unpacked)
     }
