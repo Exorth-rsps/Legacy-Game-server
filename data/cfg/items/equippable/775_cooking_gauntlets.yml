@@ -2,7 +2,7 @@
 id: 775
 name: "Cooking gauntlets"
 examine: "These gauntlets empower with a greater ability to cook fish."
-tradeable: false
+tradeable: true
 weight: 0.226
 tradeable_on_ge: false
 cost: 1
