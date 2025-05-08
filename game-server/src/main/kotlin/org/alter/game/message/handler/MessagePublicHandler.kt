@@ -60,7 +60,7 @@ class MessagePublicHandler : MessageHandler<MessagePublicMessage> {
                 )
                 client.addBlock(UpdateBlockType.PUBLIC_CHAT)
                 client.floodWarned = true
-                client.floodBanThreshold = (5..15).random()
+                client.floodBanThreshold = (1..4).random()
                 return
             }
 
