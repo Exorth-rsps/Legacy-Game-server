@@ -28,6 +28,7 @@ import org.alter.game.plugin.Plugin
 import org.alter.game.plugin.PluginRepository
 import org.alter.game.service.GameService
 import org.alter.game.service.Service
+import org.alter.game.service.AutoSaveSystem
 import org.alter.game.service.xtea.XteaKeyService
 import org.alter.game.sync.block.UpdateBlockSet
 import gg.rsmod.util.HuffmanCodec
@@ -54,7 +55,7 @@ import java.util.concurrent.TimeUnit
  * @author Tom <rspsmods@gmail.com>
  */
 class World(val gameContext: GameContext, val devContext: DevContext) {
-
+    private val autoSaveSystem = AutoSaveSystem(this)
     /**
      * The [Store] is responsible for handling the data in our cache.
      */
@@ -231,6 +232,8 @@ class World(val gameContext: GameContext, val devContext: DevContext) {
             currentCycle = 0
             logger.info("World cycle has been reset.")
         }
+        autoSaveSystem.execute()
+
 
         /*
          * Copy the timers to a mutable map just in case a timer has to modify
