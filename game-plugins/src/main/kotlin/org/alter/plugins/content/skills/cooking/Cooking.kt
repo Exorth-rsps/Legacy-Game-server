@@ -49,7 +49,7 @@ class Cooking(private val defs: DefinitionSet) {
                 player.inventory.add(food.burnt_item)
                 player.filterableMessage("You deliberately burn some ${burnName}.")
             }
-            else if(level.interpolate(minChance = 30, maxChance = 230, minLvl = food.minLevel, maxLvl = food.maxLevel, cap = 255)) /*|| player.getVarp(TutorialIsland.COMPLETION_VARP) == 90 || player.getVarp(TutorialIsland.COMPLETION_VARP) == 160)*/ {
+            else if(level.interpolate(minChance = 10, maxChance = 120, minLvl = food.minLevel, maxLvl = food.maxLevel, cap = 255)) /*|| player.getVarp(TutorialIsland.COMPLETION_VARP) == 90 || player.getVarp(TutorialIsland.COMPLETION_VARP) == 160)*/ {
                 player.inventory.add(food.cooked_item, 1)
                 player.addXp(Skills.COOKING, food.xp)
                 player.filterableMessage("You cook some ${name}.")
