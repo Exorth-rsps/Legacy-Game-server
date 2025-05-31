@@ -13,7 +13,7 @@ import java.net.InetSocketAddress
 import org.alter.plugins.content.IpBanService
 
 /**
- * A worker for the [LoginService] dat inkomende
+ * A worker voor de [LoginService] dat inkomende
  * [LoginServiceRequest]s afhandelt.
  */
 class LoginWorker(
@@ -41,11 +41,17 @@ class LoginWorker(
                 val world = request.world
                 val client = Client.fromRequest(world, request.login)
 
-                // --- Username sanitization ---
+                // --- Username sanitization én hoofdletter eerste letter ---
                 // Verwijder spaties uit de username
-                val sanitizedUsername = client.username.replace(" ", "")
+                val withoutSpaces = client.username.replace(" ", "")
+                // Maak de eerste letter een hoofdletter (als de string niet leeg is)
+                val sanitizedUsername = if (withoutSpaces.isNotEmpty()) {
+                    withoutSpaces.replaceFirstChar { it.uppercaseChar() }
+                } else {
+                    withoutSpaces
+                }
                 client.username = sanitizedUsername
-                logger.debug { "Sanitized username, removed spaces: '${client.username}'" }
+                logger.debug { "Sanitized username, removed spaces and capitalized first letter: '${client.username}'" }
 
                 // --- Username character validation ---
                 // Alleen ASCII letters, cijfers, '-' en '_' zijn toegestaan (spaties zijn verwijderd)
@@ -124,7 +130,7 @@ class LoginWorker(
                     )
                 }
             } catch (e: Exception) {
-                logger.error("Error when handling request from ${'$'}{request.login.channel}.", e)
+                logger.error("Error when handling request from ${request.login.channel}.", e)
             }
         }
     }
