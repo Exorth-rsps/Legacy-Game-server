@@ -67,10 +67,6 @@ ids.forEach {
             block = Animation.ICE_WARRIOR_HIT
             death = Animation.HUMAN_DEATH
         }
-        aggro {
-            radius = 10
-            searchDelay = 1
-        }
 
         sound {
             attackSound = Sound.HUMAN_ATTACK
