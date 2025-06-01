@@ -108,6 +108,24 @@ on_obj_option(obj = Objs.LADDER_30367, option = "Climb-down") {
         }
     }
 }
+on_obj_option(obj = Objs.LADDER_2408, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        11316 -> { //Chaos Druide
+            player.moveTo(x = 1867, z = 4243, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.LADDER_25844, option = "Climb-Up") {
+    when(player.tile.regionId) {
+        7490 -> { //Chaos Druide
+            player.moveTo(x = 2819, z = 3374, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
 
 
 

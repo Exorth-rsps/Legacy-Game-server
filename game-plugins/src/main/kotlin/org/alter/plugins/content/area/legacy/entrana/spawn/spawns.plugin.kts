@@ -68,3 +68,5 @@ spawn_npc(Npcs.GORAK, 2828, 3371, 0, 3, Direction.EAST)
 
 spawn_npc(Npcs.TWIGGY_OKORN, 2819, 3353, 0, 3, Direction.EAST)
 spawn_npc(Npcs.ZAFF, 2850, 3355, 0, 2, Direction.SOUTH)
+
+spawn_npc(Npcs.ELDER_CHAOS_DRUID, 1867, 4235, 0, 3, Direction.NORTH)
