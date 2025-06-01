@@ -158,7 +158,7 @@ object Mining {
 
         if (Random.nextInt(5) == 0) {
             val level = player.getSkills().getCurrentLevel(Skills.MINING)
-            val maxAmt = ((level / 50) * 3).coerceAtLeast(1)
+            val maxAmt = ((level / 50) * 4).coerceAtLeast(1)
             val amt = Random.nextInt(1, maxAmt + 1)
             player.inventory.add(Items.UNIDENTIFIED_MINERALS, amt)
             player.filterableMessage("You also get $amt unidentified minerals.")
