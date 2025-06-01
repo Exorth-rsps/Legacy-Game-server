@@ -3,7 +3,7 @@ package org.alter.plugins.content.area.world_chats.banker
 import org.alter.plugins.content.interfaces.bank.openBank
 
 
-arrayOf(Npcs.BANKER_2897, Npcs.BANKER_2898, Npcs.BANKER_1633, Npcs.BANKER_1634, Npcs.BANKER_1613, Npcs.BANKER_1618).forEach { banker ->
+arrayOf(Npcs.BANKER_2897, Npcs.BANKER_2898, Npcs.BANKER_1633, Npcs.BANKER_1634, Npcs.BANKER_1613, Npcs.BANKER_1618, Npcs.ODOVACAR).forEach { banker ->
     on_npc_option(npc = banker, option = "talk-to", lineOfSightDistance = 2) {
         player.queue { dialog() }
     }
