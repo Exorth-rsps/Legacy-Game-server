@@ -36,7 +36,7 @@ enum class WhittleItem(val id: Int, val level: Int, val logCount: Int = 1, val a
     MAPLE_SHORTBOW_U(id = Items.MAPLE_SHORTBOW_U, level = 50, fletchingXP = 50.0),
     MAPLE_LONGBOW_U(id = Items.MAPLE_LONGBOW_U, level = 55, fletchingXP = 58.3),
     MAPLE_STOCK(id = Items.MAPLE_STOCK, level = 54, fletchingXP = 32.0),
-    MAPLE_SHIELD(id = Items.OAK_SHIELD, level = 57, ticks = 7, logCount = 2, fletchingXP = 116.5),
+    MAPLE_SHIELD(id = Items.MAPLE_SHIELD, level = 57, ticks = 7, logCount = 2, fletchingXP = 116.5),
 
     // Mahogany Logs
     MAHOGANY_STOCK(id = Items.MAHOGANY_STOCK, level = 61, fletchingXP = 41.0),
