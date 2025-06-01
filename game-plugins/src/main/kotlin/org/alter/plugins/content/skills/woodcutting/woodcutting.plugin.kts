@@ -12,7 +12,7 @@ private val TREES = setOf(
     Tree(TreeType.TREE, obj = 1383, trunk = 1358), // Dead tree
     Tree(TreeType.TREE, obj = 1289, trunk = 1353), // Dead tree
     Tree(TreeType.TREE, obj = 2091, trunk = 1342), // Evergreen
-    Tree(TreeType.WILLOW, obj = 10819, trunk = 8489), // Willow
+    Tree(TreeType.WILLOW, obj = 10819, trunk = 9471), // Willow
     Tree(TreeType.WILLOW, obj = 10829, trunk = 9471), // Willow
     Tree(TreeType.WILLOW, obj = 10831, trunk = 9471), // Willow
     Tree(TreeType.WILLOW, obj = 10833, trunk = 9471), // Willow
