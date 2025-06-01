@@ -1,95 +1,76 @@
 package org.alter.plugins.content.skills.runecrafting
 
-import org.alter.plugins.content.skills.crafting.Spinning
-import org.alter.plugins.content.skills.crafting.data.Spin
-
 private val enterOption = "Enter"
-private val prayOption = "Pray-at"
 
-Altar.values.forEach { altar ->
+// Specified ruins IDs: 32489 wordt slechts voor talisman gebruik, 32490 heeft ook de 'Enter' optie
+val talismanOnlyRuin = Objs.MYSTERIOUS_RUINS_32489
+val optionRuin = Objs.MYSTERIOUS_RUINS_32490
 
-    /**
-     * Handle each Mysterious Ruins object for the Runecrafting altar
-     */
-    altar.ruins?.forEach { ruin ->
-
-        // The object definition for the Mysterious Ruins
-        val def = world.definitions.get(ObjectDef::class.java, ruin)
-
-        // Allow using the talisman on the ruins to enter the altar
+// Handle het gebruik van een talisman op talismanOnlyRuin om naar respective altar te teleporteren
+talismanOnlyRuin.let { ruinId ->
+    Altar.values.forEach { altar ->
         altar.talisman?.let { talisman ->
-            on_item_on_obj(obj = ruin, item = talisman, lineOfSightDistance = 5) {
+            on_item_on_obj(obj = ruinId, item = talisman, lineOfSightDistance = 5) {
                 altar.entrance?.let { player.moveTo(it) }
             }
         }
+    }
+}
 
-        // If the object has the 'enter' option, we should check that the varbit is set for the player before teleporting them to the altar
-        if (def.options.contains(enterOption)) {
-            on_obj_option(obj = ruin, option = enterOption) {
-                if (player.getVarbit(altar.varbit) == 1) {
-                    altar.entrance?.let { player.moveTo(it) }
-                }
-            }
-        }
-
-        //Cosmic Entrance
-        if (def.options.contains(prayOption)) {
-            on_obj_option(obj = ruin, option = prayOption) {
-                    altar.entrance?.let { player.moveTo(it) }
+// Handle het gebruik van een talisman op optionRuin om naar respective altar te teleporteren
+optionRuin.let { ruinId ->
+    Altar.values.forEach { altar ->
+        altar.talisman?.let { talisman ->
+            on_item_on_obj(obj = ruinId, item = talisman, lineOfSightDistance = 5) {
+                altar.entrance?.let { player.moveTo(it) }
             }
         }
     }
 
-    /**
-     * Handle the enabling of the Mysterious Ruins varbit when equipping
-     * the respective tiara
-     */
-    if (altar.tiara != null) {
-        on_item_equip(item = altar.tiara) {
+    // Handle de 'Enter'-option op optionRuin: bepaal op basis van actieve varbit welk altar
+    on_obj_option(obj = ruinId, option = enterOption) {
+        val activeAltar = Altar.values.firstOrNull { player.getVarbit(it.varbit) == 1 }
+        activeAltar?.entrance?.let { player.moveTo(it) }
+    }
+}
+
+// Handle equip/unequip van tiaras om varbit aan/uit te zetten
+Altar.values.forEach { altar ->
+    altar.tiara?.let {
+        on_item_equip(item = it) {
             player.setVarbit(altar.varbit, 1)
         }
-    }
-
-    /**
-     * Handle the disabling of the Mysterious Ruins varbit when removing
-     * the respective tiara
-     */
-    if (altar.tiara != null) {
-        on_item_unequip(item = altar.tiara) {
+        on_item_unequip(item = it) {
             player.setVarbit(altar.varbit, 0)
         }
     }
+}
 
-    /**
-     * Handle the crafting action
-     */
+// Handle het craften van runes bij elk altar
+Altar.values.forEach { altar ->
     on_obj_option(obj = altar.altar, option = altar.option) {
         player.queue {
             RunecraftAction.craftRune(this, altar.rune)
         }
     }
+}
 
-    /**
-     * Handle the exit portal for the altar
-     */
+// Handle de exit portals: exits teleporteren naar het exit-tile in Alter.kt
+Altar.values.forEach { altar ->
     if (altar.exitPortal != null && altar.exit != null) {
         on_obj_option(obj = altar.exitPortal, option = "use") {
             player.moveTo(altar.exit)
         }
     }
+}
 
-    /**
-     * Handle the locate option on a talisman
-     */
+// Handle de 'locate'-optie op een talisman (toont richting naar de optionRuin)
+Altar.values.forEach { altar ->
     altar.talisman?.let {
         on_item_option(item = it, option = "locate") {
-
-            // The tile of the ruins
-            val tile = altar.exit!!
+            val tile = altar.exit!!  // richting bepalen aan de hand van elke altar's exit
             val pos = player.tile
-
-            // The direction of the altar
-            val direction : String = when {
+            val direction: String = when {
                 pos.z > tile.z && pos.x - 1 > tile.x -> "south-west"
                 pos.x < tile.x && pos.z > tile.z -> "south-east"
                 pos.x > tile.x + 1 && pos.z < tile.z -> "north-west"
@@ -100,7 +81,6 @@ Altar.values.forEach { altar ->
                 pos.x > tile.x + 1 -> "west"
                 else -> "unknown"
             }
-
             player.message("The talisman pulls towards the $direction.")
         }
     }
