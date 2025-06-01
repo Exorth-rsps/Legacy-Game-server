@@ -56,7 +56,7 @@ private val TREES = setOf(
     Tree(TreeType.MAGIC, obj = 1761, trunk = 9713), //Magic
     Tree(TreeType.MAGIC, obj = 10834, trunk = 9713),//Magic
     Tree(TreeType.REDWOOD, obj = 29668, trunk = 29669),
-    Tree(TreeType.REDWOOD, obj = 29670, trunk = 29671)
+    Tree(TreeType.REDWOOD, obj = 29670, trunk = 29669)
 )
 
 TREES.forEach { tree ->
