@@ -19,7 +19,7 @@ enum class KeyChest(
     MUDDYCHEST(
         intArrayOf(Objs.CLOSED_CHEST_375),
         Items.MUDDY_KEY,
-        respawnCycles = 300,
+        respawnCycles = 30,
         attemptMsg = "Lock on the muddy chest",
         steals = ChestRewards.muddy_chest
     );
