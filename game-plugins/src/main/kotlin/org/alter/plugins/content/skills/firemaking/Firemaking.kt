@@ -40,7 +40,7 @@ object Firemaking {
             }
 
             val level = player.getSkills().getCurrentLevel(Skills.FIREMAKING)
-            if(level.interpolate(minChance = 40, maxChance = 120, minLvl = 1, maxLvl = 99, cap = 255)) {
+            if(level.interpolate(minChance = 20, maxChance = 100, minLvl = 1, maxLvl = 99, cap = 255)) {
                 player.addXp(Skills.FIREMAKING, log.xp)
 
                 val world = player.world
