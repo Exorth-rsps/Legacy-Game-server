@@ -77,10 +77,6 @@ ids.forEach {
             blockSound = Sound.DRAGON_HIT
             deathSound = Sound.DRAGON_DEATH
         }
-        aggro {
-            radius = 5
-            searchDelay = 1
-        }
 
     }
 }
