@@ -3,7 +3,7 @@ package org.alter.plugins.content.npcs.ogres;
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.OGRE_1153
+    Npcs.OGRE_2233
 )
 
 val table = DropTableFactory
