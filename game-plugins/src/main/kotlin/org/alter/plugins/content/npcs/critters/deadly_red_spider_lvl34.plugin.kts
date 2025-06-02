@@ -65,7 +65,7 @@ ids.forEach {
             defenceRanged = 16
         }
          aggro {
-             radius = 5
+             radius = 3
              searchDelay = 1
              aggroTimer = 50
         }
