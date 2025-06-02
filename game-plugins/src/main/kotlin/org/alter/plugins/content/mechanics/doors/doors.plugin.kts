@@ -20,7 +20,7 @@ val changesBeforeStick: Int
     get() = safeProperty(CHANGES_BEFORE_STICK_TAG, 5)
 
 val resetStickDelay: Int
-    get() = safeProperty(RESET_STICK_DELAY_TAG, 10)
+    get() = safeProperty(RESET_STICK_DELAY_TAG, 100)
 
 load_service(DoorService())
 
