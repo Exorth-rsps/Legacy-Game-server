@@ -74,7 +74,7 @@ ids.forEach {
         anims {
             attack = Animation.GIANT_SPIDER_ATTACK
             block = Animation.GIANT_SPIDER_DEFEND
-            death = Animation.BRINE_RAT_DEATH
+            death = Animation.GIANT_SPIDER_DEATH
         }
 
         sound {
