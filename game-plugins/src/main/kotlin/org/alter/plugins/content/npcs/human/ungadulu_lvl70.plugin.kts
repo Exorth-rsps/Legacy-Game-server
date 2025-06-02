@@ -50,7 +50,7 @@ ids.forEach {
     set_combat_def(it) {
         configs {
             attackSpeed = 4
-            respawnDelay = 25
+            respawnDelay = 300
             poisonChance = 0.0
             venomChance = 0.0
         }
