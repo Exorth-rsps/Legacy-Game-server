@@ -55,19 +55,23 @@ fun meleeAttack(npc: Npc, target: Pawn) {
 }
 
 fun fireAttack(npc: Npc, target: Pawn) {
+
     val minHit = 4
     val maxHit = 16
     val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC)
+
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.HUMAN_STAFF_BASH)
     npc.graphic(Graphic.FIRE_WAVE_CAST)
     world.spawn(projectile)
     val hitDelay = RangedCombatStrategy.getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
+
     if (MagicCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
         target.hit(damage = world.random(minHit..maxHit), type = HitType.HIT, delay = hitDelay)
         target.graphic(id = Graphic.FIRE_WAVE_HIT, height = 124, delay = hitDelay)
     } else {
         target.hit(damage = 0, type = HitType.BLOCK, delay = hitDelay)
+
     }
 }
 
@@ -80,5 +84,6 @@ fun healSelf(npc: Npc) {
     if (actualHeal > 0) {
         npc.hit(damage = -actualHeal, type = HitType.NPC_HEAL)
     }
+
 }
 
