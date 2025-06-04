@@ -6,13 +6,13 @@ import org.alter.game.model.combat.CombatStyle
 import org.alter.game.model.entity.Npc
 import org.alter.game.model.entity.Pawn
 import org.alter.plugins.content.combat.*
-import org.alter.plugins.content.combat.formula.MagicCombatFormula
 import org.alter.plugins.content.combat.formula.MeleeCombatFormula
+import org.alter.plugins.content.combat.formula.MagicCombatFormula
 import org.alter.plugins.content.combat.strategy.RangedCombatStrategy
 import org.alter.api.ProjectileType
 import org.alter.api.HitType
-import org.alter.api.Animation
-import org.alter.api.Graphic
+import org.alter.api.cfg.Animation
+import org.alter.api.cfg.Graphic
 
 on_npc_combat(Npcs.UNGADULU) {
     npc.queue {
@@ -55,15 +55,23 @@ fun meleeAttack(npc: Npc, target: Pawn) {
 }
 
 fun fireAttack(npc: Npc, target: Pawn) {
+
+    val minHit = 4
+    val maxHit = 16
+
     val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC)
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.HUMAN_STAFF_BASH)
     npc.graphic(Graphic.FIRE_WAVE_CAST)
     world.spawn(projectile)
     val hitDelay = RangedCombatStrategy.getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
-    val hit = npc.dealHit(target = target, formula = MagicCombatFormula(maxHit = 16), delay = hitDelay)
-    if (hit.landed()) {
-        target.graphic(id = Graphic.FIRE_WAVE_HIT, height = 124, delay = hit.getClientHitDelay())
+
+    if (MagicCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
+        target.hit(damage = world.random(minHit..maxHit), type = HitType.HIT, delay = hitDelay)
+        target.graphic(id = Graphic.FIRE_WAVE_HIT, height = 124, delay = hitDelay)
+    } else {
+        target.hit(damage = 0, type = HitType.BLOCK, delay = hitDelay)
+    
     }
 }
 
