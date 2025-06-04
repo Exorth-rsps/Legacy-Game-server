@@ -127,6 +127,94 @@ class ItemContainerTests {
         assertEquals(container[0]!!.amount, Int.MAX_VALUE)
     }
 
+    @Test
+    fun removeStackableAssureFullRemoval() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4152, amount = 3)
+
+        val tx = container.remove(item = 4152, amount = 3, assureFullRemoval = true)
+
+        assertTrue(tx.hasSucceeded())
+        assertEquals(3, tx.completed)
+        assertEquals(CAPACITY, container.freeSlotCount)
+        assertEquals(0, container.occupiedSlotCount)
+        assertNull(container[0])
+    }
+
+    @Test
+    fun removeStackableAssureFullRemovalFail() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4152, amount = 2)
+
+        val tx = container.remove(item = 4152, amount = 3, assureFullRemoval = true)
+
+        assertFalse(tx.hasSucceeded())
+        assertEquals(0, tx.completed)
+        assertEquals(27, container.freeSlotCount)
+        assertEquals(1, container.occupiedSlotCount)
+        assertNotNull(container[0])
+        assertEquals(2, container[0]!!.amount)
+    }
+
+    @Test
+    fun removeStackableLoosePartial() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4152, amount = 2)
+
+        val tx = container.remove(item = 4152, amount = 3, assureFullRemoval = false)
+
+        assertFalse(tx.hasSucceeded())
+        assertEquals(2, tx.completed)
+        assertEquals(CAPACITY, container.freeSlotCount)
+        assertEquals(0, container.occupiedSlotCount)
+        assertNull(container[0])
+    }
+
+    @Test
+    fun removeUnstackableAssureFullRemoval() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4151, amount = 3)
+
+        val tx = container.remove(item = 4151, amount = 2, assureFullRemoval = true)
+
+        assertTrue(tx.hasSucceeded())
+        assertEquals(2, tx.completed)
+        assertEquals(27, container.freeSlotCount)
+        assertEquals(1, container.occupiedSlotCount)
+        assertNull(container[0])
+        assertNull(container[1])
+        assertNotNull(container[2])
+    }
+
+    @Test
+    fun removeUnstackableAssureFullRemovalFail() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4151, amount = 1)
+
+        val tx = container.remove(item = 4151, amount = 2, assureFullRemoval = true)
+
+        assertFalse(tx.hasSucceeded())
+        assertEquals(0, tx.completed)
+        assertEquals(27, container.freeSlotCount)
+        assertEquals(1, container.occupiedSlotCount)
+        assertNotNull(container[0])
+    }
+
+    @Test
+    fun removeUnstackableLoosePartial() {
+        val container = ItemContainer(definitions, CAPACITY, ContainerStackType.NORMAL)
+        container.add(item = 4151, amount = 2)
+
+        val tx = container.remove(item = 4151, amount = 3, assureFullRemoval = false)
+
+        assertFalse(tx.hasSucceeded())
+        assertEquals(2, tx.completed)
+        assertEquals(CAPACITY, container.freeSlotCount)
+        assertEquals(0, container.occupiedSlotCount)
+        assertNull(container[0])
+        assertNull(container[1])
+    }
+
     companion object {
 
         private const val CAPACITY = 28
