@@ -300,7 +300,7 @@ class ItemContainer(val definitions: DefinitionSet, val key: ContainerKey) : Ite
             items[index] = item
             dirty = true
         } else {
-            logger.warn { "Invalid set(): slot index $index out of bounds (0..${capacity - 1}}), item=$item" }
+            logger.warn { "Invalid set(): slot index $index out of bounds (0..${capacity - 1}), item=$item" }
         }
     }
 
