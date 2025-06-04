@@ -59,7 +59,7 @@ fun fireAttack(npc: Npc, target: Pawn) {
     val minHit = 4
     val maxHit = 16
 
-    val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC)
+    val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC, delay = 51)
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.HUMAN_STAFF_BASH)
     npc.graphic(Graphic.FIRE_WAVE_CAST)
