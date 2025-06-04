@@ -60,7 +60,7 @@ fun flamesOfZamorak(npc: Npc, target: Pawn) {
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.GOD_SPELL)
     npc.graphic(Graphic.FLAMES_OF_ZAMORAK)
-    world.spawn(projectile)
+    //world.spawn(projectile)
     val hitDelay = RangedCombatStrategy.getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
     if (MagicCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
         target.hit(damage = world.random(minHit..maxHit), type = HitType.HIT, delay = hitDelay)
@@ -71,8 +71,8 @@ fun flamesOfZamorak(npc: Npc, target: Pawn) {
 }
 
 fun bloodBarrage(npc: Npc, target: Pawn) {
-    val minHit = 8
-    val maxHit = 25
+    val minHit = 4
+    val maxHit = 20
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.ANCIENT_SPELL_MULTI_CAST)
     val hitDelay = RangedCombatStrategy.getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
