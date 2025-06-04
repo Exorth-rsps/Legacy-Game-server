@@ -58,8 +58,8 @@ fun fireAttack(npc: Npc, target: Pawn) {
 
     val minHit = 4
     val maxHit = 16
+    val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC)
 
-    val projectile = npc.createProjectile(target, gfx = Graphic.FIRE_WAVE_PROJECTILE, type = ProjectileType.MAGIC, delay = 51)
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
     npc.animate(Animation.HUMAN_STAFF_BASH)
     npc.graphic(Graphic.FIRE_WAVE_CAST)
@@ -71,7 +71,7 @@ fun fireAttack(npc: Npc, target: Pawn) {
         target.graphic(id = Graphic.FIRE_WAVE_HIT, height = 124, delay = hitDelay)
     } else {
         target.hit(damage = 0, type = HitType.BLOCK, delay = hitDelay)
-    
+
     }
 }
 
@@ -80,7 +80,10 @@ fun healSelf(npc: Npc) {
     npc.animate(Animation.MONK_HEAL)
     npc.graphic(108, 10)
     val heal = world.random(5..10)
-    val newHp = (npc.getCurrentHp() + heal).coerceAtMost(npc.getMaxHp())
-    npc.setCurrentHp(newHp)
+    val actualHeal = (npc.getCurrentHp() + heal).coerceAtMost(npc.getMaxHp()) - npc.getCurrentHp()
+    if (actualHeal > 0) {
+        npc.hit(damage = -actualHeal, type = HitType.NPC_HEAL)
+    }
+
 }
 
