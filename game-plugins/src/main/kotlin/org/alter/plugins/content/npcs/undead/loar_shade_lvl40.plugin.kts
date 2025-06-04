@@ -3,8 +3,16 @@ package org.alter.plugins.content.npcs.undead;
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
+    Npcs.LOAR_SHADOW,
     Npcs.LOAR_SHADE
 )
+
+on_npc_combat(Npcs.LOAR_SHADOW) {
+    if (npc.getTransmogId() != Npcs.LOAR_SHADE) {
+        npc.setTransmogId(Npcs.LOAR_SHADE)
+    }
+    world.plugins.executeCombat(npc)
+}
 
 val table = DropTableFactory
 val droptable =
