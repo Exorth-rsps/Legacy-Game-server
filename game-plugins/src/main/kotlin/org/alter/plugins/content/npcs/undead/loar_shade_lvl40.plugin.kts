@@ -1,6 +1,5 @@
 package org.alter.plugins.content.npcs.undead;
 
-import org.alter.plugins.content.combat.isBeingAttacked
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
