@@ -6,6 +6,7 @@ import org.alter.game.model.Tile
 object Barrows {
     // bit flags for each brother in order: Dharok, Verac, Ahrim, Guthan, Karil, Torag
     val PROGRESS_ATTR = AttributeKey<Int>(persistenceKey = "barrows_progress")
+    val LAST_BROTHER_ATTR = AttributeKey<Int>(persistenceKey = "barrows_last")
 
     data class Brother(val id: Int, val mound: Tile, val crypt: Tile)
 
@@ -18,5 +19,6 @@ object Barrows {
         Brother(org.alter.api.cfg.Npcs.TORAG_THE_CORRUPTED, Tile(3553, 3282), Tile(3553, 9689, 3)),
     )
 
-    const val CHEST = 20973
+    const val CHEST = 20723
+    const val TUNNEL_INDEX = 5
 }
