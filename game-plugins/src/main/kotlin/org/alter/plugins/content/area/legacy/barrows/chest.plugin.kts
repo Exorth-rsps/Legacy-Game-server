@@ -1,6 +1,7 @@
 package org.alter.plugins.content.area.legacy.barrows
 
 import org.alter.api.cfg.Objs
+import org.alter.api.cfg.Items
 import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.drops.DropTableFactory
 import org.alter.plugins.content.drops.DropTableType
@@ -20,6 +21,7 @@ on_obj_option(obj = Objs.CHEST_20723, option = "open") {
             DropTableFactory.getDrop(player, Barrows.BROTHERS[last].id, DropTableType.CHEST)
                 ?.firstOrNull()?.let { player.inventory.add(it) }
         }
+
         player.attr.remove(Barrows.LAST_BROTHER_ATTR)
         player.message("You loot the chest and feel a strange power fade.")
         return@on_obj_option
