@@ -4,10 +4,12 @@ import org.alter.game.model.Tile
 import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.area.legacy.barrows.Barrows
 
+
 private val SARCOPHAGI = Barrows.SARCOPHAGUS_IDS
 
 SARCOPHAGI.forEachIndexed { index, sarc ->
     on_obj_option(obj = sarc, option = "search") {
+
         if (index == Barrows.TUNNEL_INDEX) {
             player.moveTo(Tile(3551, 9691))
             return@on_obj_option

@@ -8,8 +8,19 @@ on_item_option(item = Items.SPADE, "dig") {
     val loc = player.tile
 
     // 1) Barrows-logica: 1 loop, in plaats van twee
-    Barrows.BROTHERS.forEach { brother ->
+    Barrows.BROTHERS.forEachIndexed { index, brother ->
         if (loc.isWithinRadius(brother.mound, 1)) {
+
+            val flags = player.attr[Barrows.PROGRESS_ATTR] ?: 0
+            if (flags and (1 shl index) == 0) {
+                val alreadySpawned = world.npcs.any { it.owner == player && it.id == brother.id }
+                if (!alreadySpawned) {
+                    val npc = Npc(player, brother.id, brother.crypt, world)
+                    npc.respawns = false
+                    world.spawn(npc)
+                }
+            }
+
             player.moveTo(brother.crypt)
             return@on_item_option
         }
