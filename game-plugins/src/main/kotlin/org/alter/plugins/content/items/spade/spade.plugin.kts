@@ -1,7 +1,6 @@
 package org.alter.plugins.content.items.spade
 
 import org.alter.api.cfg.Items
-import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.area.legacy.barrows.Barrows
 
 on_item_option(item = Items.SPADE, "dig") {
@@ -11,14 +10,6 @@ on_item_option(item = Items.SPADE, "dig") {
     // 1) Barrows-logica: 1 loop, in plaats van twee
     Barrows.BROTHERS.forEach { brother ->
         if (loc.isWithinRadius(brother.mound, 1)) {
-            // Kijk eerst of er al een NPC bij de crypte staat:
-            val alreadySpawned = world.npcs.any { it.id == brother.id && it.tile == brother.crypt }
-            if (!alreadySpawned) {
-                // Spawn de Barrows-broeder als hij er nog niet is
-                val npc = Npc(brother.id, brother.crypt, world)
-                world.spawn(npc)
-            }
-            // Verplaats de speler naar de crypte, ongeacht of we net gespawnd hebben
             player.moveTo(brother.crypt)
             return@on_item_option
         }

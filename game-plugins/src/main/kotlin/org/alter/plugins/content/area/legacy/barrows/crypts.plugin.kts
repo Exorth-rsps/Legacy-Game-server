@@ -10,5 +10,6 @@ Barrows.BROTHERS.forEachIndexed { index, brother ->
         val killer = npc.damageMap.getMostDamage() as? Player ?: return@on_npc_death
         val flags = killer.attr[Barrows.PROGRESS_ATTR] ?: 0
         killer.attr[Barrows.PROGRESS_ATTR] = flags or (1 shl index)
+        killer.attr[Barrows.LAST_BROTHER_ATTR] = index
     }
 }
