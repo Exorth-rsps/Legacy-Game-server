@@ -172,6 +172,7 @@ object Animation {
 
 
     const val ABHORRENT_SPECTRE_ATTACK = 7550
+
     const val ABYSSAL_BLUDGEON_SPECIAL = 3299
     const val ABYSSAL_DAGGER_SPECIAL = 3300
     const val ABYSSAL_DEMON_ATTACK = 1537
@@ -1850,4 +1851,8 @@ object Animation {
     const val ROCK_GOLEM_ATTACK = 153
     const val ROCK_GOLEM_HIT = 154
     const val ROCK_GOLEM_DEATH = 156
+    const val ABOMINATION_ATTACK = 8028
+    const val ABOMINATION_RANGE_ATTACK = 8026
+    const val ABOMINATION_HIT = 8027
+    const val ABOMINATION_DEATH = 8024
 }

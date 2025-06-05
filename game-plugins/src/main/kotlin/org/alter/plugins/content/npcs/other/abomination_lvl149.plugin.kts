@@ -2,10 +2,12 @@ package org.alter.plugins.content.npcs.other
 
 import org.alter.plugins.content.combat.isBeingAttacked
 import org.alter.plugins.content.drops.DropTableFactory
+import org.alter.game.model.Tile
 
 set_multi_combat_region(region = 13472)
 
-spawn_npc(Npcs.ABOMINATION_8262, x = 2274, z = 4698, walkRadius = 5)
+spawn_npc(Npcs.ABOMINATION_8262, x = 3361, z = 10274, walkRadius = 5)
+
 
 val ids = intArrayOf(
     Npcs.ABOMINATION_8262
@@ -17,6 +19,7 @@ val npc =
         }
         main {
             total(10240)
+            nothing(12)
 
         }
 
@@ -39,7 +42,7 @@ ids.forEach {
 
         configs {
             attackSpeed = 5
-            respawnDelay = 300
+            respawnDelay = 3
             poisonChance = 0.0
             venomChance = 0.0
             followRange = 100
@@ -62,15 +65,15 @@ ids.forEach {
         }
 
         anims {
-            attack = Animation.CHROMATIC_DRAGON_HIT
-            block = Animation.CHROMATIC_DRAGON_HIT
-            death = Animation.CHROMATIC_DRAGON_DEATH
+            attack = Animation.ABOMINATION_ATTACK
+            block = Animation.ABOMINATION_HIT
+            death = Animation.ABOMINATION_DEATH
         }
 
         sound {
-            attackSound = Sound.DRAGON_ATTACK
-            blockSound = Sound.DRAGON_HIT
-            deathSound = Sound.DRAGON_DEATH
+            attackSound = Sound.SHADE_ATTACK
+            blockSound = Sound.SHADE_HIT
+            deathSound = Sound.SHADE_DEATH
         }
         aggro {
             radius = 10
