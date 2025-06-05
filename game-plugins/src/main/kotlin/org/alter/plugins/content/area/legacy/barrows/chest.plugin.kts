@@ -21,6 +21,8 @@ on_obj_option(obj = Objs.CHEST_20723, option = "open") {
             DropTableFactory.getDrop(player, Barrows.BROTHERS[last].id, DropTableType.CHEST)
                 ?.firstOrNull()?.let { player.inventory.add(it) }
         }
+
+        player.attr.remove(Barrows.LAST_BROTHER_ATTR)
         player.message("You loot the chest and feel a strange power fade.")
         return@on_obj_option
     }

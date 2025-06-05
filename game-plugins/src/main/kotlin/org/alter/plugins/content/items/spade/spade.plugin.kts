@@ -1,7 +1,6 @@
 package org.alter.plugins.content.items.spade
 
 import org.alter.api.cfg.Items
-import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.area.legacy.barrows.Barrows
 
 on_item_option(item = Items.SPADE, "dig") {
@@ -11,6 +10,7 @@ on_item_option(item = Items.SPADE, "dig") {
     // 1) Barrows-logica: 1 loop, in plaats van twee
     Barrows.BROTHERS.forEachIndexed { index, brother ->
         if (loc.isWithinRadius(brother.mound, 1)) {
+
             val flags = player.attr[Barrows.PROGRESS_ATTR] ?: 0
             if (flags and (1 shl index) == 0) {
                 val alreadySpawned = world.npcs.any { it.owner == player && it.id == brother.id }
@@ -20,6 +20,7 @@ on_item_option(item = Items.SPADE, "dig") {
                     world.spawn(npc)
                 }
             }
+
             player.moveTo(brother.crypt)
             return@on_item_option
         }

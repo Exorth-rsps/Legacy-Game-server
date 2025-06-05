@@ -1,18 +1,14 @@
 package org.alter.plugins.content.area.legacy.barrows
 
-import org.alter.api.cfg.Objs
+
 import org.alter.game.model.Tile
 import org.alter.game.model.entity.Npc
 
-private val SARCOPHAGI = intArrayOf(Objs.SARCOPHAGUS_20720, Objs.SARCOPHAGUS_20721, Objs.SARCOPHAGUS_20722)
+private val SARCOPHAGI = Barrows.SARCOPHAGUS_IDS
 
-SARCOPHAGI.forEach { sarc ->
+SARCOPHAGI.forEachIndexed { index, sarc ->
     on_obj_option(obj = sarc, option = "search") {
-        val index = Barrows.BROTHERS.indexOfFirst { player.tile.isWithinRadius(it.crypt, 2) }
-        if (index == -1) {
-            player.message("You find nothing of interest.")
-            return@on_obj_option
-        }
+
         if (index == Barrows.TUNNEL_INDEX) {
             player.moveTo(Tile(3551, 9691))
             return@on_obj_option
