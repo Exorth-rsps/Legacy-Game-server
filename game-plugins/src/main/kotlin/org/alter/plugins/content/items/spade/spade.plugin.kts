@@ -10,8 +10,6 @@ on_item_option(item = Items.SPADE, "dig") {
     // 1) Barrows-logica: 1 loop, in plaats van twee
     Barrows.BROTHERS.forEach { brother ->
         if (loc.isWithinRadius(brother.mound, 1)) {
-            player.attr[Barrows.PROGRESS_ATTR] = 0
-            player.attr.remove(Barrows.LAST_BROTHER_ATTR)
             player.moveTo(brother.crypt)
             return@on_item_option
         }
