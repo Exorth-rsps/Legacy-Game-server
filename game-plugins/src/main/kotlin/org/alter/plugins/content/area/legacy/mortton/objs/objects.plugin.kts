@@ -4,7 +4,13 @@ package org.alter.plugins.content.area.legacy.mortton.objs
  * @author Eikenb00m <https://github.com/eikenb00m>
  */
 on_obj_option(obj = Objs.STAIRS_4919, option = "Walk-Down") {
-    player.moveTo(3361, 10274, 0)
+    val locations = listOf(
+        Tile(x = 3361, z = 10274, height = 0),
+        Tile(x = 3363, z = 10274, height = 0),
+        Tile(x = 3359, z = 10272, height = 0),
+        Tile(x = 3361, z = 10270, height = 0)
+    )
+    player.moveTo(locations.random())
 }
 on_obj_option(obj = Objs.EXIT_47149, option = "Climb-Up") {
     player.moveTo(3454, 3242, 0)
