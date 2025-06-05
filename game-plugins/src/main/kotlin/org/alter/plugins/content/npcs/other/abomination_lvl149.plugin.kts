@@ -2,10 +2,22 @@ package org.alter.plugins.content.npcs.other
 
 import org.alter.plugins.content.combat.isBeingAttacked
 import org.alter.plugins.content.drops.DropTableFactory
+import org.alter.game.model.Tile
 
 set_multi_combat_region(region = 13472)
 
-spawn_npc(Npcs.ABOMINATION_8262, x = 2274, z = 4698, walkRadius = 5)
+spawn_npc(Npcs.ABOMINATION_8262, x = 3361, z = 10274, walkRadius = 5)
+
+val spawnLocations = listOf(
+    Tile(x = 3361, z = 10274, height = 0),
+    Tile(x = 3381, z = 10286, height = 0),
+    Tile(x = 3359, z = 10246, height = 0),
+    Tile(x = 3338, z = 10286, height = 0)
+)
+
+on_npc_spawn(npc = Npcs.ABOMINATION_8262) {
+    npc.moveTo(spawnLocations.random())
+}
 
 val ids = intArrayOf(
     Npcs.ABOMINATION_8262
