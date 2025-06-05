@@ -1,8 +1,9 @@
 package org.alter.plugins.content.area.legacy.barrows
 
-
 import org.alter.game.model.Tile
 import org.alter.game.model.entity.Npc
+import org.alter.plugins.content.area.legacy.barrows.Barrows
+
 
 private val SARCOPHAGI = Barrows.SARCOPHAGUS_IDS
 

@@ -21,6 +21,7 @@ object Barrows {
     )
 
     const val CHEST = 20723
+    const val TUNNEL_INDEX = 5
 
     val SARCOPHAGUS_IDS = intArrayOf(
         Objs.SARCOPHAGUS_20720,
