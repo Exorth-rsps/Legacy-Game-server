@@ -6,9 +6,9 @@ package org.alter.plugins.content.area.legacy.mortton.objs
 on_obj_option(obj = Objs.STAIRS_4919, option = "Walk-Down") {
     val locations = listOf(
         Tile(x = 3361, z = 10274, height = 0),
-        Tile(x = 3363, z = 10274, height = 0),
-        Tile(x = 3359, z = 10272, height = 0),
-        Tile(x = 3361, z = 10270, height = 0)
+        Tile(x = 3381, z = 10286, height = 0),
+        Tile(x = 3359, z = 10246, height = 0),
+        Tile(x = 3338, z = 10286, height = 0)
     )
     player.moveTo(locations.random())
 }
