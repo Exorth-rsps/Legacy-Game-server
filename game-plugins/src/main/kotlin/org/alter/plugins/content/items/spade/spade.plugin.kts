@@ -8,8 +8,9 @@ on_item_option(item = Items.SPADE, "dig") {
     val loc = player.tile
 
     // 1) Barrows-logica: 1 loop, in plaats van twee
-    Barrows.BROTHERS.forEach { brother ->
+    Barrows.BROTHERS.forEachIndexed { index, brother ->
         if (loc.isWithinRadius(brother.mound, 1)) {
+
             player.moveTo(brother.crypt)
             return@on_item_option
         }

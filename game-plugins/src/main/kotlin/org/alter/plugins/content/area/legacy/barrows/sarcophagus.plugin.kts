@@ -4,6 +4,7 @@ import org.alter.game.model.Tile
 import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.area.legacy.barrows.Barrows
 
+
 private val SARCOPHAGI = Barrows.SARCOPHAGUS_IDS
 
 SARCOPHAGI.forEachIndexed { index, sarc ->
@@ -24,6 +25,7 @@ SARCOPHAGI.forEachIndexed { index, sarc ->
                 npc.respawns = false
                 world.spawn(npc)
             }
+
         }
     }
 }

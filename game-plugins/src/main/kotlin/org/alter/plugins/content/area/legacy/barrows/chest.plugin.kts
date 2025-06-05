@@ -1,6 +1,8 @@
 package org.alter.plugins.content.area.legacy.barrows
 
 import org.alter.api.cfg.Objs
+
+import org.alter.api.cfg.Items
 import org.alter.game.model.entity.Npc
 import org.alter.plugins.content.drops.DropTableFactory
 import org.alter.plugins.content.drops.DropTableType
