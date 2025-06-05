@@ -40,7 +40,7 @@ fun meleeAttack(npc: Npc, target: Pawn) {
     val minHit = 5
     val maxHit = 17
     npc.prepareAttack(CombatClass.MELEE, CombatStyle.CRUSH, AttackStyle.ACCURATE)
-    npc.animate(Animation.CHROMATIC_DRAGON_HIT)
+    npc.animate(Animation.ABOMINATION_ATTACK)
     if (MeleeCombatFormula.getAccuracy(npc, target) >= world.randomDouble()) {
         target.hit(damage = world.random(minHit..maxHit), type = HitType.HIT, delay = 1)
     } else {
