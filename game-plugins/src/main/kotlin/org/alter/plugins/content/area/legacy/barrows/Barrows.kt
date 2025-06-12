@@ -31,5 +31,4 @@ object Barrows {
         Objs.SARCOPHAGUS_20771,
         Objs.SARCOPHAGUS_20721
     )
-
 }

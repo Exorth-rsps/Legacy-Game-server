@@ -24,6 +24,7 @@ private val brotherTables = arrayOf(
     DropTableFactory.build {
         main {
             total(128)
+
             obj(Items.DHAROKS_HELM, quantity = 1, slots = 1)
             obj(Items.DHAROKS_GREATAXE, quantity = 1, slots = 1)
             obj(Items.DHAROKS_PLATEBODY, quantity = 1, slots = 1)
@@ -44,6 +45,7 @@ private val brotherTables = arrayOf(
     DropTableFactory.build {
         main {
             total(128)
+
             obj(Items.AHRIMS_HOOD, quantity = 1, slots = 1)
             obj(Items.AHRIMS_STAFF, quantity = 1, slots = 1)
             obj(Items.AHRIMS_ROBETOP, quantity = 1, slots = 1)
