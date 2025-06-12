@@ -24,60 +24,62 @@ private val brotherTables = arrayOf(
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.DHAROKS_HELM)
-            obj(Items.DHAROKS_GREATAXE)
-            obj(Items.DHAROKS_PLATEBODY)
-            obj(Items.DHAROKS_PLATELEGS)
+
+            obj(Items.DHAROKS_HELM, quantity = 1, slots = 1)
+            obj(Items.DHAROKS_GREATAXE, quantity = 1, slots = 1)
+            obj(Items.DHAROKS_PLATEBODY, quantity = 1, slots = 1)
+            obj(Items.DHAROKS_PLATELEGS, quantity = 1, slots = 1)
             nothing(124)
         }
     },
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.VERACS_HELM)
-            obj(Items.VERACS_FLAIL)
-            obj(Items.VERACS_BRASSARD)
-            obj(Items.VERACS_PLATESKIRT)
+            obj(Items.VERACS_HELM, quantity = 1, slots = 1)
+            obj(Items.VERACS_FLAIL, quantity = 1, slots = 1)
+            obj(Items.VERACS_BRASSARD, quantity = 1, slots = 1)
+            obj(Items.VERACS_PLATESKIRT, quantity = 1, slots = 1)
             nothing(124)
         }
     },
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.AHRIMS_HOOD)
-            obj(Items.AHRIMS_STAFF)
-            obj(Items.AHRIMS_ROBETOP)
-            obj(Items.AHRIMS_ROBESKIRT)
+
+            obj(Items.AHRIMS_HOOD, quantity = 1, slots = 1)
+            obj(Items.AHRIMS_STAFF, quantity = 1, slots = 1)
+            obj(Items.AHRIMS_ROBETOP, quantity = 1, slots = 1)
+            obj(Items.AHRIMS_ROBESKIRT, quantity = 1, slots = 1)
             nothing(124)
         }
     },
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.GUTHANS_HELM)
-            obj(Items.GUTHANS_WARSPEAR)
-            obj(Items.GUTHANS_PLATEBODY)
-            obj(Items.GUTHANS_CHAINSKIRT)
+            obj(Items.GUTHANS_HELM, quantity = 1, slots = 1)
+            obj(Items.GUTHANS_WARSPEAR, quantity = 1, slots = 1)
+            obj(Items.GUTHANS_PLATEBODY, quantity = 1, slots = 1)
+            obj(Items.GUTHANS_CHAINSKIRT, quantity = 1, slots = 1)
             nothing(124)
         }
     },
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.KARILS_COIF)
-            obj(Items.KARILS_CROSSBOW)
-            obj(Items.KARILS_LEATHERTOP)
-            obj(Items.KARILS_LEATHERSKIRT)
+            obj(Items.KARILS_COIF, quantity = 1, slots = 1)
+            obj(Items.KARILS_CROSSBOW, quantity = 1, slots = 1)
+            obj(Items.KARILS_LEATHERTOP, quantity = 1, slots = 1)
+            obj(Items.KARILS_LEATHERSKIRT, quantity = 1, slots = 1)
             nothing(124)
         }
     },
     DropTableFactory.build {
         main {
             total(128)
-            obj(Items.TORAGS_HELM)
-            obj(Items.TORAGS_HAMMERS)
-            obj(Items.TORAGS_PLATEBODY)
-            obj(Items.TORAGS_PLATELEGS)
+            obj(Items.TORAGS_HELM, quantity = 1, slots = 1)
+            obj(Items.TORAGS_HAMMERS, quantity = 1, slots = 1)
+            obj(Items.TORAGS_PLATEBODY, quantity = 1, slots = 1)
+            obj(Items.TORAGS_PLATELEGS, quantity = 1, slots = 1)
             nothing(124)
         }
     }

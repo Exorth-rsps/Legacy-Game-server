@@ -36,6 +36,9 @@ on_command("varrock", Privilege.ADMIN_POWER, description = "Teleports you to var
 on_command("pk", Privilege.ADMIN_POWER, description = "Teleports you to the pkzone") {
     player.teleport(type = TeleportType.ARCEUUS, endTile = Tile (3420, 4063, 0))
 }
-on_command("barrows", Privilege.ADMIN_POWER, description = "Teleports you to the barrows") {
+on_command("mortton", Privilege.ADMIN_POWER, description = "Teleports you to morrton") {
     player.teleport(type = TeleportType.ARCEUUS, endTile = Tile (3520, 3285, 0))
+}
+on_command("barrows", Privilege.ADMIN_POWER, description = "Teleports you to the barrows") {
+    player.teleport(type = TeleportType.ARCEUUS, endTile = Tile (3565, 3290, 0))
 }
