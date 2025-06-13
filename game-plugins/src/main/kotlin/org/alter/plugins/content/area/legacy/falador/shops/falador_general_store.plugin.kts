@@ -13,4 +13,5 @@ create_shop("Falador General Store", CoinCurrency(), purchasePolicy = PurchasePo
     items[6] = ShopItem(Items.BRONZE_PICKAXE, 2, 25, 1)
     items[7] = ShopItem(Items.SPADE, 2, 9, 1)
     items[8] = ShopItem(Items.BUCKET, 2, 4, 1)
+    items[9] = ShopItem(Items.SPADE, 2, 10, 1)
 }
