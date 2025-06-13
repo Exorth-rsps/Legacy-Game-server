@@ -7,7 +7,7 @@ on_npc_option(npc = Npcs.BARTENDER_1320, option = "talk-to", lineOfSightDistance
 }
 
 suspend fun QueueTask.bartenderDialogue() {
-    chatNpc("What can I do yer for?")
+    chatNpc("What can I do for you?")
     when (options(
         "A glass of your finest ale please.",
         "Where an adventurer might make his fortune?",
