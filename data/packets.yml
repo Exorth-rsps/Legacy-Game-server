@@ -144,9 +144,9 @@ server-packets:
         type: BYTES
 
 
-#    - message: org.alter.game.message.impl.FriendListLoadedMessage
-#      type: VARIABLE_SHORT
-#      opcode: 73
+  - message: org.alter.game.message.impl.FriendListLoadedMessage
+    type: VARIABLE_SHORT
+    opcode: 73
 
   - message: org.alter.game.message.impl.UpdateRunEnergyMessage
     type: FIXED
@@ -1281,13 +1281,13 @@ client-packets:
       - name: unknown
         type: BYTE
 
-  #  - message: org.alter.game.message.impl.IgnoreListDeleteMessage
-  #    type: VARIABLE_BYTE
-  #    opcode: 86
-  #    length: -1
-  #    structure:
-  #      - name: name
-  #        type: STRING
+  - message: org.alter.game.message.impl.IgnoreListDeleteMessage
+    type: VARIABLE_BYTE
+    opcode: 86
+    length: -1
+    structure:
+      - name: name
+        type: STRING
 
   - message: org.alter.game.message.impl.IgnoreMessage # TODO: FREECAM_EXIT
     type: FIXED
@@ -1358,13 +1358,13 @@ client-packets:
       - name: x
         type: SHORT
 
-  #  - message: org.alter.game.message.impl.FriendListDeleteMessage
-  #    type: VARIABLE_BYTE
-  #    opcode: 43
-  #    length: -1
-  #    structure:
-  #      - name: name
-  #        type: STRING
+  - message: org.alter.game.message.impl.FriendListDeleteMessage
+    type: VARIABLE_BYTE
+    opcode: 43
+    length: -1
+    structure:
+      - name: name
+        type: STRING
   #
   - message: org.alter.game.message.impl.OpPlayerTMessage
     type: FIXED
@@ -1477,20 +1477,20 @@ client-packets:
         type: BYTE
         trans: NEGATE
 
-    #  - message: org.alter.game.message.impl.FriendListAddMessage
-    #    type: VARIABLE_BYTE
-    #    opcode: 50
-    #    length: -1
-    #    structure:
-    #      - name: name
-    #        type: STRING
-    #
-    #  - message: org.alter.game.message.impl.IgnoreListAddMessage
-    #    type: VARIABLE_BYTE
-    #    opcode: 11
-    #    structure:
-    #      - name: name
-    #        type: STRING
+  - message: org.alter.game.message.impl.FriendListAddMessage
+    type: VARIABLE_BYTE
+    opcode: 50
+    length: -1
+    structure:
+      - name: name
+        type: STRING
+
+  - message: org.alter.game.message.impl.IgnoreListAddMessage
+    type: VARIABLE_BYTE
+    opcode: 11
+    structure:
+      - name: name
+        type: STRING
 
     # @Done
   - message: org.alter.game.message.impl.IgnoreMessage # TODO: REFLECTION_CHECK_REPLY
