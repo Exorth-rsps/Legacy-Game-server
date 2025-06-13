@@ -3,7 +3,7 @@ package org.alter.plugins.content.npcs.undead
 import org.alter.plugins.content.drops.DropTableFactory
 
 val ids = intArrayOf(
-    Npcs.VYREWATCH_8256
+    Npcs.FERAL_VAMPYRE_3237
 )
 
 val table = DropTableFactory
@@ -13,8 +13,8 @@ val droptable =
             obj(Items.BONES, quantity = 1)
         }
         main {
-            total(256)
-            nothing(32)
+            total(128)
+            nothing(16)
         }
     }
 
@@ -34,18 +34,18 @@ on_npc_death(*ids) {
 ids.forEach {
     set_combat_def(it) {
         configs {
-            attackSpeed = 4
+            attackSpeed = 5
             respawnDelay = 40
             poisonChance = 0.0
             venomChance = 0.0
         }
         stats {
-            hitpoints = 80
-            attack = 70
-            strength = 70
-            defence = 65
-            magic = 60
-            ranged = 60
+            hitpoints = 55
+            attack = 50
+            strength = 48
+            defence = 45
+            magic = 1
+            ranged = 1
         }
 
         anims {
@@ -55,9 +55,9 @@ ids.forEach {
         }
 
         sound {
-            attackSound = Sound.VYREWATCH_VAMPIRE_ATTACK
-            blockSound = Sound.VYREWATCH_VAMPIRE_HIT
-            deathSound = Sound.VYREWATCH_VAMPIRE_DEATH
+            attackSound = Sound.VAMPIRE_ATTACK
+            blockSound = Sound.VAMPIRE_HIT
+            deathSound = Sound.VAMPIRE_DEATH
         }
     }
 }

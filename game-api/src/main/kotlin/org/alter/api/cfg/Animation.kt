@@ -1855,4 +1855,7 @@ object Animation {
     const val ABOMINATION_RANGE_ATTACK = 8026
     const val ABOMINATION_HIT = 8027
     const val ABOMINATION_DEATH = 8024
+    const val VYREWATCH_ATTACK = 8034
+    const val VYREWATCH_HIT = 8035
+    const val VYREWATCH_DEATH = 8033
 }
