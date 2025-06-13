@@ -1,7 +1,19 @@
 package org.alter.plugins.content.items.spade
 
+import org.alter.api.cfg.Items
+import org.alter.plugins.content.area.legacy.barrows.Barrows
+
 on_item_option(item = Items.SPADE, "dig") {
     player.animate(830)
+    val loc = player.tile
+
+    // 1) Barrows-logica: 1 loop, in plaats van twee
+    Barrows.BROTHERS.forEachIndexed { index, brother ->
+        if (loc.isWithinRadius(brother.mound, 4)) {
+            player.moveTo(brother.crypt)
+            return@on_item_option
+        }
+    }
     if (player.tile.x == 3229 && player.tile.z == 3209 && player.inventory.contains(Items.TREASURE_SCROLL)) {
         player.queue {
             player.inventory.remove(23067, 1)

@@ -35,25 +35,15 @@ suspend fun QueueTask.no_thank_you() {
 
 suspend fun QueueTask.teleport_me() {
     chatPlayer("Can you sail me to Mot'ton?", animation = 568)
-    //teleport(player)
-    chatNpc("No.... i cant at this moment!", animation = 554)
-    chatPlayer("Why not?", animation = 568)
-    chatNpc("I must first repair the ship!", animation = 554)
-    chatPlayer("....", animation = 568)
+    chatNpc("Have a good sail!", animation = 554)
+    teleport(player)
 }
 
-//fun teleport(p: Player) {
-//    p.queue {
-//        val npc = player.getInteractingNpc()
-//        player.lock = LockState.FULL
-//        npc.forceChat("Senventior Disthine Molenko")
-//        npc.graphic(108, 10)
-//        wait(3)
-//        player.graphic(109, 125) // This remains a projectile
-//        wait(2)
-//        player.graphic(110, 125)
-//        wait(2)
-//        player.moveTo(3616, 1245, 0)
-//        player.lock = LockState.NONE
-//    }
-//}
+fun teleport(p: Player) {
+    p.queue {
+        val npc = player.getInteractingNpc()
+        player.lock = LockState.FULL
+        player.moveTo(3616, 1245, 0)
+        player.lock = LockState.NONE
+    }
+}
