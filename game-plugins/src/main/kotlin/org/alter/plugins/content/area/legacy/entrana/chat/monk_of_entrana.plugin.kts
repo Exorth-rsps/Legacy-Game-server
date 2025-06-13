@@ -24,7 +24,7 @@ suspend fun QueueTask.dialog() {
 }
 
 suspend fun QueueTask.options(): Int = options(
-    "Can you sail me to Mot'ton? (Costs 1K)",
+    "Can you sail me to Mot'ton?",
     "No thank you."
 )
 
@@ -43,7 +43,7 @@ fun teleport(p: Player) {
     p.queue {
         val npc = player.getInteractingNpc()
         player.lock = LockState.FULL
-        player.moveTo(3616, 1245, 0)
+        player.moveTo(3521, 3285, 0)
         player.lock = LockState.NONE
     }
 }
