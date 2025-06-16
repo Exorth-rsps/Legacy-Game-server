@@ -1,0 +1,30 @@
+package org.alter.plugins.content.mechanics.random_events
+
+import org.alter.api.cfg.Items
+import org.alter.api.cfg.Npcs
+import org.alter.game.model.entity.Npc
+import org.alter.game.model.queue.QueueTask
+
+private val SANDWICH_REWARDS = intArrayOf(
+    Items.SANDWICH_LADY_HAT,
+    Items.SANDWICH_LADY_TOP,
+    Items.SANDWICH_LADY_BOTTOM,
+    Items.BAGUETTE
+)
+
+on_npc_option(npc = Npcs.SANDWICH_LADY, option = "talk-to") {
+    if (npc.owner != player) {
+        player.message("The Sandwich Lady is busy with someone else.")
+        return@on_npc_option
+    }
+    npc.timers.remove(IGNORE_EVENT_TIMER)
+    player.queue { sandwichDialog(npc) }
+}
+
+suspend fun QueueTask.sandwichDialog(npc: Npc) {
+    chatNpc("Fancy a snack? Here you go!", npc = npc.id)
+    val reward = SANDWICH_REWARDS.random()
+    player.inventory.add(reward)
+    chatNpc("Enjoy your treat.", npc = npc.id)
+    world.remove(npc)
+}
