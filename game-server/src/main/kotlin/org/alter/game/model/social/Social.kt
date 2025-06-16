@@ -9,10 +9,6 @@ import java.nio.file.Paths
 
 class Social {
 
-    private companion object {
-        const val WORLD_ID = 1
-    }
-
     private val friends = mutableListOf<String>()
     private val ignores = mutableListOf<String>()
 
@@ -136,5 +132,6 @@ fun sendPrivateMessage(
     }
     companion object {
         private val logger = KotlinLogging.logger{}
+        const val WORLD_ID = 1
     }
 }
