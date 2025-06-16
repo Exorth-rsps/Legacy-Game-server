@@ -20,15 +20,7 @@ first-launch-example
 /game.yml
 /dev-settings.yml
 
-.idea/workspace.xml
-.idea/vcs.xml
-.idea/misc.xml
-.idea/kotlinc.xml
-.idea/jarRepositories.xml
-.idea/icon.png
-.idea/gradle.xml
-.idea/compiler.xml
-.idea/icon.png
+.idea/
 data/inter.txt
 data/inter-share.txt
 data/bannedip

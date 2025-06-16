@@ -19,7 +19,8 @@ Due to the plugin capabilities, even owners without programming experience can j
   ![tutor1](https://raw.githubusercontent.com/AlterRSPS/Resources/main/docs/resources/ReadMe_Alter/tutor1.png)
 * Second paste `https://github.com/AlterRSPS/Alter` in URL Field and hit Clone. </br>
   ![tutor2](https://raw.githubusercontent.com/AlterRSPS/Resources/main/docs/resources/ReadMe_Alter/tuor2.png)
-* Hit `Clone` and Let the project fully load.
+* Hit `Clone` and let the project fully load.
+* If IntelliJ reports **Kotlin not configured**, remove the `.idea` folder and open the project again by selecting `build.gradle.kts`.
 * Now open the `2023-08-03-rev215.tar.gz` file that you downloaded. and drag out Xteas.json and Cache folder and pull it to `/Data/` Folder.
   ![tutor6](https://raw.githubusercontent.com/AlterRSPS/Resources/main/docs/resources/ReadMe_Alter/tutor6.png)
 - Xtea.json has to be in same folder like: Data /`api.yml` , `blocks.yml` , etc..
