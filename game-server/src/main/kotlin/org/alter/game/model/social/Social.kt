@@ -9,6 +9,10 @@ import java.nio.file.Paths
 
 class Social {
 
+    private companion object {
+        const val WORLD_ID = 1
+    }
+
     private val friends = mutableListOf<String>()
     private val ignores = mutableListOf<String>()
 
@@ -30,7 +34,7 @@ class Social {
         friends.forEach { name ->
             val user = world.getPlayerForName(name)
             if (user != null && !user.social.ignores.contains(player.username)) {
-                player.write(UpdateFriendListMessage(0, user.username, "", 304, 0, user.privilege.icon))
+                player.write(UpdateFriendListMessage(1, user.username, "", WORLD_ID, 0, user.privilege.icon))
             } else {
                 player.write(UpdateFriendListMessage(0, name, "", 0, 0, 0))
             }

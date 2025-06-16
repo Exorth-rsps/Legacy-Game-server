@@ -1488,6 +1488,7 @@ client-packets:
   - message: org.alter.game.message.impl.IgnoreListAddMessage
     type: VARIABLE_BYTE
     opcode: 11
+    length: -1
     structure:
       - name: name
         type: STRING
