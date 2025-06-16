@@ -560,16 +560,16 @@ server-packets:
       - name: rights
         type: BYTE
 #
-#  - message: org.alter.game.message.impl.UpdateIgnoreListMessage
-#    type: VARIABLE_SHORT
-#    opcode: 23
-#    structure:
-#      - name: online
-#        write: BYTE
-#      - name: username
-#        write: BYTES
-#      - name: previousUsername
-#        write: BYTES
+  - message: org.alter.game.message.impl.UpdateIgnoreListMessage
+    type: VARIABLE_SHORT
+    opcode: 23
+    structure:
+      - name: online
+        type: BYTE
+      - name: username
+        type: BYTES
+      - name: previousUsername
+        type: BYTES
 #
 #  - message: org.alter.game.message.impl.MessagePrivateReceiverMessage
 #    type: VARIABLE_SHORT
