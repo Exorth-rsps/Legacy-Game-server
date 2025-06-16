@@ -548,17 +548,17 @@ server-packets:
     opcode: 90
     structure:
       - name: online
-        write: BYTE
+        type: BYTE
       - name: username
-        write: BYTES
+        type: BYTES
       - name: previousUsername
-        write: BYTES
+        type: BYTES
       - name: world
-        write: SHORT
+        type: SHORT
       - name: clanRank
-        write: BYTE
+        type: BYTE
       - name: rights
-        write: BYTE
+        type: BYTE
 #
 #  - message: org.alter.game.message.impl.UpdateIgnoreListMessage
 #    type: VARIABLE_SHORT
