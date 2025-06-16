@@ -20,27 +20,23 @@ class Social {
      * [0] = Current one, And move [0] => [1] When user changes name, Just need verification on how many users does Gagex store.
      */
     fun pushFriends(player: Player) {
-        if (friends.isEmpty()) {
-            friends.add("TEMP_FIX_DONT_REMOVE")
-        }
         val world = player.world
 
-        if (friends.isEmpty() || true) {
+        if (friends.isEmpty()) {
             player.write(FriendListLoadedMessage())
-        } else {
-            friends.forEach {
-                val user = world.getPlayerForName(it)
-                if (user != null && !user.social.ignores.contains(player.username))
-                    player.write(UpdateFriendListMessage(0, user.username, "", 304, 0, 0))
-                else
-                /**
-                 * @TODO
-                 * When implementing name change -> save old user name for [previousUsername]
-                 * Actually forgot if it was a list of usernames or only latest
-                 */
-                player.write(UpdateFriendListMessage(0, it, "", 0, 0, 0))
+            return
+        }
+
+        friends.forEach { name ->
+            val user = world.getPlayerForName(name)
+            if (user != null && !user.social.ignores.contains(player.username)) {
+                player.write(UpdateFriendListMessage(0, user.username, "", 304, 0, user.privilege.icon))
+            } else {
+                player.write(UpdateFriendListMessage(0, name, "", 0, 0, 0))
             }
         }
+
+        player.write(FriendListLoadedMessage())
     }
 
     /**

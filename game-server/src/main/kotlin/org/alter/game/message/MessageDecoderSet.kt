@@ -101,11 +101,11 @@ class MessageDecoderSet {
         put(OpPlayer8Message::class.java, OpPlayer8Decoder(), OpPlayer8Handler(), structures)
         put(OpPlayerTMessage::class.java, OpPlayerTDecoder(), OpPlayerTHandler(), structures)
 
-        //put(FriendListAddMessage::class.java, FriendListAddDecoder(), FriendListAddHandler(), structures)
-        //put(FriendListDeleteMessage::class.java, FriendListDeleteDecoder(), FriendListDeleteHandler(), structures)
-        //put(IgnoreListAddMessage::class.java, IgnoreListAddDecoder(), IgnoreListAddHandler(), structures)
-        //put(IgnoreListDeleteMessage::class.java, IgnoreListDeleteDecoder(), IgnoreListDeleteHandler(), structures)
-        //put(MessagePrivateSenderMessage::class.java, MessagePrivateSenderDecoder(), MessagePrivateSenderHandler(), structures)
+        put(FriendListAddMessage::class.java, FriendListAddDecoder(), FriendListAddHandler(), structures)
+        put(FriendListDeleteMessage::class.java, FriendListDeleteDecoder(), FriendListDeleteHandler(), structures)
+        put(IgnoreListAddMessage::class.java, IgnoreListAddDecoder(), IgnoreListAddHandler(), structures)
+        put(IgnoreListDeleteMessage::class.java, IgnoreListDeleteDecoder(), IgnoreListDeleteHandler(), structures)
+        put(MessagePrivateSenderMessage::class.java, MessagePrivateSenderDecoder(), MessagePrivateSenderHandler(), structures)
 
     }
 
