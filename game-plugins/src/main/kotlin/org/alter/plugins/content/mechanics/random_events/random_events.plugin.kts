@@ -51,8 +51,7 @@ on_timer(IGNORE_EVENT_TIMER) {
     world.remove(npc)
 }
 
-fun spawnRandomEvent(p: Player) {
-    val npcId = EVENTS.random()
+fun spawnRandomEvent(p: Player, npcId: Int = EVENTS.random()) {
     val tile = p.tile.transform(1, 0)
     val npc = Npc(npcId, tile, world)
     npc.owner = p
