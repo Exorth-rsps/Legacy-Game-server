@@ -14,7 +14,7 @@ object XpReward {
     const val INTERFACE_ID = 240
     const val CONFIRM_COMPONENT = 26
 
-    private val COMPONENT_TO_SKILL = mapOf(
+    val COMPONENT_TO_SKILL = mapOf(
         2 to Skills.ATTACK,
         3 to Skills.STRENGTH,
         4 to Skills.RANGED,

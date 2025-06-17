@@ -1,11 +1,10 @@
 package org.alter.plugins.content.interfaces.xpreward
 import org.alter.game.model.attr.XP_REWARD_ITEM
 import org.alter.game.model.attr.XP_REWARD_SKILL
-import org.alter.api.ext.addXp
 import org.alter.api.ext.message
 import org.alter.api.ext.closeInterface
 import org.alter.api.ext.playSound
-import org.alter.game.model.entity.Sound
+import org.alter.api.cfg.Sound
 
 XpReward.COMPONENT_TO_SKILL.forEach { (component, skill) ->
     on_button(interfaceId = XpReward.INTERFACE_ID, component = component) {
