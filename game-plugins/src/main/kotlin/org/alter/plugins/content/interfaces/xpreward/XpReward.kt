@@ -14,6 +14,12 @@ object XpReward {
     const val INTERFACE_ID = 240
     const val CONFIRM_COMPONENT = 26
 
+    /**
+     * Mapping of interface component ids to the skill they represent.
+     * Annotated with [JvmField] so scripts can access the map directly
+     * without going through the generated getter.
+     */
+    @JvmField
     val COMPONENT_TO_SKILL = mapOf(
         2 to Skills.ATTACK,
         3 to Skills.STRENGTH,
