@@ -458,7 +458,7 @@ open class Player(world: World) : Pawn(world) {
 
         initiated = true
         world.plugins.executeLogin(this)
-        social.updateStatus(this)
+        social.updateStatus(this, true)
     }
 
     /**
@@ -483,7 +483,7 @@ open class Player(world: World) : Pawn(world) {
         world.instanceAllocator.logout(this)
         world.plugins.executeLogout(this)
         world.unregister(this)
-        social.updateStatus(this)
+        social.updateStatus(this, false)
     }
 
     fun calculateWeight() {

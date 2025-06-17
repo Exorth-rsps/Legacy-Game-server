@@ -59,7 +59,7 @@ class Social {
         }
         friends.add(name)
         pushFriends(player)
-        updateStatus(player)
+        updateStatus(player, online = true)
     }
 
     fun addIgnore(player: Player, name: String) {
@@ -73,30 +73,39 @@ class Social {
         }
         ignores.add(name)
         pushIgnores(player)
-        updateStatus(player)
+        updateStatus(player, online = true)
     }
 
     fun deleteIgnore(player: Player, name: String) {
         ignores.remove(name)
         pushIgnores(player)
-        updateStatus(player)
+        updateStatus(player, online = true)
     }
 
     fun deleteFriend(player: Player, name: String) {
         friends.remove(name)
         pushFriends(player)
-        updateStatus(player)
+        updateStatus(player, online = true)
     }
 
     //TODO Add support for having private off/friends/etc...
-    fun updateStatus(player: Player) {
-        player.world.players.forEach {
-            if (it == player)
+    fun updateStatus(player: Player, online: Boolean) {
+        player.world.players.forEach { other ->
+            if (other == player)
                 return@forEach
-            if (it.social.ignores.contains(player.username))
+            if (other.social.ignores.contains(player.username))
                 return@forEach
-            if (it.social.friends.contains(player.username)) {
-                it.social.pushFriends(it)
+            if (other.social.friends.contains(player.username)) {
+                other.write(
+                    UpdateFriendListMessage(
+                        if (online) 1 else 0,
+                        player.username,
+                        "",
+                        WORLD_ID,
+                        0,
+                        player.privilege.icon
+                    )
+                )
             }
         }
     }
