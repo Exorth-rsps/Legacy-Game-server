@@ -14,10 +14,10 @@ on_npc_option(npc = Npcs.GENIE, option = "talk-to") {
     player.queue { genieDialog(npc) }
 }
 
-suspend fun QueueTask.genieDialog(npc: Npc) {
-    chatNpc("Greetings adventurer, I have a gift for you.", npc = npc.id)
+suspend fun QueueTask.genieDialog(eventNpc: Npc) {
+    chatNpc("Greetings adventurer, I have a gift for you.", npc = eventNpc.id)
     chatPlayer("Thanks!")
     player.inventory.add(Items.LAMP)
-    chatNpc("Rub the lamp to gain some experience.", npc = npc.id)
-    world.remove(npc)
+    chatNpc("Rub the lamp to gain some experience.", npc = eventNpc.id)
+    world.remove(eventNpc)
 }

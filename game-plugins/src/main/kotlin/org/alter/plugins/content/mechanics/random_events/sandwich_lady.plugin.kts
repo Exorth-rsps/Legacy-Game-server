@@ -21,10 +21,10 @@ on_npc_option(npc = Npcs.SANDWICH_LADY, option = "talk-to") {
     player.queue { sandwichDialog(npc) }
 }
 
-suspend fun QueueTask.sandwichDialog(npc: Npc) {
-    chatNpc("Fancy a snack? Here you go!", npc = npc.id)
+suspend fun QueueTask.sandwichDialog(eventNpc: Npc) {
+    chatNpc("Fancy a snack? Here you go!", npc = eventNpc.id)
     val reward = SANDWICH_REWARDS.random()
     player.inventory.add(reward)
-    chatNpc("Enjoy your treat.", npc = npc.id)
-    world.remove(npc)
+    chatNpc("Enjoy your treat.", npc = eventNpc.id)
+    world.remove(eventNpc)
 }

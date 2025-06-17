@@ -17,8 +17,7 @@ private val EVENTS = intArrayOf(
     Npcs.GENIE,
     Npcs.LEO,
     Npcs.FREAKY_FORESTER_6748,
-    Npcs.SANDWICH_LADY,
-    Npcs.MR_MORDAUT
+    Npcs.SANDWICH_LADY
 )
 
 fun spawnRandomEvent(player: Player, npcId: Int = EVENTS.random()) {

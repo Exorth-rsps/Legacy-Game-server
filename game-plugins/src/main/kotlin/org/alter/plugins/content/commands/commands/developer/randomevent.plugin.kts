@@ -16,7 +16,6 @@ on_command("randomevent", Privilege.DEV_POWER, description = "Spawn a random eve
             "gravedigger", "leo" -> Npcs.LEO
             "freaky forester", "forester" -> Npcs.FREAKY_FORESTER_6748
             "sandwich lady", "sandwich" -> Npcs.SANDWICH_LADY
-            "surprise exam", "mr mordaut", "exam" -> Npcs.MR_MORDAUT
             else -> -1
         }
         if (npcId == -1) {

@@ -20,10 +20,10 @@ on_npc_option(npc = Npcs.FREAKY_FORESTER_6748, option = "talk-to") {
     player.queue { foresterDialog(npc) }
 }
 
-suspend fun QueueTask.foresterDialog(npc: Npc) {
-    chatNpc("Good job hunting! Take this.", npc = npc.id)
+suspend fun QueueTask.foresterDialog(eventNpc: Npc) {
+    chatNpc("Good job hunting! Take this.", npc = eventNpc.id)
     val reward = LEDERHOSEN_REWARDS.random()
     player.inventory.add(reward)
-    chatNpc("Wear it with pride.", npc = npc.id)
-    world.remove(npc)
+    chatNpc("Wear it with pride.", npc = eventNpc.id)
+    world.remove(eventNpc)
 }

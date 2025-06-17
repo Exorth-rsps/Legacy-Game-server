@@ -22,11 +22,11 @@ on_npc_option(npc = Npcs.LEO, option = "talk-to") {
     player.queue { gravediggerDialog(npc) }
 }
 
-suspend fun QueueTask.gravediggerDialog(npc: Npc) {
-    chatNpc("Thanks for helping with the graves.", npc = npc.id)
+suspend fun QueueTask.gravediggerDialog(eventNpc: Npc) {
+    chatNpc("Thanks for helping with the graves.", npc = eventNpc.id)
     chatPlayer("Happy to help!")
     val reward = ZOMBIE_REWARDS.random()
     player.inventory.add(reward)
-    chatNpc("Here, take this as a reward.", npc = npc.id)
-    world.remove(npc)
+    chatNpc("Here, take this as a reward.", npc = eventNpc.id)
+    world.remove(eventNpc)
 }
