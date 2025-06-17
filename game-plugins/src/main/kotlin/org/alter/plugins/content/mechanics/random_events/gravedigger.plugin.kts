@@ -14,12 +14,13 @@ private val ZOMBIE_REWARDS = intArrayOf(
 )
 
 on_npc_option(npc = Npcs.LEO, option = "talk-to") {
-    if (npc.owner != player) {
+    val eventNpc = player.getInteractingNpc()
+    if (eventNpc.owner != player) {
         player.message("Leo isn't paying attention to you.")
         return@on_npc_option
     }
-    npc.timers.remove(IGNORE_EVENT_TIMER)
-    player.queue { gravediggerDialog(npc) }
+    eventNpc.timers.remove(IGNORE_EVENT_TIMER)
+    player.queue { gravediggerDialog(eventNpc) }
 }
 
 suspend fun QueueTask.gravediggerDialog(eventNpc: Npc) {

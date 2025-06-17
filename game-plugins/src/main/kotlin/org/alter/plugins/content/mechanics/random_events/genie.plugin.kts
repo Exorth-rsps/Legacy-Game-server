@@ -6,12 +6,13 @@ import org.alter.game.model.entity.Npc
 import org.alter.game.model.queue.QueueTask
 
 on_npc_option(npc = Npcs.GENIE, option = "talk-to") {
-    if (npc.owner != player) {
+    val eventNpc = player.getInteractingNpc()
+    if (eventNpc.owner != player) {
         player.message("The genie ignores you.")
         return@on_npc_option
     }
-    npc.timers.remove(IGNORE_EVENT_TIMER)
-    player.queue { genieDialog(npc) }
+    eventNpc.timers.remove(IGNORE_EVENT_TIMER)
+    player.queue { genieDialog(eventNpc) }
 }
 
 suspend fun QueueTask.genieDialog(eventNpc: Npc) {

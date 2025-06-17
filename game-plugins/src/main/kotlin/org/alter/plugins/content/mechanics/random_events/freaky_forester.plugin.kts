@@ -12,12 +12,13 @@ private val LEDERHOSEN_REWARDS = intArrayOf(
 )
 
 on_npc_option(npc = Npcs.FREAKY_FORESTER_6748, option = "talk-to") {
-    if (npc.owner != player) {
+    val eventNpc = player.getInteractingNpc()
+    if (eventNpc.owner != player) {
         player.message("The forester doesn't seem to notice you.")
         return@on_npc_option
     }
-    npc.timers.remove(IGNORE_EVENT_TIMER)
-    player.queue { foresterDialog(npc) }
+    eventNpc.timers.remove(IGNORE_EVENT_TIMER)
+    player.queue { foresterDialog(eventNpc) }
 }
 
 suspend fun QueueTask.foresterDialog(eventNpc: Npc) {

@@ -13,12 +13,13 @@ private val SANDWICH_REWARDS = intArrayOf(
 )
 
 on_npc_option(npc = Npcs.SANDWICH_LADY, option = "talk-to") {
-    if (npc.owner != player) {
+    val eventNpc = player.getInteractingNpc()
+    if (eventNpc.owner != player) {
         player.message("The Sandwich Lady is busy with someone else.")
         return@on_npc_option
     }
-    npc.timers.remove(IGNORE_EVENT_TIMER)
-    player.queue { sandwichDialog(npc) }
+    eventNpc.timers.remove(IGNORE_EVENT_TIMER)
+    player.queue { sandwichDialog(eventNpc) }
 }
 
 suspend fun QueueTask.sandwichDialog(eventNpc: Npc) {
