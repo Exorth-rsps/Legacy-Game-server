@@ -52,6 +52,7 @@ object XpReward {
         p.setInterfaceUnderlay(-1, -1)
         p.openInterface(INTERFACE_ID, InterfaceDestination.MAIN_SCREEN)
         p.setComponentText(INTERFACE_ID, 0, "Choose the stat you wish to be advanced!")
+        p.setComponentText(INTERFACE_ID, CONFIRM_COMPONENT, "Confirm")
         COMPONENT_TO_SKILL.keys.forEach { comp ->
             p.setInterfaceEvents(INTERFACE_ID, comp, 1..1, InterfaceEvent.ClickOp1)
         }
