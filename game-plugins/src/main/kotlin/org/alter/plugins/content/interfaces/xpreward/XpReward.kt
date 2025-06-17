@@ -55,6 +55,7 @@ object XpReward {
         COMPONENT_TO_SKILL.keys.forEach { comp ->
             p.setInterfaceEvents(INTERFACE_ID, comp, 1..1, InterfaceEvent.ClickOp1)
         }
+        p.setInterfaceEvents(INTERFACE_ID, 1, 1..1, InterfaceEvent.ClickOp1)
         p.setInterfaceEvents(INTERFACE_ID, CONFIRM_COMPONENT, 1..1, InterfaceEvent.ClickOp1)
     }
 }

@@ -13,6 +13,10 @@ XpReward.COMPONENT_TO_SKILL.forEach { (component, skill) ->
     }
 }
 
+on_button(interfaceId = XpReward.INTERFACE_ID, component = 1) {
+    player.closeInterface(XpReward.INTERFACE_ID)
+}
+
 on_button(interfaceId = XpReward.INTERFACE_ID, component = XpReward.CONFIRM_COMPONENT) {
     val item = player.attr[XP_REWARD_ITEM] ?: return@on_button
     val skill = player.attr[XP_REWARD_SKILL]
