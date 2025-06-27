@@ -1858,4 +1858,11 @@ object Animation {
     const val VYREWATCH_ATTACK = 8034
     const val VYREWATCH_HIT = 8035
     const val VYREWATCH_DEATH = 8033
+    const val GIANT_ROC_ATTACK = 5024
+    const val GIANT_ROC_RANGED = 5031
+    const val GIANT_ROC_DEATH = 5033
+    const val GIANT_ROC_SPAWN = 5028
+    const val GIANT_ROC_HIT = 5029
+    const val GIANT_ROC_DEFEND = 5032
+
 }
