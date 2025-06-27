@@ -5,6 +5,8 @@ import org.alter.plugins.content.interfaces.attack.AttackTab.ATTACK_STYLE_VARP
 import org.alter.plugins.content.interfaces.attack.AttackTab.DISABLE_AUTO_RETALIATE_VARP
 import org.alter.plugins.content.interfaces.attack.AttackTab.SPECIAL_ATTACK_VARP
 import org.alter.plugins.content.interfaces.attack.AttackTab.setEnergy
+import org.alter.api.InterfaceDestination
+import org.alter.api.cfg.Varbit
 import org.alter.game.model.attr.NEW_ACCOUNT_ATTR
 import org.alter.plugins.content.combat.specialattack.SpecialAttacks
 
@@ -90,4 +92,22 @@ on_equip_to_slot(EquipmentType.WEAPON.id) {
  */
 on_logout {
     player.setVarp(SPECIAL_ATTACK_VARP, 0)
+}
+
+/**
+ * Toggle defensive spell casting.
+ */
+on_button(interfaceId = ATTACK_TAB_INTERFACE_ID, component = 21) {
+    player.toggleVarbit(Varbit.DEFENSIVE_CASTING_MODE)
+}
+
+/**
+ * Open spellbook to select an autocast spell.
+ */
+on_button(interfaceId = ATTACK_TAB_INTERFACE_ID, component = 26) {
+    if (!player.lock.canInterfaceInteract()) {
+        return@on_button
+    }
+    player.setVarbit(Varbit.AUTOCAST_SPELL, 0)
+    player.openInterface(InterfaceDestination.MAGIC)
 }
