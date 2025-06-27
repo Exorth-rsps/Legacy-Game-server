@@ -24,6 +24,10 @@ table.register(droptable, *ids)
 
 on_npc_pre_death(*ids) {
     val p = npc.damageMap.getMostDamage()!! as Player
+    val playerName = p.username
+    p.world.players.forEach {
+        it.message("<col=8900331>[GLOBAL]</col> Giant Roc has been slain by $playerName!", ChatMessageType.CONSOLE)
+    }
 }
 
 on_npc_death(*ids) {
