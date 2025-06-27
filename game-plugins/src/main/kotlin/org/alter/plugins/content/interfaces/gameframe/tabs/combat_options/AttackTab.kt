@@ -2,6 +2,7 @@ package org.alter.plugins.content.interfaces.attack
 
 import org.alter.game.model.entity.Player
 import org.alter.game.model.timer.TimerKey
+import org.alter.game.model.attr.AttributeKey
 import org.alter.api.ext.getVarp
 import org.alter.api.ext.secondsToTicks
 import org.alter.api.ext.setVarp
@@ -18,6 +19,7 @@ object AttackTab {
     const val SPECIAL_ATTACK_VARP = 301
 
     val SPEC_RESTORE = TimerKey()
+    val SELECT_AUTOCAST_ATTR = AttributeKey<Boolean>()
 
     fun setEnergy(p: Player, amount: Int) {
         check(amount in 0..100)

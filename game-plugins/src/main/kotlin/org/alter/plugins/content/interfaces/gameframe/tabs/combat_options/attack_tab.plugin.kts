@@ -4,6 +4,7 @@ import org.alter.plugins.content.interfaces.attack.AttackTab.ATTACK_TAB_INTERFAC
 import org.alter.plugins.content.interfaces.attack.AttackTab.ATTACK_STYLE_VARP
 import org.alter.plugins.content.interfaces.attack.AttackTab.DISABLE_AUTO_RETALIATE_VARP
 import org.alter.plugins.content.interfaces.attack.AttackTab.SPECIAL_ATTACK_VARP
+import org.alter.plugins.content.interfaces.attack.AttackTab.SELECT_AUTOCAST_ATTR
 import org.alter.plugins.content.interfaces.attack.AttackTab.setEnergy
 import org.alter.api.InterfaceDestination
 import org.alter.api.cfg.Varbit
@@ -92,6 +93,7 @@ on_equip_to_slot(EquipmentType.WEAPON.id) {
  */
 on_logout {
     player.setVarp(SPECIAL_ATTACK_VARP, 0)
+    player.attr.remove(SELECT_AUTOCAST_ATTR)
 }
 
 /**
@@ -109,5 +111,6 @@ on_button(interfaceId = ATTACK_TAB_INTERFACE_ID, component = 26) {
         return@on_button
     }
     player.setVarbit(Varbit.AUTOCAST_SPELL, 0)
+    player.attr[AttackTab.SELECT_AUTOCAST_ATTR] = true
     player.openInterface(InterfaceDestination.MAGIC)
 }
