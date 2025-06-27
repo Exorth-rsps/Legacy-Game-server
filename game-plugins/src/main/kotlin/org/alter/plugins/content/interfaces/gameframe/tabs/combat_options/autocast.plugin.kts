@@ -23,7 +23,8 @@ MagicSpells.getCombatSpells().forEach { (_, meta) ->
 }
 
 on_interface_close(interfaceId = InterfaceDestination.MAGIC.interfaceId) {
-    if (player.attr.remove(SELECT_AUTOCAST_ATTR) == true) {
+    if (player.attr.has(SELECT_AUTOCAST_ATTR)) {
+        player.attr.remove(SELECT_AUTOCAST_ATTR)
         player.openInterface(InterfaceDestination.ATTACK)
     }
 }
