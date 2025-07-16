@@ -46,11 +46,9 @@ SpecialAttacks.register(Items.DINHS_BULWARK, SPECIAL_REQUIREMENT) {
     }
 
     player.attr[Combat.DAMAGE_TAKE_MULTIPLIER] = DAMAGE_REDUCTION
-    player.setVarp(Varp.WEAPON_STANCE_BULWARK, 1)
     player.timers[Bulwark.DEFENCE_TIMER] = DEFENCE_DURATION
 }
 
 on_timer(Bulwark.DEFENCE_TIMER) {
     player.attr.remove(Combat.DAMAGE_TAKE_MULTIPLIER)
-    player.setVarp(Varp.WEAPON_STANCE_BULWARK, 0)
 }
