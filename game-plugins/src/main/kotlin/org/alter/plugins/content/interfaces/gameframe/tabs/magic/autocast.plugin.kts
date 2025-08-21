@@ -9,9 +9,24 @@ import org.alter.plugins.content.interfaces.attack.AttackTab
 
 private const val AUTOCAST_INTERFACE_ID = 201
 
-// Open autocast selection from the combat tab.
-on_button(interfaceId = AttackTab.ATTACK_TAB_INTERFACE_ID, component = 19) {
-    player.openInterface(interfaceId = AUTOCAST_INTERFACE_ID, dest = InterfaceDestination.MAIN_SCREEN)
+on_login {
+    player.setInterfaceEvents(interfaceId = AUTOCAST_INTERFACE_ID, component = 4, range = 0..300, setting = 2)
+}
+
+private fun Player.toggleAutocastInterface() {
+    if (getVarbit(Combat.SELECTED_AUTOCAST_VARBIT) != 0) {
+        setVarbit(Combat.SELECTED_AUTOCAST_VARBIT, 0)
+        setVarp(Varp.AUTOCAST_BASE_ITEM, 0)
+    } else {
+        openInterface(interfaceId = AUTOCAST_INTERFACE_ID, dest = InterfaceDestination.MAIN_SCREEN)
+    }
+}
+
+// Open autocast selection from the combat tab or disable if already active.
+intArrayOf(21, 26).forEach { component ->
+    on_button(interfaceId = AttackTab.ATTACK_TAB_INTERFACE_ID, component = component) {
+        player.toggleAutocastInterface()
+    }
 }
 
 // Example staff option to open the interface. More staffs can be added here.
@@ -36,4 +51,5 @@ on_button(interfaceId = AUTOCAST_INTERFACE_ID, component = 4) {
 // Reset autocast when the weapon is unequipped.
 on_unequip_from_slot(EquipmentType.WEAPON.id) {
     player.setVarbit(Combat.SELECTED_AUTOCAST_VARBIT, 0)
+    player.setVarp(Varp.AUTOCAST_BASE_ITEM, 0)
 }
