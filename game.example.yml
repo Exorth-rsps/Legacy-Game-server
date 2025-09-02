@@ -61,3 +61,4 @@ services:
     port: 4842
 
   - class: org.alter.game.service.AiPlayerService
+

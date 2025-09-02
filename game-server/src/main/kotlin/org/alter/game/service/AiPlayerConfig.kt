@@ -9,6 +9,7 @@ import java.io.File
 /**
  * Service responsible for loading AI player configuration from [ai_players.yml].
  */
+
 class AiPlayerConfig : Service {
 
     var minOnline: Int = 0
@@ -24,13 +25,16 @@ class AiPlayerConfig : Service {
         logger.info { "Loaded AI player config: minOnline=$minOnline, maxOnline=$maxOnline, names=${names.size}" }
     }
 
-    override fun postLoad(server: Server, world: World) { }
+    override fun postLoad(server: Server, world: World) {
+    }
 
-    override fun bindNet(server: Server, world: World) { }
+    override fun bindNet(server: Server, world: World) {
+    }
 
-    override fun terminate(server: Server, world: World) { }
+    override fun terminate(server: Server, world: World) {
+    }
 
     companion object {
-        private val logger = KotlinLogging.logger {}
+        private val logger = KotlinLogging.logger{}
     }
 }
