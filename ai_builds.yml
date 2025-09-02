@@ -4,28 +4,28 @@ starter:
     - skill: attack
       target: 20
       npc: 2858
-      spawn:
-        x: 2966
-        z: 3371
+      spawn: # exact tile where the target is expected
+        x: 2968
+        z: 3372
         height: 0
     - skill: strength
       target: 20
       npc: 2858
-      spawn:
-        x: 2966
-        z: 3371
+      spawn: # exact tile where the target is expected
+        x: 2968
+        z: 3372
         height: 0
     - skill: defence
       target: 20
       npc: 2858
-      spawn:
-        x: 2966
-        z: 3371
+      spawn: # exact tile where the target is expected
+        x: 2968
+        z: 3372
         height: 0
     - skill: woodcutting
       target: 10
       obj: 1276
-      spawn:
+      spawn: # exact tile where the target is expected
         x: 3000
         z: 3363
         height: 0
@@ -34,21 +34,21 @@ fighter:
     - skill: attack
       target: 40
       npc: 3269
-      spawn:
-        x: 2965
-        z: 3392
+      spawn: # exact tile where the target is expected
+        x: 2967
+        z: 3394
         height: 0
     - skill: strength
       target: 50
       npc: 3269
-      spawn:
-        x: 2965
-        z: 3292
+      spawn: # exact tile where the target is expected
+        x: 2967
+        z: 3394
         height: 0
     - skill: defence
       target: 40
       npc: 3269
-      spawn:
-        x: 2965
-        z: 3292
+      spawn: # exact tile where the target is expected
+        x: 2967
+        z: 3394
         height: 0

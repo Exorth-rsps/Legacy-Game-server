@@ -44,6 +44,10 @@ Due to the plugin capabilities, even owners without programming experience can j
 * [Z-Kris's Event Inspector](https://media.z-kris.com/runelite-event-inspector-client.jar) , Want to dump osrs data easily? or see hows what being sent? Use this RL Client it's pretty easy to use.
 * That's it for now. If you got something to share feel free to ping me on discord ill inspect it and add it.
 
+### AI builds
+* Training goals for automated players are defined in `ai_builds.yml`.
+* Each goal's `spawn` block points to the exact tile where the target NPC or object is expected.
+
 ### Credits:
 * Credits are given out to everyone who helped out with information or contributed in some form to the project. And can be found in: [Here](https://github.com/AlterRSPS)
 
