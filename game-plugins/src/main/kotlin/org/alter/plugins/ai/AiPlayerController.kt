@@ -10,6 +10,7 @@ import org.alter.api.ext.player
 import org.alter.game.model.Tile
 import org.alter.game.model.World
 import org.alter.game.model.entity.Player
+import org.alter.game.model.entity.Npc
 import org.alter.game.service.ai.AiLearningService
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -43,7 +44,7 @@ class AiPlayerController(
                     return
                 }
                 logger.info {
-                    "Chose goal ${'$'}{next.skill} at spawn (${ '$'}{next.spawn.x}, ${ '$'}{next.spawn.z}, ${ '$'}{next.spawn.height})"
+                    "Chose goal ${next.skill} at spawn (${next.spawn.x}, ${next.spawn.z}, ${next.spawn.height})"
                 }
                 state = State.MOVING(next)
                 player.queue {
@@ -54,13 +55,11 @@ class AiPlayerController(
             is State.MOVING -> {
                 val target = s.goal.spawn.toTile()
                 if (player.tile == target) {
-                    logger.info { "Arrived at spawn ${'$'}target for goal ${'$'}{s.goal.skill}" }
+                    logger.info { "Arrived at spawn $target for goal ${s.goal.skill}" }
                     state = State.ACTING(s.goal)
                     actOnGoal(s.goal)
                 } else {
-                    logger.info {
-                        "Not at spawn yet; current: ${'$'}{player.tile}, target: ${'$'}target"
-                    }
+                    logger.info { "Not at spawn yet; current: ${player.tile}, target: $target" }
                 }
             }
             is State.ACTING -> {
@@ -72,7 +71,7 @@ class AiPlayerController(
 
     private fun actOnGoal(goal: TrainingGoal) {
         logger.info {
-            "Acting on goal ${'$'}{goal.skill} at spawn (${ '$'}{goal.spawn.x}, ${ '$'}{goal.spawn.z}, ${ '$'}{goal.spawn.height})"
+            "Acting on goal ${goal.skill} at spawn (${goal.spawn.x}, ${goal.spawn.z}, ${goal.spawn.height})"
         }
 
         val spawnTile = goal.spawn.toTile()
@@ -82,30 +81,46 @@ class AiPlayerController(
             return
         }
 
+        // --- NPC handling ---
         goal.npc?.let { npcId ->
             val radius = NPC_SEARCH_RADIUS
-            val npc = world.npcs
-                .filter { it.id == npcId }
-                .minByOrNull { it.tile.getDistance(spawnTile) }
-                ?.takeIf { it.tile.isWithinRadius(spawnTile, radius) }
-            logger.info { "NPC search result: ${'$'}{npc?.id ?: "null"}" }
-            if (npc != null) {
-                player.attack(npc)
+
+            var bestDistance = Int.MAX_VALUE
+            var bestNpc: Npc? = null
+
+            // Gebruik de beschikbare iteratie op de NPC-collectie
+            world.npcs.forEach { n: Npc ->
+                if (n.id != npcId) return@forEach
+                val d = n.tile.getDistance(spawnTile)
+                if (d < bestDistance) {
+                    bestDistance = d
+                    bestNpc = n
+                }
+            }
+
+            val npcWithinRadius = bestNpc?.takeIf { it.tile.isWithinRadius(spawnTile, radius) }
+            logger.info { "NPC search result: ${npcWithinRadius?.id ?: "null"}" }
+
+            if (npcWithinRadius != null) {
+                player.attack(npcWithinRadius)
                 return
             } else {
-                logger.warn { "No NPC ${'$'}npcId found within radius ${'$'}radius of spawn ${'$'}spawnTile; action not started" }
+                logger.warn { "No NPC $npcId found within radius $radius of spawn $spawnTile; action not started" }
             }
         }
 
+        // --- Object handling ---
         goal.obj?.let { objId ->
             val obj = (0..3).asSequence()
                 .mapNotNull { world.getObject(spawnTile, it) }
                 .firstOrNull { it.id == objId }
+
             logger.info { "Object search result: ${obj?.id ?: "null"}" }
+
             if (obj != null) {
                 logger.warn { "Object actions not implemented; action not started" }
             } else {
-                logger.warn { "Object ${'$'}objId not found at spawn ${'$'}spawnTile; action not started" }
+                logger.warn { "Object $objId not found at spawn $spawnTile; action not started" }
             }
         }
     }
@@ -125,7 +140,7 @@ class AiPlayerController(
     }
 
     private fun loadBuilds(): Map<String, Build> {
-        val path = Paths.get("ai_builds.yml")
+        val path = Paths.get("../ai_builds.yml")
         if (!Files.exists(path)) return emptyMap()
         val mapper = ObjectMapper(YAMLFactory())
             .registerKotlinModule()
@@ -169,4 +184,3 @@ class AiPlayerController(
         private val logger = KotlinLogging.logger {}
     }
 }
-
