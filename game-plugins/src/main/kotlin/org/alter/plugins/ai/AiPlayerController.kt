@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.alter.api.ext.player
 import org.alter.game.model.Tile
 import org.alter.game.model.World
@@ -36,7 +37,14 @@ class AiPlayerController(
     fun tick() {
         when (val s = state) {
             State.IDLE -> {
-                val next = chooseNextGoal() ?: return
+                val next = chooseNextGoal()
+                if (next == null) {
+                    logger.info { "No goal chosen; action not started" }
+                    return
+                }
+                logger.info {
+                    "Chose goal ${'$'}{next.skill} at spawn (${ '$'}{next.spawn.x}, ${ '$'}{next.spawn.z}, ${ '$'}{next.spawn.height})"
+                }
                 state = State.MOVING(next)
                 player.queue {
                     val pawn = this.player
@@ -44,9 +52,15 @@ class AiPlayerController(
                 }
             }
             is State.MOVING -> {
-                if (player.tile == s.goal.spawn.toTile()) {
+                val target = s.goal.spawn.toTile()
+                if (player.tile == target) {
+                    logger.info { "Arrived at spawn ${'$'}target for goal ${'$'}{s.goal.skill}" }
                     state = State.ACTING(s.goal)
                     actOnGoal(s.goal)
+                } else {
+                    logger.info {
+                        "Not at spawn yet; current: ${'$'}{player.tile}, target: ${'$'}target"
+                    }
                 }
             }
             is State.ACTING -> {
@@ -57,10 +71,37 @@ class AiPlayerController(
     }
 
     private fun actOnGoal(goal: TrainingGoal) {
+        logger.info {
+            "Acting on goal ${'$'}{goal.skill} at spawn (${ '$'}{goal.spawn.x}, ${ '$'}{goal.spawn.z}, ${ '$'}{goal.spawn.height})"
+        }
+
+        val spawnTile = goal.spawn.toTile()
+
+        if (goal.npc == null && goal.obj == null) {
+            logger.warn { "Goal has no NPC or object; action not started" }
+            return
+        }
+
         goal.npc?.let { npcId ->
-            val npc = world.npcs.firstOrNull { it.id == npcId && it.tile == goal.spawn.toTile() }
+            val npc = world.npcs.firstOrNull { it.id == npcId && it.tile == spawnTile }
+            logger.info { "NPC search result: ${'$'}{npc?.id ?: "null"}" }
             if (npc != null) {
                 player.attack(npc)
+                return
+            } else {
+                logger.warn { "NPC ${'$'}npcId not found at spawn ${'$'}spawnTile; action not started" }
+            }
+        }
+
+        goal.obj?.let { objId ->
+            val obj = (0..3).asSequence()
+                .mapNotNull { world.getObject(spawnTile, it) }
+                .firstOrNull { it.id == objId }
+            logger.info { "Object search result: ${'$'}{obj?.id ?: "null"}" }
+            if (obj != null) {
+                logger.warn { "Object actions not implemented; action not started" }
+            } else {
+                logger.warn { "Object ${'$'}objId not found at spawn ${'$'}spawnTile; action not started" }
             }
         }
     }
@@ -115,6 +156,10 @@ class AiPlayerController(
         object IDLE : State()
         data class MOVING(val goal: TrainingGoal) : State()
         data class ACTING(val goal: TrainingGoal) : State()
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger {}
     }
 }
 
