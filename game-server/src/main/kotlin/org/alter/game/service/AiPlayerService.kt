@@ -19,9 +19,8 @@ class AiPlayerService : Service {
     private val aiPlayers = mutableListOf<Player>()
 
     override fun init(server: Server, world: World, serviceProperties: ServerProperties) {
-        config = world.getService(AiPlayerConfig::class.java) ?: AiPlayerConfig().also {
-            it.init(server, world, ServerProperties())
-        }
+        config = world.getService(AiPlayerConfig::class.java)
+            ?: throw IllegalStateException("AiPlayerConfig service not loaded")
     }
 
     override fun postLoad(server: Server, world: World) {

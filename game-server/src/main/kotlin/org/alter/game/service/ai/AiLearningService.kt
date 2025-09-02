@@ -104,6 +104,24 @@ class AiLearningService : Service {
     }
 
     /**
+     * Log a generic goal completion for an AI player.
+     */
+    fun logGoalEvent(player: Player, goal: String, reward: Double) {
+        if (player !in aiPlayers) return
+        val line = "goal,${player.username},$goal,$reward,${System.currentTimeMillis()}\n"
+        try {
+            Files.write(eventLog, line.toByteArray(), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+        } catch (e: IOException) {
+            System.err.println("AiLearningService failed to log goal event: ${e.message}")
+        }
+    }
+
+    /**
+     * Retrieve the current Q-value for a goal state.
+     */
+    fun getGoalValue(goal: String): Double = qTable.getOrDefault("goal|$goal", 0.0)
+
+    /**
      * Reads the event log and updates the in memory Q-table. After processing
      * the log file is cleared to avoid duplicate processing.
      */

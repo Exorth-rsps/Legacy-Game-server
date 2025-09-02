@@ -9,14 +9,10 @@ import org.alter.api.ext.player
 import org.alter.game.model.Tile
 import org.alter.game.model.World
 import org.alter.game.model.entity.Player
+import org.alter.game.service.ai.AiLearningService
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.ArrayDeque
-
-/**
- * Returns and removes the first element of this [ArrayDeque], or `null` if the deque is empty.
- */
-private fun <T> ArrayDeque<T>.removeFirstOrNull(): T? = if (isEmpty()) null else removeFirst()
+import kotlin.random.Random
 
 /**
  * Simple state driven controller for automated players.
@@ -27,20 +23,20 @@ private fun <T> ArrayDeque<T>.removeFirstOrNull(): T? = if (isEmpty()) null else
 class AiPlayerController(
     private val world: World,
     private val player: Player,
+    private val learning: AiLearningService,
     buildName: String
 ) {
 
     private val npcConfigs: Map<Int, String> = loadNpcConfigs()
     private val builds: Map<String, Build> = loadBuilds()
-    private val goalQueue: ArrayDeque<TrainingGoal> =
-        ArrayDeque(builds[buildName]?.goals ?: emptyList())
+    private val goals: List<TrainingGoal> = builds[buildName]?.goals ?: emptyList()
 
     private var state: State = State.IDLE
 
     fun tick() {
         when (val s = state) {
             State.IDLE -> {
-                val next = goalQueue.removeFirstOrNull() ?: return
+                val next = chooseNextGoal() ?: return
                 state = State.MOVING(next)
                 player.queue {
                     val pawn = this.player
@@ -53,7 +49,10 @@ class AiPlayerController(
                     actOnGoal(s.goal)
                 }
             }
-            is State.ACTING -> state = State.IDLE
+            is State.ACTING -> {
+                learning.logGoalEvent(player, s.goal.skill, 1.0)
+                state = State.IDLE
+            }
         }
     }
 
@@ -87,6 +86,16 @@ class AiPlayerController(
             .registerKotlinModule()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         return mapper.readValue(path.toFile())
+    }
+
+    private fun chooseNextGoal(): TrainingGoal? {
+        if (goals.isEmpty()) return null
+        val epsilon = 0.1
+        return if (Random.nextDouble() < epsilon) {
+            goals.random()
+        } else {
+            goals.maxByOrNull { learning.getGoalValue(it.skill) } ?: goals.random()
+        }
     }
 
     data class Build(val goals: List<TrainingGoal> = emptyList())
