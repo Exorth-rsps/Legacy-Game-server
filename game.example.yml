@@ -59,3 +59,6 @@ services:
 
   - class: org.alter.plugins.service.worldlist.WorldListService
     port: 4842
+
+  - class: org.alter.game.service.AiPlayerService
+

@@ -6,6 +6,10 @@ import org.alter.game.Server
 import org.alter.game.model.World
 import java.io.File
 
+/**
+ * Service responsible for loading AI player configuration from [ai_players.yml].
+ */
+
 class AiPlayerConfig : Service {
 
     var minOnline: Int = 0
