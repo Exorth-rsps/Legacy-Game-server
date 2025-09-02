@@ -14,6 +14,11 @@ import java.nio.file.Paths
 import java.util.ArrayDeque
 
 /**
+ * Returns and removes the first element of this [ArrayDeque], or `null` if the deque is empty.
+ */
+private fun <T> ArrayDeque<T>.removeFirstOrNull(): T? = if (isEmpty()) null else removeFirst()
+
+/**
  * Simple state driven controller for automated players.
  *
  * Loads training goals from [ai_builds.yml] and NPC definitions from
