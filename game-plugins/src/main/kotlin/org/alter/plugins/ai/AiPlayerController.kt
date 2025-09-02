@@ -88,9 +88,10 @@ class AiPlayerController(
             var bestDistance = Int.MAX_VALUE
             var bestNpc: Npc? = null
 
-            // Gebruik de beschikbare iteratie op de NPC-collectie
+            // Iterate over all npcs and keep the closest one within radius and height
             world.npcs.forEach { n: Npc ->
-                if (n.id != npcId) return@forEach
+                if (n.id != npcId || !n.tile.isWithinRadius(spawnTile, radius)) return@forEach
+
                 val d = n.tile.getDistance(spawnTile)
                 if (d < bestDistance) {
                     bestDistance = d
@@ -98,11 +99,10 @@ class AiPlayerController(
                 }
             }
 
-            val npcWithinRadius = bestNpc?.takeIf { it.tile.isWithinRadius(spawnTile, radius) }
-            logger.info { "NPC search result: ${npcWithinRadius?.id ?: "null"}" }
+            logger.info { "NPC search result: ${bestNpc?.id ?: "null"}" }
 
-            if (npcWithinRadius != null) {
-                player.attack(npcWithinRadius)
+            if (bestNpc != null) {
+                player.attack(bestNpc!!)
                 return
             } else {
                 logger.warn { "No NPC $npcId found within radius $radius of spawn $spawnTile; action not started" }
