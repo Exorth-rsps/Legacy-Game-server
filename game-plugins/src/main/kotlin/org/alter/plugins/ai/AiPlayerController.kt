@@ -145,9 +145,11 @@ class AiPlayerController(
         val target: Int,
         val npc: Int? = null,
         val obj: Int? = null,
+        /** Exact tile where the target NPC or object is expected. */
         val spawn: Spawn
     )
 
+    /** Coordinates for the exact tile the goal uses. */
     data class Spawn(val x: Int, val z: Int, val height: Int = 0) {
         fun toTile(): Tile = Tile(x, z, height)
     }
