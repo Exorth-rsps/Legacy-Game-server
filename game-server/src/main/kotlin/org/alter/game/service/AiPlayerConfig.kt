@@ -17,7 +17,10 @@ class AiPlayerConfig : Service {
     var names: List<String> = emptyList()
 
     override fun init(server: Server, world: World, serviceProperties: ServerProperties) {
-        val file = File("../ai_players.yml")
+        val file = listOf("ai_players.yml", "../ai_players.yml")
+            .map { File(it) }
+            .firstOrNull { it.exists() }
+            ?: throw IllegalStateException("ai_players.yml not found")
         val props = ServerProperties().loadYaml(file)
         minOnline = props.getOrDefault("min_online", 0)
         maxOnline = props.getOrDefault("max_online", 0)
