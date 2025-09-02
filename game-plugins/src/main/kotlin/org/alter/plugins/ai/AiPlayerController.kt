@@ -84,7 +84,7 @@ class AiPlayerController(
 
         goal.npc?.let { npcId ->
             val npc = world.npcs.firstOrNull { it.id == npcId && it.tile == spawnTile }
-            logger.info { "NPC search result: ${'$'}{npc?.id ?: "null"}" }
+            logger.info { "NPC search result: ${'$'}{npc?.id ?: 'null'}" }
             if (npc != null) {
                 player.attack(npc)
                 return
@@ -97,7 +97,7 @@ class AiPlayerController(
             val obj = (0..3).asSequence()
                 .mapNotNull { world.getObject(spawnTile, it) }
                 .firstOrNull { it.id == objId }
-            logger.info { "Object search result: ${'$'}{obj?.id ?: "null"}" }
+            logger.info { "Object search result: ${obj?.id ?: "null"}" }
             if (obj != null) {
                 logger.warn { "Object actions not implemented; action not started" }
             } else {
