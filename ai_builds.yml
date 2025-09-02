@@ -1,0 +1,56 @@
+---
+starter:
+  goals:
+    - skill: attack
+      target: 5
+      npc: 1
+      spawn:
+        x: 3222
+        z: 3218
+        height: 0
+    - skill: woodcutting
+      target: 10
+      obj: 1276
+      spawn:
+        x: 3220
+        z: 3224
+        height: 0
+fighter:
+  goals:
+    - skill: attack
+      target: 20
+      npc: 15
+      spawn:
+        x: 3203
+        z: 3231
+        height: 0
+    - skill: strength
+      target: 20
+      npc: 15
+      spawn:
+        x: 3203
+        z: 3231
+        height: 0
+    - skill: defence
+      target: 20
+      npc: 15
+      spawn:
+        x: 3203
+        z: 3231
+        height: 0
+skiller:
+  goals:
+    - skill: woodcutting
+      target: 30
+      obj: 1277
+      spawn:
+        x: 3185
+        z: 3225
+        height: 0
+    - skill: fishing
+      target: 30
+      obj: 1009
+      spawn:
+        x: 3244
+        z: 3152
+        height: 0
