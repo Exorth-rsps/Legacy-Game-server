@@ -67,6 +67,8 @@ class AiPlayerService : Service {
         }
     }
 
+    fun getPlayers(): List<Player> = aiPlayers.toList()
+
     companion object {
         private val logger = KotlinLogging.logger {}
     }

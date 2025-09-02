@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.alter.api.ext.player
 import org.alter.game.model.Tile
 import org.alter.game.model.World
@@ -32,11 +33,13 @@ class AiPlayerController(
     private val goals: List<TrainingGoal> = builds[buildName]?.goals ?: emptyList()
 
     private var state: State = State.IDLE
+    private val logger = KotlinLogging.logger {}
 
     fun tick() {
         when (val s = state) {
             State.IDLE -> {
                 val next = chooseNextGoal() ?: return
+                logger.info { "${player.username} selected goal ${next.skill} at (${next.spawn.x}, ${next.spawn.z})" }
                 state = State.MOVING(next)
                 player.queue {
                     val pawn = this.player
@@ -51,6 +54,7 @@ class AiPlayerController(
             }
             is State.ACTING -> {
                 learning.logGoalEvent(player, s.goal.skill, 1.0)
+                logger.info { "${player.username} completed goal ${s.goal.skill}" }
                 state = State.IDLE
             }
         }

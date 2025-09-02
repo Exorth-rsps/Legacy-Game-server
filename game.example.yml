@@ -60,5 +60,10 @@ services:
   - class: org.alter.plugins.service.worldlist.WorldListService
     port: 4842
 
+  - class: org.alter.game.service.ai.AiLearningService
+
   - class: org.alter.game.service.AiPlayerService
+
+  - class: org.alter.plugins.service.ai.AiPlayerControllerService
+    build: starter
 
