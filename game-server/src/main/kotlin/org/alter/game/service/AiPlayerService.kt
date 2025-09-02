@@ -4,6 +4,7 @@ import org.alter.game.Server
 import org.alter.game.model.PlayerUID
 import org.alter.game.model.World
 import org.alter.game.model.entity.Player
+import org.alter.game.service.ai.AiLearningService
 import gg.rsmod.util.ServerProperties
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.math.min
@@ -17,10 +18,12 @@ class AiPlayerService : Service {
 
     private lateinit var config: AiPlayerConfig
     private val aiPlayers = mutableListOf<Player>()
+    private var learning: AiLearningService? = null
 
     override fun init(server: Server, world: World, serviceProperties: ServerProperties) {
         config = world.getService(AiPlayerConfig::class.java)
             ?: throw IllegalStateException("AiPlayerConfig service not loaded")
+        learning = world.getService(AiLearningService::class.java)
     }
 
     override fun postLoad(server: Server, world: World) {
@@ -30,7 +33,10 @@ class AiPlayerService : Service {
     override fun bindNet(server: Server, world: World) { }
 
     override fun terminate(server: Server, world: World) {
-        aiPlayers.forEach { world.unregister(it) }
+        aiPlayers.forEach {
+            learning?.unregisterAiPlayer(it)
+            world.unregister(it)
+        }
         aiPlayers.clear()
     }
 
@@ -52,6 +58,7 @@ class AiPlayerService : Service {
                 p.tile = world.gameContext.home
                 world.register(p)
                 aiPlayers.add(p)
+                learning?.registerAiPlayer(p)
             }
             if (needed > 0) {
                 logger.info { "Registered $needed AI player(s)." }
@@ -60,6 +67,7 @@ class AiPlayerService : Service {
             val removeCount = current - config.maxOnline
             repeat(removeCount) {
                 val p = aiPlayers.removeAt(aiPlayers.lastIndex)
+                learning?.unregisterAiPlayer(p)
                 world.unregister(p)
             }
             logger.info { "Unregistered $removeCount AI player(s)." }
