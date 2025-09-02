@@ -39,6 +39,7 @@ allprojects {
         implementation(lib.jackson.dataformat.yaml)
         implementation(lib.jackson.dataformat.toml)
         implementation(lib.jackson.databind)
+        implementation(lib.jackson.module.kotlin)
         implementation(lib.json)
         implementation(lib.jbcrypt)
         implementation(lib.gson)
