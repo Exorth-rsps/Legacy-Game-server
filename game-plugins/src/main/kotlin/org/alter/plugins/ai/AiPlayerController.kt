@@ -83,13 +83,17 @@ class AiPlayerController(
         }
 
         goal.npc?.let { npcId ->
-            val npc = world.npcs.firstOrNull { it.id == npcId && it.tile == spawnTile }
-            logger.info { "NPC search result: ${'$'}{npc?.id ?: 'null'}" }
+            val radius = NPC_SEARCH_RADIUS
+            val npc = world.npcs
+                .filter { it.id == npcId }
+                .minByOrNull { it.tile.getDistance(spawnTile) }
+                ?.takeIf { it.tile.isWithinRadius(spawnTile, radius) }
+            logger.info { "NPC search result: ${'$'}{npc?.id ?: "null"}" }
             if (npc != null) {
                 player.attack(npc)
                 return
             } else {
-                logger.warn { "NPC ${'$'}npcId not found at spawn ${'$'}spawnTile; action not started" }
+                logger.warn { "No NPC ${'$'}npcId found within radius ${'$'}radius of spawn ${'$'}spawnTile; action not started" }
             }
         }
 
@@ -161,6 +165,7 @@ class AiPlayerController(
     }
 
     companion object {
+        private const val NPC_SEARCH_RADIUS = 8
         private val logger = KotlinLogging.logger {}
     }
 }
