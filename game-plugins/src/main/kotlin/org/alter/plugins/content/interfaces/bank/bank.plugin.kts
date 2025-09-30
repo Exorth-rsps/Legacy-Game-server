@@ -368,8 +368,12 @@ on_component_to_component_item_swap(
 
         val sameTab = curTab == dstTab
 
+        if (srcSlot == dstSlot) {
+            return@on_component_to_component_item_swap
+        }
+
         if (!insertMode && destinationItem == null && sameTab) {
-            container.swap(srcSlot, dstSlot)
+            container.insert(srcSlot, dstSlot)
             return@on_component_to_component_item_swap
         }
 
