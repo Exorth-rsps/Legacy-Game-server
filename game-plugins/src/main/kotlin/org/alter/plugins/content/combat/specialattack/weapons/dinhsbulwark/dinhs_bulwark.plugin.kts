@@ -20,9 +20,9 @@ object Bulwark {
     val DEFENCE_TIMER = TimerKey()
 }
 
-private const val SPECIAL_REQUIREMENT = 50
-private const val DAMAGE_REDUCTION = 0.5
-private const val DEFENCE_DURATION = 30
+private val SPECIAL_REQUIREMENT = 50
+private val DAMAGE_REDUCTION = 0.5
+private val DEFENCE_DURATION = 30
 
 SpecialAttacks.register(Items.DINHS_BULWARK, SPECIAL_REQUIREMENT) {
     player.animate(id = Animation.HUMAN_EASTDOOR_SHOVE)

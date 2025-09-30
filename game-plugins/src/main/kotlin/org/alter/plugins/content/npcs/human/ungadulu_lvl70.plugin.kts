@@ -18,7 +18,7 @@ val droptable =
                 obj(Items.BERSERKER_HELM, quantity = 1, 1)
                 obj(Items.ARCHER_HELM, quantity = 1, 1)
                 obj(Items.MIME_MASK, quantity = 1, 15)
-                nothing(111)
+                nothing(100)
             }
             table("second") {
                 total(128)
@@ -26,7 +26,7 @@ val droptable =
                 obj(Items.MIME_GLOVES, quantity = 1, 15)
                 obj(Items.MIME_LEGS, quantity = 1, 15)
                 obj(Items.MIME_TOP, quantity = 1, 15)
-                nothing(68)
+                nothing(100)
             }
             table("main") {
                 total(128)
@@ -38,7 +38,7 @@ val droptable =
                 obj(Items.AVANTOE_POTION_UNF_NOTED, quantityRange = 1..4, 5)
                 obj(Items.CADANTINE_POTION_UNF_NOTED, quantityRange = 1..4, 5)
                 obj(Items.RUNE_SCIMITAR, quantity = 1, 11)
-                nothing(82)
+                nothing(20)
             }
         }
     }

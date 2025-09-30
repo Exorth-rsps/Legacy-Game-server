@@ -17,7 +17,7 @@ val droptable =
             obj(Items.COINS, quantityRange = 1..150, 90)
             obj(Items.AIR_RUNE, quantityRange = 1..30, 22)
             obj(Items.WATER_RUNE, quantityRange = 1..20, 18)
-            nothing(1)
+            nothing(60)
         }
         table("rare") {
             total(128)

@@ -16,31 +16,33 @@ val droptable =
             total(128)
             obj(Items.STEEL_ARROW, quantityRange = 5..15, 2)
             obj(Items.IRON_ARROW, quantityRange = 5..15, 3)
-            obj(Items.SHORTBOW, quantityRange = 1..0, 4)
-            obj(Items.OAK_SHORTBOW, quantityRange = 1..0, 5)
-            obj(Items.STEEL_SWORD, quantityRange = 1..0, 6)
+            obj(Items.SHORTBOW, quantity = 1, 4)
+            obj(Items.OAK_SHORTBOW, quantity = 1, 5)
+            obj(Items.STEEL_SWORD, quantity = 1, 6)
             obj(Items.AIR_RUNE, quantityRange = 5..15, 8)
             nothing(100)
         }
         table("coins") {
             total(128)
-            obj(Items.COINS, quantityRange = 25..0, 1)
+            obj(Items.COINS, quantityRange = 25..30, 1)
+
             nothing(127)
         }
         table("second") {
             total(128)
             obj(Items.MIND_RUNE, quantityRange = 5..15, 1)
-            obj(Items.STEEL_SQ_SHIELD, quantityRange = 1..0, 2)
-            obj(Items.STEEL_MED_HELM, quantityRange = 1..0, 3)
-            obj(Items.STEEL_CHAINBODY, quantityRange = 1..0, 4)
-            obj(Items.STEEL_MACE, quantityRange = 1..0, 5)
-            obj(Items.STEEL_LONGSWORD, quantityRange = 1..0, 6)
+            obj(Items.STEEL_SQ_SHIELD, quantity = 1, 2)
+            obj(Items.STEEL_MED_HELM, quantity = 1, 3)
+            obj(Items.STEEL_CHAINBODY, quantity = 1, 4)
+            obj(Items.STEEL_MACE, quantity = 1, 5)
+            obj(Items.STEEL_LONGSWORD, quantity = 1, 6)
+
             nothing(107)
         }
         table("rare") {
             total(128)
-            obj(Items.STEEL_FULL_HELM, quantityRange = 1..0, 1)
-            obj(Items.STEEL_BATTLEAXE, quantityRange = 1..0, 2)
+            obj(Items.STEEL_FULL_HELM, quantity = 1, 1)
+            obj(Items.STEEL_BATTLEAXE, quantity = 1, 2)
             obj(Items.WATER_RUNE, quantityRange = 5..15, 3)
             obj(Items.CHAOS_RUNE, quantityRange = 1..10, 4)
             obj(Items.STEEL_KITESHIELD, quantity = 1, 5)

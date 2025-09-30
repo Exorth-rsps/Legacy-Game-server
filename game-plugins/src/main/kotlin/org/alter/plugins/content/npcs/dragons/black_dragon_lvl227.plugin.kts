@@ -41,7 +41,7 @@ val droptable =
             obj(Items.UNCUT_EMERALD, quantity = 1, 80)
             obj(Items.UNCUT_DIAMOND, quantity = 1, 70)
             obj(Items.UNCUT_RUBY, quantity = 1, 75)
-            nothing(1)
+            nothing(75)
         }
 
 

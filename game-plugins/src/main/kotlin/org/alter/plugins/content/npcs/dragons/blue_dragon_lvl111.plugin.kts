@@ -25,27 +25,27 @@ val droptable =
             total(128)
             obj(Items.UNCUT_SAPPHIRE, quantity = 1, 90)
             obj(Items.UNCUT_EMERALD, quantity = 1, 80)
-            nothing(1)
+            nothing(90)
         }
         table("second") {
             total(128)
             obj(Items.UNCUT_RUBY, quantity = 1, 75)
             obj(Items.LIMPWURT_ROOT_NOTED, quantityRange = 2..6, 40)
             obj(Items.RED_SPIDERS_EGGS_NOTED, quantityRange = 2..6, 34)
-            nothing(1)
+            nothing(75)
         }
         table("main") {
             total(128)
             obj(Items.MITHRIL_SWORD, quantity = 1, 45)
             obj(Items.ADAMANT_SWORD, quantity = 1, 40)
             obj(Items.RUNE_SWORD, quantity = 1, 28)
-            nothing(15)
+            nothing(50)
         }
         table("rare") {
             total(128)
             obj(Items.WHITE_BERRIES_NOTED, quantityRange = 2..6, 22)
             obj(Items.SNAPE_GRASS_NOTED, quantityRange = 2..6, 28)
-            nothing(78)
+            nothing(80)
         }
 
 

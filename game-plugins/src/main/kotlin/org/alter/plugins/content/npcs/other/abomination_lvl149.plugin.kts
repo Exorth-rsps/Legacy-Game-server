@@ -23,26 +23,31 @@ val npc =
             total(128)
             obj(Items.DINHS_BULWARK, quantity = 1, 2)
             obj(Items.UNCUT_ONYX, quantity = 1, 4)
+            nothing(100)
         }
         table("herbs-noted") {
             total(128)
             obj(Items.GRIMY_TORSTOL, quantity = 11, 4)
             obj(Items.GRIMY_TOADFLAX, quantity = 16, 4)
             obj(Items.CRUSHED_NEST, quantity = 9, 7)
+            nothing(20)
         }
         table("gems") {
             total(128)
             obj(Items.UNCUT_DIAMOND, quantity = 6, 3)
+            nothing(20)
         }
         table("coins") {
             total(128)
             obj(Items.COINS, quantity = 5530, 8)
             obj(Items.COINS, quantity = 6255, 8)
             obj(Items.COINS, quantity = 9850, 8)
+            nothing(60)
         }
         table("herb-secondaries") {
             total(128)
             obj(Items.JANGERBERRIES, quantity = 9, 7)
+            nothing(20)
         }
 
     }
@@ -64,7 +69,7 @@ ids.forEach {
 
         configs {
             attackSpeed = 5
-            respawnDelay = 3
+            respawnDelay = 300
             poisonChance = 0.0
             venomChance = 0.0
             followRange = 100

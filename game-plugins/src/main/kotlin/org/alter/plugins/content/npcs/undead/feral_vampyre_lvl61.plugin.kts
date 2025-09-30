@@ -17,21 +17,21 @@ val droptable =
             obj(Items.GRIMY_GUAM_LEAF, quantity = 1, 60)
             obj(Items.GRIMY_MARRENTILL, quantity = 1, 52)
             obj(Items.GRIMY_TARROMIN, quantity = 1, 48)
-            nothing(1)
+            nothing(80)
         }
         table("herb-secondaries") {
             total(128)
             obj(Items.RANARR_SEED, quantity = 1, 39)
             obj(Items.TARROMIN_SEED, quantity = 1, 42)
             obj(Items.KWUARM_SEED, quantity = 1, 33)
-            nothing(14)
+            nothing(80)
         }
         table("herbs-noted") {
             total(128)
             obj(Items.GRIMY_HARRALANDER, quantity = 1, 44)
             obj(Items.GRIMY_RANARR_WEED, quantity = 1, 37)
             obj(Items.GRIMY_CADANTINE, quantity = 1, 31)
-            nothing(16)
+            nothing(80)
         }
         table("second") {
             total(128)
@@ -42,7 +42,7 @@ val droptable =
             obj(Items.UNCUT_RUBY, quantity = 1, 14)
             obj(Items.CHAOS_TALISMAN, quantity = 1, 17)
             obj(Items.NATURE_TALISMAN, quantity = 1, 20)
-            nothing(4)
+            nothing(80)
         }
     }
 

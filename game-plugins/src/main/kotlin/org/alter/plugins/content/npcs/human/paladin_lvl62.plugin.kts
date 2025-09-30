@@ -28,7 +28,7 @@ val droptable =
             obj(Items.STEEL_BAR_NOTED, quantity = 1, 5)
             obj(Items.MITHRIL_BAR_NOTED, quantity = 1, 3)
             obj(Items.DRAGON_BATTLEAXE, quantity = 1, 1)
-            nothing(40)
+            nothing(60)
         }
 
     }

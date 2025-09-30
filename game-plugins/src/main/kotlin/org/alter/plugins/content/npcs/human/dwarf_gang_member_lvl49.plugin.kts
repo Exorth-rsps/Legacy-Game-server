@@ -19,7 +19,7 @@ val droptable =
             obj(Items.GOLD_BAR, quantity = 1, 20)
             obj(Items.ADAMANT_PICKAXE, quantity = 1, 17)
             obj(Items.RUNE_PICKAXE, quantity = 1, 14)
-            nothing(1)
+            nothing(30)
         }
     }
 

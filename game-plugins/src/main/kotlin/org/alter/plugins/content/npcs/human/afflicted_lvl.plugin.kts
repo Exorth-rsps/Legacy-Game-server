@@ -30,29 +30,29 @@ val droptable =
             total(128)
             obj(Items.GRIMY_IRIT_LEAF, quantity = 1, 85)
             obj(Items.GRIMY_LANTADYME, quantity = 1, 80)
-            nothing(1)
+            nothing(80)
         }
         table("second") {
             total(128)
             obj(Items.GRIMY_HARRALANDER, quantity = 1, 75)
             obj(Items.GRIMY_CADANTINE, quantity = 1, 71)
-            nothing(1)
+            nothing(80)
         }
         table("herbs") {
             total(128)
             obj(Items.GRIMY_KWUARM, quantity = 1, 67)
-            nothing(61)
+            nothing(80)
         }
         table("rare") {
             total(128)
             obj(Items.GRIMY_AVANTOE, quantity = 1, 62)
             obj(Items.GRIMY_TARROMIN, quantity = 1, 77)
-            nothing(1)
+            nothing(80)
         }
         table("herb-secondaries") {
             total(128)
             obj(Items.GRIMY_MARRENTILL, quantity = 1, 81)
-            nothing(47)
+            nothing(80)
         }
 
     }

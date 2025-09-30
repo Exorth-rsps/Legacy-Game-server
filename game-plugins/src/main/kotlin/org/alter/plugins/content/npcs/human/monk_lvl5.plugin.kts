@@ -16,7 +16,7 @@ val droptable =
             total(128)
             obj(Items.MONKS_ROBE, quantity = 1, 1)
             obj(Items.MONKS_ROBE_TOP, quantity = 1, 1)
-            nothing(126)
+            nothing(60)
         }
     }
 

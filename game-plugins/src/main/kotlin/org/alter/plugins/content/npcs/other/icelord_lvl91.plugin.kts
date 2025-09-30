@@ -22,13 +22,13 @@ val droptable =
             obj(Items.AMULET_OF_STRENGTH, quantity = 1, 10)
             obj(Items.AMULET_OF_POWER, quantity = 1, 10)
             obj(Items.CHEFS_HAT, quantity = 1, 5)
-            nothing(1)
+            nothing(20)
         }
         table("secondary") {
             total(128)
             obj(Items.STEEL_BOOTS, quantity = 1, 5)
             obj(Items.IRON_BOOTS, quantity = 1, 10)
-            nothing(113)
+            nothing(40)
         }
     }
 

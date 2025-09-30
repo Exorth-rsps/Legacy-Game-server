@@ -1,5 +1,6 @@
 package org.alter.plugins.content.skills.cooking
 
+import org.alter.api.cfg.Items
 import org.alter.game.fs.DefinitionSet
 import org.alter.game.fs.def.ItemDef
 import org.alter.game.model.entity.Player
@@ -34,13 +35,14 @@ class Cooking(private val defs: DefinitionSet) {
             cookable = food.raw_item
         }
 
-        repeat(amount) {
-
-            if(!canCook(player, food, forceBurn)) {
-                return
+        var animationPlaying = false
+        for (i in 0 until amount) {
+            if (!canCook(player, food, forceBurn)) {
+                break
             }
 
             player.animate(obj.animation)
+            animationPlaying = true
             player.playSound(obj.sound, 1, 0)
 
             player.inventory.remove(cookable)
@@ -49,7 +51,7 @@ class Cooking(private val defs: DefinitionSet) {
                 player.inventory.add(food.burnt_item)
                 player.filterableMessage("You deliberately burn some ${burnName}.")
             }
-            else if(level.interpolate(minChance = 10, maxChance = 120, minLvl = food.minLevel, maxLvl = food.maxLevel, cap = 255)) /*|| player.getVarp(TutorialIsland.COMPLETION_VARP) == 90 || player.getVarp(TutorialIsland.COMPLETION_VARP) == 160)*/ {
+            else if(successfullyCooked(player, level, food, obj)) /*|| player.getVarp(TutorialIsland.COMPLETION_VARP) == 90 || player.getVarp(TutorialIsland.COMPLETION_VARP) == 160)*/ {
                 player.inventory.add(food.cooked_item, 1)
                 player.addXp(Skills.COOKING, food.xp)
                 player.filterableMessage("You cook some ${name}.")
@@ -66,6 +68,9 @@ class Cooking(private val defs: DefinitionSet) {
                 player.filterableMessage("You accidentally burn some ${name}.")
             }
             task.wait(5)
+        }
+
+        if (animationPlaying) {
             player.animate(-1)
         }
     }
@@ -95,6 +100,36 @@ class Cooking(private val defs: DefinitionSet) {
             return false
         }
         return true
+    }
+
+    private fun successfullyCooked(player: Player, level: Int, food: CookingFood, obj: CookingObj): Boolean {
+        val startOffset = if (obj.isRange) RANGE_START_OFFSET else FIRE_START_OFFSET
+        val baseStop = food.stopLevel + STOP_EXTRA_LEVELS
+        val stopLevel = if (player.equipment.contains(Items.COOKING_GAUNTLETS)) {
+            (food.gauntletStopLevel ?: food.stopLevel) + STOP_EXTRA_LEVELS
+        } else {
+            baseStop
+        }
+
+        val burnStart = food.minLevel.toDouble() - startOffset
+
+        val burnSpan = (stopLevel - burnStart).coerceAtLeast(1.0)
+        val effectiveLevel = level.toDouble()
+
+        // The OSRS wiki models burn reduction as a linear drop-off that starts roughly
+        // two dozen levels below the requirement on fires and about thirty levels below
+        // on ranges. Shifting the start of the curve by those amounts (and extending the
+        // stop-burn level a few virtual levels beyond the documented cap) reproduces the
+        // published success rates for high-level fish such as sharks while letting food
+        // definitions specify alternate gauntlet-assisted burn caps.
+        val chance = ((effectiveLevel - burnStart).coerceAtLeast(0.0) / burnSpan).coerceIn(0.0, 1.0)
+        return RANDOM.nextDouble() <= chance
+    }
+
+    companion object {
+        private const val RANGE_START_OFFSET = 32.0
+        private const val FIRE_START_OFFSET = 24.0
+        private const val STOP_EXTRA_LEVELS = 3.0
     }
 
     suspend fun combine(task: QueueTask, ingredient: CookingIngredient, amount: Int) {

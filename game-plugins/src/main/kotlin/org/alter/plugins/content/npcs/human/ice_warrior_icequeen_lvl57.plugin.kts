@@ -15,20 +15,18 @@ val droptable =
         table("main") {
             total(128)
             obj(Items.LIMPWURT_SEED, quantityRange = 1..3, 30)
-            obj(Items.STRAWBERRY_SEED, quantityRange = 1..3, 30)
             obj(Items.MARRENTILL_SEED, quantityRange = 1..3, 30)
             obj(Items.JANGERBERRY_SEED, quantityRange = 1..3, 30)
             obj(Items.TARROMIN_SEED, quantityRange = 1..3, 30)
-            nothing(1)
+            nothing(40)
         }
         table("second") {
             total(128)
-            obj(Items.WATERMELON_SEED, quantityRange = 1..2, 30)
             obj(Items.HARRALANDER_SEED, quantityRange = 1..2, 30)
             obj(Items.SNAPE_GRASS_SEED, quantityRange = 1..2, 30)
             obj(Items.RANARR_SEED, quantityRange = 1..2, 30)
             obj(Items.WHITEBERRY_SEED, quantityRange = 1..2, 30)
-            nothing(1)
+            nothing(40)
         }
         table("herbs") {
             total(128)
@@ -37,14 +35,14 @@ val droptable =
             obj(Items.POISON_IVY_SEED, quantityRange = 1..2, 30)
             obj(Items.AVANTOE_SEED, quantityRange = 1..2, 30)
             obj(Items.KWUARM_SEED, quantityRange = 1..2, 30)
-            nothing(1)
+            nothing(40)
         }
         table("gems") {
             total(128)
             obj(Items.SNAPDRAGON_SEED, quantityRange = 1..2, 30)
             obj(Items.CADANTINE_SEED, quantityRange = 1..2, 30)
             obj(Items.LANTADYME_SEED, quantityRange = 1..2, 30)
-            nothing(38)
+            nothing(60)
         }
 
     }

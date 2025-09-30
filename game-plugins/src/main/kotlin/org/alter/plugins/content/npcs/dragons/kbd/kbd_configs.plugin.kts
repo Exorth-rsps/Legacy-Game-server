@@ -27,6 +27,7 @@ val kbd =
             obj(Items.BLOOD_RUNE, quantityRange = 10..50, 20)
             obj(Items.CHAOS_RUNE, quantityRange = 50..150, 20)
             obj(Items.DEATH_RUNE, quantityRange = 30..100, 20)
+            nothing (40)
         }
         table("second") {
             total(128)
@@ -38,12 +39,13 @@ val kbd =
             obj(Items.ADAMANT_KITESHIELD, quantity = 1, 15)
             obj(Items.ADAMANT_FULL_HELM, quantity = 1, 15)
             obj(Items.RUNITE_BAR, quantity = 1, 15)
+            nothing(40)
         }
         table("rare") {
             total(128)
             obj(Items.DRAGON_MED_HELM, quantity = 1, 10)
             obj(Items.DRAGON_PLATELEGS, quantity = 1, 8)
-            obj(Items.DRAGON_CHAINBODY, quantity = 1, 8)
+            obj(Items.DRAGON_CHAINBODY_3140, quantity = 1, 8)
             obj(Items.DRAGON_PLATESKIRT, quantity = 1, 8)
             obj(Items.DRAGON_BOOTS, quantity = 1, 8)
             obj(Items.DRAGON_ARROWTIPS, quantityRange = 1..50, 8)
@@ -52,6 +54,7 @@ val kbd =
             obj(Items.DRAGON_AXE, quantity = 1, 3)
             obj(Items.DRAGON_PICKAXE, quantity = 1, 3)
             obj(Items.DRAGONFIRE_SHIELD, quantity = 1, 3)
+            nothing(60)
         }
 
 

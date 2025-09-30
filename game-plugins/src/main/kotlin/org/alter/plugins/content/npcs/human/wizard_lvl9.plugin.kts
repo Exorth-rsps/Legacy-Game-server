@@ -18,14 +18,14 @@ val droptable =
             obj(Items.BODY_TALISMAN, quantity = 1, 15)
             obj(Items.MIND_TALISMAN, quantity = 1, 15)
             obj(Items.BLOOD_TALISMAN, quantity = 1, 1)
-            nothing(17)
+            nothing(30)
         }
         table("second") {
             total(128)
             obj(Items.CHAOS_TALISMAN, quantity = 1, 10)
             obj(Items.COSMIC_TALISMAN, quantity = 1, 10)
             obj(Items.DEATH_TALISMAN, quantity = 1, 1)
-            nothing(107)
+            nothing(80)
         }
     }
 

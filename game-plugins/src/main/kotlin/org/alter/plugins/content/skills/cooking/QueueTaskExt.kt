@@ -8,7 +8,7 @@ import org.alter.api.ext.*
 import org.alter.plugins.content.skills.cooking.data.CookingObj
 
 private val closeCookingDialog: QueueTask.() -> Unit = {
-    player.closeComponent(parent = 162, child = 561)
+    player.closeComponent(parent = 162, child = 559)
 }
 
 suspend fun QueueTask.cookingMessageBox(vararg items: Int, title: String = "What would you like to cook?", maxItems: Int = player.inventory.capacity, obj: CookingObj?, logic: Player.(Int, Int, CookingObj?) -> Unit) {

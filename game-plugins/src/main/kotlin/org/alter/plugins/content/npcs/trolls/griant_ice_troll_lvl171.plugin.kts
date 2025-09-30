@@ -23,25 +23,25 @@ val droptable =
             obj(Items.INFINITY_GLOVES, quantity = 1, 1)
             obj(Items.INFINITY_BOTTOMS, quantity = 1, 1)
             obj(Items.BLURITE_SWORD, quantity = 1, 1)
-            nothing(120)
+            nothing(100)
         }
         table("second") {
             total(128)
             obj(Items.PURE_ESSENCE_NOTED, quantityRange = 1..20, 10)
             obj(Items.COAL_NOTED, quantityRange = 1..10, 10)
             obj(Items.UNCUT_DIAMOND, quantity = 1, 10)
-            nothing(98)
+            nothing(20)
         }
         table("gems") {
             total(128)
             obj(Items.UNCUT_RUBY, quantity = 1, 15)
-            nothing(113)
+            nothing(20)
         }
         table("secondary") {
             total(128)
             obj(Items.OAK_LOGS_NOTED, quantityRange = 1..5, 7)
             obj(Items.WILLOW_LOGS_NOTED, quantityRange = 1..5, 4)
-            nothing(117)
+            nothing(20)
         }
         }
 

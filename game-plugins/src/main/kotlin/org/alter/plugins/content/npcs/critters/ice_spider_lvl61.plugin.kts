@@ -14,14 +14,14 @@ val droptable =
             obj(Items.JANGERBERRIES, quantity = 1, 30)
             obj(Items.EYE_OF_NEWT, quantity = 1, 50)
             obj(Items.UNICORN_HORN_DUST, quantity = 1, 50)
-            nothing(1)
+            nothing(50)
         }
         table("second") {
             total(128)
             obj(Items.LIMPWURT_ROOT, quantity = 1, 50)
             obj(Items.VOLCANIC_ASH, quantity = 1, 50)
             obj(Items.RED_SPIDERS_EGGS, quantity = 1, 50)
-            nothing(1)
+            nothing(50)
         }
         table("herb-secondaries") {
             total(128)
@@ -29,7 +29,7 @@ val droptable =
             obj(Items.WHITE_BERRIES, quantity = 1, 40)
             obj(Items.TOADS_LEGS, quantity = 1, 40)
             obj(Items.GOAT_HORN_DUST, quantity = 1, 40)
-            nothing(1)
+            nothing(40)
         }
         table("herbs") {
             total(128)

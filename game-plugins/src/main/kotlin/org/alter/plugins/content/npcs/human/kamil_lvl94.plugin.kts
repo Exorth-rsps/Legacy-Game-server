@@ -15,7 +15,7 @@ val droptable =
         table("coins") {
             total(128)
             obj(Items.COINS, quantityRange = 250..1500, 90)
-            nothing(38)
+            nothing(60)
         }
         table("main") {
             total(128)
@@ -33,7 +33,7 @@ val droptable =
             obj(Items.STEEL_ARROW, quantityRange = 25..50, 15)
             obj(Items.MITHRIL_ARROW, quantityRange = 10..25, 15)
             obj(Items.ADAMANT_ARROW, quantityRange = 1..20, 10)
-            nothing(1)
+            nothing(20)
         }
         table("second") {
             total(128)
@@ -42,7 +42,7 @@ val droptable =
             obj(Items.WHITE_SCIMITAR, quantity = 1, 15)
             obj(Items.WHITE_BATTLEAXE, quantity = 1, 15)
             obj(Items.WHITE_2H_SWORD, quantity = 1, 10)
-            nothing(65)
+            nothing(20)
         }
         table("rare") {
             total(128)
@@ -61,7 +61,7 @@ val droptable =
             obj(Items.RUNE_LONGSWORD, quantity = 1, 7)
             obj(Items.RUNE_SWORD, quantity = 1, 7)
             obj(Items.RUNE_MACE, quantity = 1, 7)
-            nothing(37)
+            nothing(60)
         }
 
     }

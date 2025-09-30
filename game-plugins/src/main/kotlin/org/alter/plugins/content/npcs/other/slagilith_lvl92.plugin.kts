@@ -19,7 +19,7 @@ val droptable =
             obj(Items.UNCUT_DIAMOND, quantity = 1, 70)
             obj(Items.UNCUT_RUBY, quantity = 1, 75)
             obj(Items.UNCUT_EMERALD, quantity = 1, 80)
-            nothing(1)
+            nothing(20)
         }
         table("rare") {
             total(128)
@@ -28,7 +28,7 @@ val droptable =
             obj(Items.ROCKSHELL_GLOVES, quantity = 1, 13)
             obj(Items.ROCKSHELL_PLATE, quantity = 1, 14)
             obj(Items.ROCKSHELL_LEGS, quantity = 1, 15)
-            nothing(63)
+            nothing(60)
         }
     }
 

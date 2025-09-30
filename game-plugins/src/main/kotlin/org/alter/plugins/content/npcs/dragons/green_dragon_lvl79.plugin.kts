@@ -24,7 +24,7 @@ val droptable =
             total(128)
             obj(Items.UNCUT_SAPPHIRE, quantity = 1, 90)
             obj(Items.UNCUT_EMERALD, quantity = 1, 80)
-            nothing(1)
+            nothing(90)
         }
         table("second") {
             total(128)

@@ -26,7 +26,7 @@ val droptable =
             obj(Items.WATER_RUNE, quantityRange = 1..20, 20)
             obj(Items.MITHRIL_BAR, quantity = 1, 2)
             obj(Items.COAL, quantityRange = 1..3, 10)
-            nothing(2)
+            nothing(20)
         }
         table("gems") {
             total(128)
@@ -45,7 +45,7 @@ val droptable =
             obj(Items.MITHRIL_FULL_HELM, quantity = 1, 10)
             obj(Items.MITHRIL_PLATELEGS, quantity = 1, 10)
             obj(Items.MITHRIL_PLATEBODY, quantity = 1, 10)
-            nothing(1)
+            nothing(20)
         }
         table("rare") {
             total(128)

@@ -18,7 +18,7 @@ val droptable =
             obj(Items.GOBLIN_MAIL, quantity = 1, 30)
             obj(Items.IRON_SWORD, quantity = 1, 20)
             obj(Items.AIR_RUNE, quantityRange = 1..10, 10)
-            nothing(1)
+            nothing(30)
         }
         table("second") {
             total(128)

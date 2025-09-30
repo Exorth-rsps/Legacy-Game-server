@@ -25,7 +25,7 @@ val droptable =
             obj(Items.CHAOS_RUNE, quantityRange = 10..50, 15)
             obj(Items.DEATH_RUNE, quantityRange = 1..25, 9)
             obj(Items.COINS, quantityRange = 100..250, 60)
-            nothing(1)
+            nothing(20)
         }
         table("rare") {
             total(128)
@@ -38,7 +38,7 @@ val droptable =
             obj(Items.COAL, quantityRange = 3..25, 3)
             obj(Items.ADAMANT_PICKAXE, quantity = 1, 3)
             obj(Items.ADAMANT_AXE, quantity = 1, 3)
-            nothing(79)
+            nothing(80)
         }
         table("second") {
             total(128)

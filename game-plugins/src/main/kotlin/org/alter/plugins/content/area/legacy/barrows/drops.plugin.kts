@@ -13,7 +13,7 @@ val chestTable = DropTableFactory.build {
         obj(Items.CHAOS_RUNE, quantityRange = 50..150, slots = 16)
         obj(Items.MIND_RUNE, quantityRange = 50..150, slots = 16)
         obj(Items.BOLT_RACK, quantityRange = 50..100, slots = 16)
-        obj(Items.COINS_99, quantityRange = 1000..5000, slots = 16)
+        obj(Items.COINS, quantityRange = 1000..5000, slots = 16)
     }
 }
 

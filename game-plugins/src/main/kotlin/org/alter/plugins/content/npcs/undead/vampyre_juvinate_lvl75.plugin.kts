@@ -23,7 +23,7 @@ val droptable =
             obj(Items.ADAMANT_SCIMITAR, quantity = 1, 12)
             obj(Items.STAFF_OF_AIR, quantity = 1, 3)
             obj(Items.STAFF_OF_EARTH, quantity = 1, 5)
-            nothing(9)
+            nothing(20)
         }
         table("second") {
             total(128)
@@ -33,19 +33,19 @@ val droptable =
             obj(Items.STEEL_PLATEBODY, quantity = 1, 24)
             obj(Items.STEEL_PLATESKIRT, quantity = 1, 25)
             obj(Items.MITHRIL_KITESHIELD, quantity = 1, 26)
-            nothing(1)
+            nothing(20)
         }
         table("herbs-noted") {
             total(128)
             obj(Items.WILLOW_LOGS, quantity = 5, 20)
             obj(Items.YEW_LOGS, quantity = 5, 12)
-            nothing(96)
+            nothing(20)
         }
         table("rare") {
             total(128)
             obj(Items.NATURE_RUNE, quantity = 10, 12)
             obj(Items.AMULET_OF_MAGIC, quantity = 1, 1)
-            nothing(115)
+            nothing(20)
         }
 
     }

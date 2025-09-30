@@ -25,7 +25,7 @@ val droptable =
             obj(Items.WHITE_CHAINBODY, quantity = 1, 4)
             obj(Items.WHITE_FULL_HELM, quantity = 1, 3)
             obj(Items.WHITE_PLATEBODY, quantity = 1, 3)
-            nothing(1)
+            nothing(20)
         }
         table("rare") {
             total(128)
@@ -36,7 +36,7 @@ val droptable =
             obj(Items.LEATHER_CHAPS, quantity = 1, 20)
             obj(Items.STUDDED_CHAPS, quantity = 1, 20)
             obj(Items.LEATHER_VAMBRACES, quantity = 1, 20)
-            nothing(1)
+            nothing(20)
         }
         table("second") {
             total(128)
@@ -47,7 +47,7 @@ val droptable =
             obj(Items.WHITE_PLATELEGS, quantity = 1, 3)
             obj(Items.WHITE_PLATESKIRT, quantity = 1, 3)
             obj(Items.WHITE_KITESHIELD, quantity = 1, 3)
-            nothing(43)
+            nothing(30)
         }
 
     }
