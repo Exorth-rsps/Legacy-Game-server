@@ -366,7 +366,14 @@ on_component_to_component_item_swap(
         val curTab = getCurrentTab(player, srcSlot)
         val dstTab = getCurrentTab(player, dstSlot)
 
-        val shouldInsert = insertMode || destinationItem == null
+        val sameTab = curTab == dstTab
+
+        if (!insertMode && destinationItem == null && sameTab) {
+            container.swap(srcSlot, dstSlot)
+            return@on_component_to_component_item_swap
+        }
+
+        val shouldInsert = insertMode || dstTab != curTab || destinationItem == null
 
         if (!shouldInsert) {
             container.swap(srcSlot, dstSlot)
