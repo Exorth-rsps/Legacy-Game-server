@@ -38,7 +38,6 @@ on_interface_open(BANK_INTERFACE_ID) {
         }
         slotOffset += size
     }
-    player.bank.shift()
 }
 
 on_interface_close(BANK_INTERFACE_ID) {
@@ -361,28 +360,35 @@ on_component_to_component_item_swap(
         if (container[srcSlot] == null) {
             return@on_component_to_component_item_swap
         }
-        val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
-        if (!insertMode) {
-            container.swap(srcSlot, dstSlot)
-        } else { // insert mode patch for movement between bank tabs and updating varbits
-            val curTab = getCurrentTab(player, srcSlot)
-            val dstTab = getCurrentTab(player, dstSlot)
-            if (dstTab != curTab) {
-                if ((dstTab > curTab && curTab != 0) || dstTab == 0)
-                    container.insert(srcSlot, dstSlot - 1)
-                else
-                    container.insert(srcSlot, dstSlot)
 
-                if (dstTab != 0) {
-                    player.setVarbit(BANK_TAB_ROOT_VARBIT + dstTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + dstTab) + 1)
+        val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
+        val destinationItem = container[dstSlot]
+        val curTab = getCurrentTab(player, srcSlot)
+        val dstTab = getCurrentTab(player, dstSlot)
+
+        val shouldInsert = insertMode || destinationItem == null
+
+        if (!shouldInsert) {
+            container.swap(srcSlot, dstSlot)
+            return@on_component_to_component_item_swap
+        }
+
+        val insertionSlot = when {
+            dstTab != curTab && ((dstTab > curTab && curTab != 0) || dstTab == 0) -> (dstSlot - 1).coerceAtLeast(0)
+            else -> dstSlot
+        }
+
+        container.insert(srcSlot, insertionSlot)
+
+        if (dstTab != curTab) {
+            if (dstTab != 0) {
+                player.setVarbit(BANK_TAB_ROOT_VARBIT + dstTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + dstTab) + 1)
+            }
+            if (curTab != 0) {
+                player.setVarbit(BANK_TAB_ROOT_VARBIT + curTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) - 1)
+                if (player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) == 0 && curTab <= numTabsUnlocked(player)) {
+                    shiftTabs(player, curTab)
                 }
-                if (curTab != 0) {
-                    player.setVarbit(BANK_TAB_ROOT_VARBIT + curTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) - 1)
-                    if (player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) == 0 && curTab <= numTabsUnlocked(player))
-                        shiftTabs(player, curTab)
-                }
-            } else {
-                container.insert(srcSlot, dstSlot)
             }
         }
     } else {
