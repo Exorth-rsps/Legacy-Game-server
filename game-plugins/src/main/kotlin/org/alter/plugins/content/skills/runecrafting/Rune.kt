@@ -18,15 +18,15 @@ enum class Rune(val id: Int, val essence: IntArray = intArrayOf(Items.RUNE_ESSEN
     EARTH(id = Items.EARTH_RUNE,    essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 6.5),
     FIRE(id = Items.FIRE_RUNE,      essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 7.0),
     BODY(id = Items.BODY_RUNE,      essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 7.5),
-    COSMIC(id = Items.COSMIC_RUNE,                                                                                                          level = 75, xp = 8.0),
-    CHAOS(id = Items.CHAOS_RUNE,                                                                                                            level = 99, xp = 8.5),
-    ASTRAL(id = Items.ASTRAL_RUNE,                                                                                                          level = 99, xp = 8.7),
-    NATURE(id = Items.NATURE_RUNE,                                                                                                          level = 1, xp = 9.0),
-    LAW(id = Items.LAW_RUNE,                                                                                                                level = 99, xp = 9.5),
-    DEATH(id = Items.DEATH_RUNE,                                                                                                            level = 99, xp = 10.0),
+    COSMIC(id = Items.COSMIC_RUNE,  essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 75, xp = 8.0),
+    CHAOS(id = Items.CHAOS_RUNE,    essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 8.5),
+    ASTRAL(id = Items.ASTRAL_RUNE,  essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 8.7),
+    NATURE(id = Items.NATURE_RUNE,  essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 1, xp = 9.0),
+    LAW(id = Items.LAW_RUNE,        essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                           level = 99, xp = 9.5),
+    DEATH(id = Items.DEATH_RUNE,    essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                            level = 99, xp = 10.0),
     BLOOD(id = Items.BLOOD_RUNE,    essence = intArrayOf(Items.DARK_ESSENCE_BLOCK, Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                 level = 50, xp = 23.8),
     SOUL(id = Items.SOUL_RUNE,      essence = intArrayOf(Items.DARK_ESSENCE_BLOCK),                                                         level = 99, xp = 29.7),
-    WRATH(id = Items.WRATH_RUNE,                                                                                                            level = 99, xp = 8.0);
+    WRATH(id = Items.WRATH_RUNE,    essence = intArrayOf(Items.RUNE_ESSENCE, Items.PURE_ESSENCE),                                                         level = 99, xp = 8.0);
 
     /**
      * Gets the rune count multiplier for the player's Runecrafting level.
