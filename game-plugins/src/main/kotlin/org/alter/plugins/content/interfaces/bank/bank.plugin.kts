@@ -353,58 +353,50 @@ on_component_to_component_item_swap(
         return@on_component_to_component_item_swap
     }
 
-    val hasValidSrc = srcSlot in 0 until container.capacity
-    val hasValidDst = dstSlot in 0 until container.capacity
-
-    if (hasValidSrc && hasValidDst) {
-        if (container[srcSlot] == null) {
-            return@on_component_to_component_item_swap
-        }
-
-        val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
-        val destinationItem = container[dstSlot]
-        val curTab = getCurrentTab(player, srcSlot)
-        val dstTab = getCurrentTab(player, dstSlot)
-
-        val sameTab = curTab == dstTab
-
-        if (srcSlot == dstSlot) {
-            return@on_component_to_component_item_swap
-        }
-
-        if (!insertMode && destinationItem == null && sameTab) {
-            container.insert(srcSlot, dstSlot)
-            return@on_component_to_component_item_swap
-        }
-
-        val shouldInsert = insertMode || dstTab != curTab || destinationItem == null
-
-        if (!shouldInsert) {
-            container.swap(srcSlot, dstSlot)
-            return@on_component_to_component_item_swap
-        }
-
-        val insertionSlot = when {
-            dstTab != curTab && ((dstTab > curTab && curTab != 0) || dstTab == 0) -> (dstSlot - 1).coerceAtLeast(0)
-            else -> dstSlot
-        }
-
-        container.insert(srcSlot, insertionSlot)
-
-        if (dstTab != curTab) {
-            if (dstTab != 0) {
-                player.setVarbit(BANK_TAB_ROOT_VARBIT + dstTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + dstTab) + 1)
-            }
-            if (curTab != 0) {
-                player.setVarbit(BANK_TAB_ROOT_VARBIT + curTab, player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) - 1)
-                if (player.getVarbit(BANK_TAB_ROOT_VARBIT + curTab) == 0 && curTab <= numTabsUnlocked(player)) {
-                    shiftTabs(player, curTab)
-                }
-            }
-        }
-    } else {
-        // Sync the container on the client
+    if (srcSlot !in 0 until container.capacity || container[srcSlot] == null) {
         container.dirty = true
+        return@on_component_to_component_item_swap
+    }
+
+    if (dstSlot !in 0 until container.capacity) {
+        container.dirty = true
+        return@on_component_to_component_item_swap
+    }
+
+    val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
+    val destinationItem = container[dstSlot]
+    val currentTab = getCurrentTab(player, srcSlot)
+    val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT).coerceIn(0, 9)
+
+    if (destinationItem == null) {
+        if (insertMode && selectedTab != currentTab) {
+            dropToTab(player, selectedTab, srcSlot)
+        } else {
+            val target = dstSlot.coerceIn(0, container.capacity - 1)
+            if (srcSlot != target) {
+                container.insert(srcSlot, target)
+                container.shift()
+            }
+        }
+        return@on_component_to_component_item_swap
+    }
+
+    if (!insertMode) {
+        if (srcSlot != dstSlot) {
+            container.swap(srcSlot, dstSlot)
+        }
+        return@on_component_to_component_item_swap
+    }
+
+    val dstTab = getCurrentTab(player, dstSlot)
+    if (dstTab != currentTab) {
+        dropToTab(player, dstTab, srcSlot)
+        return@on_component_to_component_item_swap
+    }
+
+    if (srcSlot != dstSlot) {
+        container.insert(srcSlot, dstSlot)
+        container.shift()
     }
 }
 
