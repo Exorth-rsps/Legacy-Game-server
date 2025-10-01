@@ -25,19 +25,7 @@ import org.alter.plugins.content.interfaces.bank.BankTabs.numTabsUnlocked
 import org.alter.plugins.content.interfaces.bank.BankTabs.shiftTabs
 
 on_interface_open(BANK_INTERFACE_ID) {
-    var slotOffset = 0
-    for (tab in 1..9) {
-        val size = player.getVarbit(BANK_TAB_ROOT_VARBIT + tab)
-        for (slot in slotOffset until slotOffset + size) {
-            if (player.bank[slot] == null) {
-                player.setVarbit(BANK_TAB_ROOT_VARBIT + tab, player.getVarbit(BANK_TAB_ROOT_VARBIT + tab) - 1)
-                // check for empty tab shift
-                if (player.getVarbit(BANK_TAB_ROOT_VARBIT + tab) == 0 && tab <= numTabsUnlocked(player))
-                    shiftTabs(player, tab)
-            }
-        }
-        slotOffset += size
-    }
+    Bank.cleanEmptySlots(player)
 }
 
 on_interface_close(BANK_INTERFACE_ID) {
@@ -377,7 +365,7 @@ on_component_to_component_item_swap(
         }
         val target = targetSlot.coerceIn(0, maxTarget)
         if (srcSlot != target) {
-            container.insert(srcSlot, target)
+            Bank.tabSafeInsert(player, srcSlot, target)
         }
     }
 
@@ -399,7 +387,7 @@ on_component_to_component_item_swap(
 
     if (!insertMode) {
         if (srcSlot != dstSlot) {
-            container.swap(srcSlot, dstSlot)
+            Bank.swap(player, srcSlot, dstSlot)
         }
         return@on_component_to_component_item_swap
     }
@@ -411,7 +399,7 @@ on_component_to_component_item_swap(
     }
 
     if (srcSlot != dstSlot) {
-        container.insert(srcSlot, dstSlot)
+        Bank.tabSafeInsert(player, srcSlot, dstSlot)
     }
 }
 

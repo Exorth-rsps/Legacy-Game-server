@@ -12,6 +12,8 @@ import org.alter.plugins.content.interfaces.bank.BankTabs.BANK_TAB_ROOT_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.SELECTED_TAB_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.getCurrentTab
 import org.alter.plugins.content.interfaces.bank.BankTabs.getTabByItem
+import org.alter.plugins.content.interfaces.bank.BankTabs.numTabsUnlocked
+import org.alter.plugins.content.interfaces.bank.BankTabs.shiftTabs
 import org.alter.plugins.content.interfaces.equipstats.EquipmentStats
 
 /**
@@ -36,6 +38,58 @@ object Bank {
      * items from a looting bag into the bank.
      */
     private const val BANK_YOUR_LOOT_VARBIT = 4139
+
+    fun cleanEmptySlots(player: Player) {
+        val bank = player.bank
+        var seenItem = false
+        for (index in bank.capacity - 1 downTo 0) {
+            val item = bank[index]
+            if (item == null) {
+                if (seenItem) {
+                    val tab = getCurrentTab(player, index)
+                    if (tab != 0) {
+                        val varbit = BANK_TAB_ROOT_VARBIT + tab
+                        val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
+                        player.setVarbit(varbit, newSize)
+                        if (newSize == 0 && tab <= numTabsUnlocked(player)) {
+                            shiftTabs(player, tab)
+                        }
+                    }
+                }
+            } else {
+                seenItem = true
+            }
+        }
+        bank.shift()
+    }
+
+    fun swap(player: Player, from: Int, to: Int) {
+        player.bank.swap(from, to)
+    }
+
+    fun tabSafeInsert(player: Player, from: Int, to: Int) {
+        val bank = player.bank
+        val targetTab = getCurrentTab(player, to)
+        val sourceTab = getCurrentTab(player, from)
+
+        bank.insert(from, to)
+
+        if (targetTab != sourceTab) {
+            if (targetTab != 0) {
+                val targetVarbit = BANK_TAB_ROOT_VARBIT + targetTab
+                player.setVarbit(targetVarbit, player.getVarbit(targetVarbit) + 1)
+            }
+
+            if (sourceTab != 0) {
+                val sourceVarbit = BANK_TAB_ROOT_VARBIT + sourceTab
+                val newSize = (player.getVarbit(sourceVarbit) - 1).coerceAtLeast(0)
+                player.setVarbit(sourceVarbit, newSize)
+                if (newSize == 0 && sourceTab <= numTabsUnlocked(player)) {
+                    shiftTabs(player, sourceTab)
+                }
+            }
+        }
+    }
 
     fun withdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
         var withdrawn = 0
