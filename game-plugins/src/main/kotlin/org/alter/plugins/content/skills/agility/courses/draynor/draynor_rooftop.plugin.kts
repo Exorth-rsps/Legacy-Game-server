@@ -1,5 +1,6 @@
 package org.alter.plugins.content.skills.agility.courses.draynor
 
+import org.alter.api.Skills
 import org.alter.api.cfg.Animation
 import org.alter.api.cfg.Items
 import org.alter.api.cfg.Objs
@@ -21,9 +22,9 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         experience = 8.0,
         description = "Climb the rough wall north of the bank to access the rooftops.",
         objectIds = setOf(Objs.ROUGH_WALL),
-        objectTile = Tile(3103, 3261, 0),
-        startTile = Tile(3103, 3261, 0),
-        endTile = Tile(3103, 3261, 3),
+        objectTile = Tile(3103, 3279, 0),
+        startTile = Tile(3103, 3279, 0),
+        endTile = Tile(3102, 3279, 3),
         animation = Animation.AGILITY_CLIMB_UP,
         animationDuration = 4,
         interactionOption = "Climb",
@@ -74,7 +75,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         endTile = Tile(3116, 3263, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 5,
-        interactionOption = "Jump",
+        interactionOption = "Jump-up",
     )
     obstacle(
         name = "First gap",
@@ -86,7 +87,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         endTile = Tile(3120, 3262, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 4,
-        interactionOption = "Jump",
+        interactionOption = "Cross",
     )
     obstacle(
         name = "Second gap",
@@ -98,7 +99,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         endTile = Tile(3122, 3262, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 4,
-        interactionOption = "Jump",
+        interactionOption = "Cross",
     )
     obstacle(
         name = "Crate dismount",
@@ -122,6 +123,10 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
 }
 
 AgilityCourseRegistry.register(draynorRooftopCourse)
+
+private val draynorFinalObstacle: AgilityObstacle? = draynorRooftopCourse.obstacles.lastOrNull()
+private val draynorLapBonusExperience: Double = (draynorRooftopCourse.totalLapExperience - draynorRooftopCourse.obstacles
+    .sumOf { it.experience ?: 0.0 }).coerceAtLeast(0.0)
 
 private val draynorObstaclesByObject: Map<Int, List<AgilityObstacle>> =
     draynorRooftopCourse.obstacles
@@ -155,6 +160,8 @@ draynorObstaclesByObject.forEach { (objectId, obstacles) ->
                 wait(1)
             }
 
+            player.message(obstacle.description ?: "You attempt the ${obstacle.name.lowercase()}.")
+
             obstacle.animation?.let { animationId ->
                 player.animate(animationId)
                 val duration = obstacle.animationDuration ?: 0
@@ -172,7 +179,21 @@ draynorObstaclesByObject.forEach { (objectId, obstacles) ->
                 player.moveTo(endTile)
             }
 
-            player.message("You attempt the ${obstacle.name.lowercase()}.")
+            obstacle.experience?.let { xp ->
+                player.addXp(Skills.AGILITY, xp)
+            }
+
+            if (draynorFinalObstacle != null && obstacle == draynorFinalObstacle) {
+                if (draynorLapBonusExperience > 0) {
+                    player.addXp(Skills.AGILITY, draynorLapBonusExperience)
+                }
+
+                val formattedXp = formatExperience(draynorRooftopCourse.totalLapExperience)
+                player.message("You complete the ${draynorRooftopCourse.name} and earn $formattedXp Agility experience.")
+                draynorRooftopCourse.description?.let { player.message(it) }
+            } else {
+                player.message("You successfully traverse the ${obstacle.name.lowercase()}.")
+            }
         }
     }
 }
@@ -185,4 +206,12 @@ private fun chooseDraynorObstacle(obstacles: List<AgilityObstacle>, objectTile: 
     return obstacles.firstOrNull { it.objectTile == objectTile }
         ?: obstacles.firstOrNull { it.startTile == objectTile }
         ?: obstacles.firstOrNull()
+}
+
+private fun formatExperience(xp: Double): String {
+    return if (xp % 1.0 == 0.0) {
+        xp.toInt().toString()
+    } else {
+        "%.1f".format(xp)
+    }
 }

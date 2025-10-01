@@ -42,7 +42,11 @@ data class AgilityReward(
 
 /**
  * An agility course combines a level requirement, the total experience per
- * lap and rich metadata about its constituent obstacles and rewards.
+ * lap and rich metadata about its constituent obstacles and rewards. The
+ * [name] and optional [description] are intended for player-facing messaging
+ * while [totalLapExperience] represents the canonical experience that should
+ * be awarded after a full lap even if individual obstacles add up to a
+ * different value.
  */
 data class AgilityCourse(
     val id: String,
