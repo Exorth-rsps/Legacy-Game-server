@@ -8,18 +8,22 @@ import org.alter.game.model.Tile
  * [objectIds] can be used once we start wiring the course logic so that
  * each configured entry can be mapped to the corresponding world object.
  *
- * [startTile] describes the tile a player should step onto before starting the
- * obstacle, with the optional [animation] and [animationDuration] (in game
- * ticks) documenting the expected movement.
+ * [objectTile] and [startTile] describe the tile of the interactive object and
+ * the tile a player should step onto before starting the obstacle
+ * respectively. The optional [animation] and [animationDuration] (in game
+ * ticks) document the expected movement and timing, while [interactionOption]
+ * stores the object option that should trigger the obstacle.
  */
 data class AgilityObstacle(
     val name: String,
     val experience: Double? = null,
     val description: String? = null,
     val objectIds: Set<Int> = emptySet(),
+    val objectTile: Tile? = null,
     val startTile: Tile? = null,
     val animation: Int? = null,
     val animationDuration: Int? = null,
+    val interactionOption: String? = null,
 )
 
 /**
@@ -45,7 +49,6 @@ data class AgilityCourse(
     val totalLapExperience: Double,
     val obstacles: List<AgilityObstacle>,
     val rewards: List<AgilityReward>,
-    val regions: Set<Int> = emptySet(),
     val description: String? = null
 )
 
@@ -72,24 +75,31 @@ class AgilityCourseBuilder(private val id: String) {
     var minimumLevel: Int = 1
     var totalLapExperience: Double? = null
     var description: String? = null
-    private val regions = linkedSetOf<Int>()
     private val obstacles = mutableListOf<AgilityObstacle>()
     private val rewards = mutableListOf<AgilityReward>()
-
-    fun regions(vararg regionIds: Int) {
-        regions.addAll(regionIds.toList())
-    }
 
     fun obstacle(
         name: String,
         experience: Double? = null,
         description: String? = null,
         objectIds: Set<Int> = emptySet(),
+        objectTile: Tile? = null,
         startTile: Tile? = null,
         animation: Int? = null,
         animationDuration: Int? = null,
+        interactionOption: String? = null,
     ) {
-        obstacles += AgilityObstacle(name, experience, description, objectIds, startTile, animation, animationDuration)
+        obstacles += AgilityObstacle(
+            name = name,
+            experience = experience,
+            description = description,
+            objectIds = objectIds,
+            objectTile = objectTile,
+            startTile = startTile,
+            animation = animation,
+            animationDuration = animationDuration,
+            interactionOption = interactionOption,
+        )
     }
 
     fun reward(
@@ -113,7 +123,6 @@ class AgilityCourseBuilder(private val id: String) {
             totalLapExperience = computedLapExperience,
             obstacles = obstacles.toList(),
             rewards = rewards.toList(),
-            regions = regions.toSet(),
             description = description
         )
     }
