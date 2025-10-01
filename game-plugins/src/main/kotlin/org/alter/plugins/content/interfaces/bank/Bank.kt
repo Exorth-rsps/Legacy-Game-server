@@ -41,28 +41,33 @@ object Bank {
 
     fun cleanEmptySlots(player: Player) {
         val bank = player.bank
-        var hasSeenItem = false
-        for (index in bank.capacity - 1 downTo 0) {
-            val item = bank[index]
-            if (item == null) {
-                if (hasSeenItem) {
-                    val tab = getCurrentTab(player, index)
-                    if (tab != 0) {
-                        val varbit = BANK_TAB_ROOT_VARBIT + tab
-                        val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
-                        player.setVarbit(varbit, newSize)
-                    }
-                }
-            } else {
-                hasSeenItem = true
+        var lastOccupied = bank.capacity - 1
+
+        while (lastOccupied >= 0 && bank[lastOccupied] == null) {
+            val tab = getCurrentTab(player, lastOccupied)
+            if (tab != 0) {
+                val varbit = BANK_TAB_ROOT_VARBIT + tab
+                val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
+                player.setVarbit(varbit, newSize)
             }
+            lastOccupied--
         }
-        bank.shift()
+
         shiftTabs(player)
+        bank.dirty = true
     }
 
     fun swap(player: Player, from: Int, to: Int) {
-        player.bank.swap(from, to)
+        val bank = player.bank
+        if (bank[to] == null) {
+            val sourceTab = getCurrentTab(player, from)
+            val targetTab = getCurrentTab(player, to)
+            if (sourceTab != targetTab) {
+                tabSafeInsert(player, from, to)
+                return
+            }
+        }
+        bank.swap(from, to)
     }
 
     fun tabSafeInsert(player: Player, from: Int, to: Int) {

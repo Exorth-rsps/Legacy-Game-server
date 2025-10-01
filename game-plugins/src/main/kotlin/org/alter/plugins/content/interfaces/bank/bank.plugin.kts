@@ -351,12 +351,6 @@ on_component_to_component_item_swap(
         return@on_component_to_component_item_swap
     }
 
-    val occupied = container.occupiedSlotCount
-    if (srcSlot >= occupied || dstSlot >= occupied) {
-        container.dirty = true
-        return@on_component_to_component_item_swap
-    }
-
     val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
     if (!insertMode) {
         if (srcSlot != dstSlot) {
