@@ -351,55 +351,21 @@ on_component_to_component_item_swap(
         return@on_component_to_component_item_swap
     }
 
-    val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
-    val destinationItem = container[dstSlot]
-    val currentTab = getCurrentTab(player, srcSlot)
-    val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT).coerceIn(0, 9)
-
-    fun moveWithinTab(targetSlot: Int) {
-        val lastOccupied = container.rawItems.indexOfLast { it != null }
-        val maxTarget = when {
-            lastOccupied == -1 -> 0
-            lastOccupied >= container.capacity - 1 -> container.capacity - 1
-            else -> lastOccupied + 1
-        }
-        val target = targetSlot.coerceIn(0, maxTarget)
-        if (srcSlot != target) {
-            Bank.tabSafeInsert(player, srcSlot, target)
-        }
-    }
-
-    if (destinationItem == null) {
-        val destinationTab = getCurrentTab(player, dstSlot)
-        val targetTab = when {
-            selectedTab != 0 && selectedTab != currentTab -> selectedTab
-            destinationTab != currentTab -> destinationTab
-            else -> null
-        }
-
-        if (targetTab != null) {
-            dropToTab(player, targetTab, srcSlot)
-        } else {
-            moveWithinTab(dstSlot)
-        }
+    val occupied = container.occupiedSlotCount
+    if (srcSlot >= occupied || dstSlot >= occupied) {
+        container.dirty = true
         return@on_component_to_component_item_swap
     }
 
+    val insertMode = player.getVarbit(REARRANGE_MODE_VARBIT) == 1
     if (!insertMode) {
         if (srcSlot != dstSlot) {
             Bank.swap(player, srcSlot, dstSlot)
         }
-        return@on_component_to_component_item_swap
-    }
-
-    val dstTab = getCurrentTab(player, dstSlot)
-    if (dstTab != currentTab) {
-        dropToTab(player, dstTab, srcSlot)
-        return@on_component_to_component_item_swap
-    }
-
-    if (srcSlot != dstSlot) {
-        Bank.tabSafeInsert(player, srcSlot, dstSlot)
+    } else {
+        if (srcSlot != dstSlot) {
+            Bank.tabSafeInsert(player, srcSlot, dstSlot)
+        }
     }
 }
 

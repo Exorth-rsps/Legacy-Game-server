@@ -41,26 +41,24 @@ object Bank {
 
     fun cleanEmptySlots(player: Player) {
         val bank = player.bank
-        var seenItem = false
+        var hasSeenItem = false
         for (index in bank.capacity - 1 downTo 0) {
             val item = bank[index]
             if (item == null) {
-                if (seenItem) {
+                if (hasSeenItem) {
                     val tab = getCurrentTab(player, index)
                     if (tab != 0) {
                         val varbit = BANK_TAB_ROOT_VARBIT + tab
                         val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
                         player.setVarbit(varbit, newSize)
-                        if (newSize == 0 && tab <= numTabsUnlocked(player)) {
-                            shiftTabs(player, tab)
-                        }
                     }
                 }
             } else {
-                seenItem = true
+                hasSeenItem = true
             }
         }
         bank.shift()
+        shiftTabs(player)
     }
 
     fun swap(player: Player, from: Int, to: Int) {
@@ -74,19 +72,17 @@ object Bank {
 
         bank.insert(from, to)
 
-        if (targetTab != sourceTab) {
-            if (targetTab != 0) {
-                val targetVarbit = BANK_TAB_ROOT_VARBIT + targetTab
-                player.setVarbit(targetVarbit, player.getVarbit(targetVarbit) + 1)
-            }
+        if (targetTab != 0) {
+            val targetVarbit = BANK_TAB_ROOT_VARBIT + targetTab
+            player.setVarbit(targetVarbit, player.getVarbit(targetVarbit) + 1)
+        }
 
-            if (sourceTab != 0) {
-                val sourceVarbit = BANK_TAB_ROOT_VARBIT + sourceTab
-                val newSize = (player.getVarbit(sourceVarbit) - 1).coerceAtLeast(0)
-                player.setVarbit(sourceVarbit, newSize)
-                if (newSize == 0 && sourceTab <= numTabsUnlocked(player)) {
-                    shiftTabs(player, sourceTab)
-                }
+        if (sourceTab != 0) {
+            val sourceVarbit = BANK_TAB_ROOT_VARBIT + sourceTab
+            val newSize = (player.getVarbit(sourceVarbit) - 1).coerceAtLeast(0)
+            player.setVarbit(sourceVarbit, newSize)
+            if (newSize == 0) {
+                shiftTabs(player)
             }
         }
     }
