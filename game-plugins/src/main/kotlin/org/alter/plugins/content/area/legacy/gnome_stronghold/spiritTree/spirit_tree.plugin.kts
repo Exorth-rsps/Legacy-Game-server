@@ -63,13 +63,29 @@ fun spiritTreeTele(player: Player, endTile : Tile) {
 
 fun TreeTele (player: Player) {
     player.queue(TaskPriority.STRONG) {
-        when (interfaceOptions("Tree Gnome Village", "Gnome Stronghold", "Battlefield of Khazard", "Grand Exchange", "Feldip Hills", "Prifddinas", "<col=777777>Port Sarim</col>", "<col=777777>Etceteria</col>", "<col=777777>Brimhaven</col>", "<col=777777>Hosidius</col>", "<col=777777>Farming Guild</col>", "<col=777777>Your house</col>", "Cancel", title = "Spirit Tree Locations")) {
-            0 -> spiritTreeTele(player, Tile(2542, 3169, 0))
-            1 -> spiritTreeTele(player, Tile(2461, 3444, 0))
-            2 -> spiritTreeTele(player, Tile(2557, 3260, 0))
-            3 -> spiritTreeTele(player, Tile(3183, 3508, 0))
-            4 -> spiritTreeTele(player, Tile(2488, 2850, 0))
-            5 -> spiritTreeTele(player, Tile(3274, 6123, 0))
+
+        when (
+            interfaceOptions("Gnome Stronghold", "Draynor Rooftop", "<col=777777>Al Kharid Rooftop</col>", "<col=777777>Varrock Rooftop</col>", "<col=777777>Barbarian Outpost Course</col>", "<col=777777>Canfis Rooftop Course</col>", "Falador Rooftop Course", "<col=777777>Wilderness Course</col>", "Seers' Village Rooftop Course", "<col=777777>Pollnivneach Rooftop Course</col>", "<col=777777>Relekka Rooftop Course</col>", "<col=777777>Ardounge Rooftop Course</col>", "Cancel", title = "Spirit Tree Agility Locations")) {
+            0 -> spiritTreeTele(player, Tile(2472, 3438, 0))//Gnome Stronghold
+            1 -> spiritTreeTele(player, Tile(3105, 3278, 0))//Draynor Rooftop
+            2 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //2 -> spiritTreeTele(player, Tile(3273, 3198, 0))//Al kharid
+            3 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //3 -> spiritTreeTele(player, Tile(3223, 3416, 0))//Varrock
+            4 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //4 -> spiritTreeTele(player, Tile(2552, 3563, 0))//Barbarion
+            5 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //5 -> spiritTreeTele(player, Tile(3506, 3486, 0))//Canfis
+            6 -> spiritTreeTele(player, Tile(3032, 3340, 0))//Falador
+            7 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //7 -> spiritTreeTele(player, Tile(2998, 3932, 0))//Wilderness
+            8 -> spiritTreeTele(player, Tile(2731, 3484, 0))//Seers
+            9 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //9 -> spiritTreeTele(player, Tile(3356, 2965, 0))//Pollnivneach
+            10 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //10 -> spiritTreeTele(player, Tile(2631, 3678, 0))//Relekka
+            11 -> itemMessage(message = "This course unavailable.", item = 6063, amountOrZoom = 400)
+            //11 -> spiritTreeTele(player, Tile(2669, 3298, 0))//Ardounge
             12 -> player.closeInterface(InterfaceDestination.MAIN_SCREEN)
         }
     }
