@@ -23,6 +23,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.ROUGH_WALL),
         objectTile = Tile(3103, 3261, 0),
         startTile = Tile(3103, 3261, 0),
+        endTile = Tile(3103, 3261, 3),
         animation = Animation.AGILITY_CLIMB_UP,
         animationDuration = 4,
         interactionOption = "Climb",
@@ -34,6 +35,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.TIGHTROPE),
         objectTile = Tile(3103, 3261, 3),
         startTile = Tile(3103, 3261, 3),
+        endTile = Tile(3108, 3263, 3),
         animation = Animation.AGILITY_LOG_WALK,
         animationDuration = 7,
         interactionOption = "Cross",
@@ -45,6 +47,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.TIGHTROPE_11406),
         objectTile = Tile(3108, 3263, 3),
         startTile = Tile(3108, 3263, 3),
+        endTile = Tile(3110, 3265, 3),
         animation = Animation.AGILITY_LOG_WALK,
         animationDuration = 6,
         interactionOption = "Cross",
@@ -56,6 +59,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.NARROW_WALL),
         objectTile = Tile(3110, 3265, 3),
         startTile = Tile(3110, 3265, 3),
+        endTile = Tile(3113, 3265, 3),
         animation = Animation.AGILITY_CROSS_LEDGE_RIGHT,
         animationDuration = 5,
         interactionOption = "Balance",
@@ -67,6 +71,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.WALL_11630),
         objectTile = Tile(3113, 3265, 3),
         startTile = Tile(3113, 3265, 3),
+        endTile = Tile(3116, 3263, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 5,
         interactionOption = "Jump",
@@ -78,6 +83,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.GAP_10861),
         objectTile = Tile(3116, 3263, 3),
         startTile = Tile(3116, 3263, 3),
+        endTile = Tile(3120, 3262, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 4,
         interactionOption = "Jump",
@@ -89,6 +95,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.GAP_10862),
         objectTile = Tile(3120, 3262, 3),
         startTile = Tile(3120, 3262, 3),
+        endTile = Tile(3122, 3262, 3),
         animation = Animation.AGILITY_JUMP,
         animationDuration = 4,
         interactionOption = "Jump",
@@ -100,6 +107,7 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         objectIds = setOf(Objs.CRATE_11632),
         objectTile = Tile(3122, 3262, 3),
         startTile = Tile(3122, 3262, 3),
+        endTile = Tile(3122, 3261, 0),
         animation = Animation.AGILITY_CLIMB_DOWN,
         animationDuration = 3,
         interactionOption = "Climb-down",
@@ -157,6 +165,11 @@ draynorObstaclesByObject.forEach { (objectId, obstacles) ->
 
             if (obstacle.animation == null) {
                 wait(1)
+            }
+
+            val endTile = obstacle.endTile
+            if (endTile != null && player.tile != endTile) {
+                player.moveTo(endTile)
             }
 
             player.message("You attempt the ${obstacle.name.lowercase()}.")

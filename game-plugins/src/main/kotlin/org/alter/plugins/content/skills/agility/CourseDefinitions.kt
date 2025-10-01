@@ -8,11 +8,12 @@ import org.alter.game.model.Tile
  * [objectIds] can be used once we start wiring the course logic so that
  * each configured entry can be mapped to the corresponding world object.
  *
- * [objectTile] and [startTile] describe the tile of the interactive object and
- * the tile a player should step onto before starting the obstacle
- * respectively. The optional [animation] and [animationDuration] (in game
- * ticks) document the expected movement and timing, while [interactionOption]
- * stores the object option that should trigger the obstacle.
+ * [objectTile], [startTile], and [endTile] describe the tile of the interactive
+ * object, the tile a player should step onto before starting the obstacle and
+ * the tile they should land on once the interaction has finished respectively.
+ * The optional [animation] and [animationDuration] (in game ticks) document the
+ * expected movement and timing, while [interactionOption] stores the object
+ * option that should trigger the obstacle.
  */
 data class AgilityObstacle(
     val name: String,
@@ -21,6 +22,7 @@ data class AgilityObstacle(
     val objectIds: Set<Int> = emptySet(),
     val objectTile: Tile? = null,
     val startTile: Tile? = null,
+    val endTile: Tile? = null,
     val animation: Int? = null,
     val animationDuration: Int? = null,
     val interactionOption: String? = null,
@@ -85,6 +87,7 @@ class AgilityCourseBuilder(private val id: String) {
         objectIds: Set<Int> = emptySet(),
         objectTile: Tile? = null,
         startTile: Tile? = null,
+        endTile: Tile? = null,
         animation: Int? = null,
         animationDuration: Int? = null,
         interactionOption: String? = null,
@@ -96,6 +99,7 @@ class AgilityCourseBuilder(private val id: String) {
             objectIds = objectIds,
             objectTile = objectTile,
             startTile = startTile,
+            endTile = endTile,
             animation = animation,
             animationDuration = animationDuration,
             interactionOption = interactionOption,
