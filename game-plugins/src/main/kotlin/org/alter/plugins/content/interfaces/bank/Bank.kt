@@ -7,11 +7,9 @@ import org.alter.game.model.item.Item
 import org.alter.api.BonusSlot
 import org.alter.api.InterfaceDestination
 import org.alter.api.ext.*
-import org.alter.plugins.content.interfaces.bank.BankTabs.BANK_TABLIST_ID
 import org.alter.plugins.content.interfaces.bank.BankTabs.BANK_TAB_ROOT_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.SELECTED_TAB_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.getCurrentTab
-import org.alter.plugins.content.interfaces.bank.BankTabs.getTabByItem
 import org.alter.plugins.content.interfaces.bank.BankTabs.numTabsUnlocked
 import org.alter.plugins.content.interfaces.bank.BankTabs.shiftTabs
 import org.alter.plugins.content.interfaces.equipstats.EquipmentStats
@@ -41,19 +39,23 @@ object Bank {
 
     fun cleanEmptySlots(player: Player) {
         val bank = player.bank
-        var lastOccupied = bank.capacity - 1
-
-        while (lastOccupied >= 0 && bank[lastOccupied] == null) {
-            val tab = getCurrentTab(player, lastOccupied)
-            if (tab != 0) {
-                val varbit = BANK_TAB_ROOT_VARBIT + tab
-                val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
-                player.setVarbit(varbit, newSize)
+        for (index in bank.capacity - 1 downTo 0) {
+            if (bank[index] == null) {
+                val tab = getCurrentTab(player, index)
+                if (tab != 0) {
+                    val varbit = BANK_TAB_ROOT_VARBIT + tab
+                    val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
+                    player.setVarbit(varbit, newSize)
+                }
             }
-            lastOccupied--
         }
 
+        bank.shift()
         shiftTabs(player)
+        val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT)
+        if (selectedTab != 0 && selectedTab > numTabsUnlocked(player)) {
+            player.setVarbit(SELECTED_TAB_VARBIT, 0)
+        }
         bank.dirty = true
     }
 
@@ -62,10 +64,14 @@ object Bank {
         if (bank[to] == null) {
             val sourceTab = getCurrentTab(player, from)
             val targetTab = getCurrentTab(player, to)
-            if (sourceTab != targetTab) {
-                tabSafeInsert(player, from, to)
+
+            if (sourceTab == targetTab) {
+                bank.insert(from, to)
                 return
             }
+
+            tabSafeInsert(player, from, to)
+            return
         }
         bank.swap(from, to)
     }
@@ -88,6 +94,9 @@ object Bank {
             player.setVarbit(sourceVarbit, newSize)
             if (newSize == 0) {
                 shiftTabs(player)
+                if (player.getVarbit(SELECTED_TAB_VARBIT) == sourceTab) {
+                    player.setVarbit(SELECTED_TAB_VARBIT, 0)
+                }
             }
         }
     }
@@ -98,8 +107,6 @@ object Bank {
         val to = p.inventory
         val amount = Math.min(from.getItemCount(id), amt)
         val note = p.getVarbit(WITHDRAW_AS_VARBIT) == 1
-        val oldItemArray = BankTabs.buildBankGrid(p)
-
         for (i in slot until from.capacity) {
             val item = from[i] ?: continue
             if (item.id != id) {
@@ -119,6 +126,7 @@ object Bank {
             withdrawn += transfer?.completed ?: 0
 
             if (from[i] == null) {
+                val tab = getCurrentTab(p, i)
                 if (placehold || p.getVarbit(ALWAYS_PLACEHOLD_VARBIT) == 1) {
                     val def = item.getDef(p.world.definitions)
                     /**
@@ -129,26 +137,18 @@ object Bank {
                         p.bank[i] = Item(def.placeholderLink, -2)
                     }
                 } else {
-//                    var itemsTab: Int = -1
-//                    if (oldItemArray != null) {
-//                        itemsTab = getTabByItem(p, item.id, oldItemArray)
-//                    }
-//
-//                    val tabed = oldItemArray?.filter { it.tabId == itemsTab }
-//                    if (tabed!![0].item!!.id == item.id && tabed[0].item!!.amount == 0) {
-//                        val tabVarbit = BANK_TAB_ROOT_VARBIT + itemsTab
-//
-//                        val remove = from.shiftV2(tabed[0].slot)
-//                        val setVarsValue = p.getVarbit(tabVarbit)
-//
-//                        if (itemsTab != 0) {
-//                            p.setVarbit(tabVarbit, setVarsValue - remove)
-//                            if (setVarsValue == 0) {
-//                                BankTabs.shiftTabs(p, itemsTab)
-//                                p.setVarbit(SELECTED_TAB_VARBIT, 0)
-//                            }
-//                        }
-//                    }
+                    p.bank.shift()
+
+                    if (tab != 0) {
+                        val tabVarbit = BANK_TAB_ROOT_VARBIT + tab
+                        val newSize = (p.getVarbit(tabVarbit) - 1).coerceAtLeast(0)
+                        p.setVarbit(tabVarbit, newSize)
+
+                        if (newSize == 0) {
+                            shiftTabs(p, tab)
+                            p.setVarbit(SELECTED_TAB_VARBIT, 0)
+                        }
+                    }
                 }
             }
         }
