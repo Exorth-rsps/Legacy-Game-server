@@ -368,15 +368,31 @@ on_component_to_component_item_swap(
     val currentTab = getCurrentTab(player, srcSlot)
     val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT).coerceIn(0, 9)
 
+    fun moveWithinTab(targetSlot: Int) {
+        val lastOccupied = container.rawItems.indexOfLast { it != null }
+        val maxTarget = when {
+            lastOccupied == -1 -> 0
+            lastOccupied >= container.capacity - 1 -> container.capacity - 1
+            else -> lastOccupied + 1
+        }
+        val target = targetSlot.coerceIn(0, maxTarget)
+        if (srcSlot != target) {
+            container.insert(srcSlot, target)
+        }
+    }
+
     if (destinationItem == null) {
-        if (insertMode && selectedTab != currentTab) {
-            dropToTab(player, selectedTab, srcSlot)
+        val destinationTab = getCurrentTab(player, dstSlot)
+        val targetTab = when {
+            selectedTab != 0 && selectedTab != currentTab -> selectedTab
+            destinationTab != currentTab -> destinationTab
+            else -> null
+        }
+
+        if (targetTab != null) {
+            dropToTab(player, targetTab, srcSlot)
         } else {
-            val target = dstSlot.coerceIn(0, container.capacity - 1)
-            if (srcSlot != target) {
-                container.insert(srcSlot, target)
-                container.shift()
-            }
+            moveWithinTab(dstSlot)
         }
         return@on_component_to_component_item_swap
     }
@@ -396,7 +412,6 @@ on_component_to_component_item_swap(
 
     if (srcSlot != dstSlot) {
         container.insert(srcSlot, dstSlot)
-        container.shift()
     }
 }
 
