@@ -113,6 +113,73 @@ object Bank {
     }
 
     fun withdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
+        val from = p.bank
+        val to = p.inventory
+        val note = p.getVarbit(WITHDRAW_AS_VARBIT) == 1
+
+        val item = from[slot]
+        if (item == null) {
+            p.message("That item is no longer in your bank.")
+            return
+        }
+
+        if (item.id != id) {
+            // Fallback to the legacy search behaviour if the client and server became
+            // desynchronised for some reason.
+            legacyWithdraw(p, id, amt, slot, placehold)
+            return
+        }
+
+        val originalAmount = item.amount
+        val amount = Math.min(amt, originalAmount)
+        if (amount <= 0) {
+            p.message("You can't withdraw that many.")
+            return
+        }
+        val copy = Item(item.id, amount)
+        if (copy.amount >= item.amount) {
+            copy.copyAttr(item)
+        }
+
+        val transfer = from.transfer(to, item = copy, fromSlot = slot, note = note, unnote = !note)
+        val withdrawn = transfer?.completed ?: 0
+
+        if (withdrawn == 0) {
+            p.message("You don't have enough inventory space.")
+            return
+        }
+
+        if (withdrawn != amount) {
+            p.message("You don't have enough inventory space to withdraw that many.")
+        }
+
+        if (from[slot] == null) {
+            val tab = getCurrentTab(p, slot)
+            if (placehold || p.getVarbit(ALWAYS_PLACEHOLD_VARBIT) == 1) {
+                val def = item.getDef(p.world.definitions)
+                if (def.placeholderLink > 0) {
+                    p.bank[slot] = Item(def.placeholderLink, -2)
+                }
+            } else {
+                p.bank.shift()
+
+                if (tab != 0) {
+                    val tabVarbit = BANK_TAB_ROOT_VARBIT + tab
+                    val newSize = (p.getVarbit(tabVarbit) - 1).coerceAtLeast(0)
+                    p.setVarbit(tabVarbit, newSize)
+
+                    if (newSize == 0) {
+                        shiftTabs(p, tab)
+                        p.setVarbit(SELECTED_TAB_VARBIT, 0)
+                    }
+                }
+            }
+        }
+
+        p.persistBank()
+    }
+
+    private fun legacyWithdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
         var withdrawn = 0
         val from = p.bank
         val to = p.inventory
@@ -140,10 +207,6 @@ object Bank {
                 val tab = getCurrentTab(p, i)
                 if (placehold || p.getVarbit(ALWAYS_PLACEHOLD_VARBIT) == 1) {
                     val def = item.getDef(p.world.definitions)
-                    /**
-                     * Make sure the item has a valid placeholder item in its
-                     * definition.
-                     */
                     if (def.placeholderLink > 0) {
                         p.bank[i] = Item(def.placeholderLink, -2)
                     }
