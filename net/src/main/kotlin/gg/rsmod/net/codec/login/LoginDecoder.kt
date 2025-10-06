@@ -1,30 +1,50 @@
 package gg.rsmod.net.codec.login
 
 import gg.rsmod.net.codec.StatefulFrameDecoder
-import gg.rsmod.util.io.BufferUtils.readIntIME
-import gg.rsmod.util.io.BufferUtils.readJagexString
-import gg.rsmod.util.io.BufferUtils.readIntLE
-import gg.rsmod.util.io.BufferUtils.readIntME
-import gg.rsmod.util.io.BufferUtils.readString
-import gg.rsmod.util.io.Xtea
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.netty.buffer.ByteBuf
-import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import java.math.BigInteger
+import net.rsprot.buffer.extensions.toJagByteBuf
+import net.rsprot.protocol.common.client.OldSchoolClientType
+import net.rsprot.protocol.common.loginprot.incoming.codec.GameLoginDecoder
+import net.rsprot.protocol.common.loginprot.incoming.codec.GameReconnectDecoder
+import net.rsprot.protocol.common.loginprot.incoming.codec.shared.exceptions.InvalidVersionException
+import net.rsprot.protocol.loginprot.incoming.util.AuthenticationType
+import net.rsprot.protocol.loginprot.incoming.util.LoginBlock
+import net.rsprot.protocol.loginprot.incoming.util.OtpAuthenticationType
 
 /**
  * @author Tom <rspsmods@gmail.com>
  */
-class LoginDecoder(private val serverRevision: Int, private val cacheCrcs: IntArray,
-                   private val serverSeed: Long, private val rsaExponent: BigInteger?, private val rsaModulus: BigInteger?) : StatefulFrameDecoder<LoginDecoderState>(LoginDecoderState.HANDSHAKE) {
+class LoginDecoder(
+    private val serverRevision: Int,
+    private val cacheCrcs: IntArray,
+    private val serverSeed: Long,
+    rsaExponent: BigInteger?,
+    rsaModulus: BigInteger?,
+) : StatefulFrameDecoder<LoginDecoderState>(LoginDecoderState.HANDSHAKE) {
+
+    private val loginDecoder: GameLoginDecoder
+    private val reconnectDecoder: GameReconnectDecoder
 
     private var payloadLength = -1
-
     private var reconnecting = false
 
-    override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>, state: LoginDecoderState) {
+    init {
+        val exponent = requireNotNull(rsaExponent) { "RSA exponent must be configured when using RSProt." }
+        val modulus = requireNotNull(rsaModulus) { "RSA modulus must be configured when using RSProt." }
+        loginDecoder = GameLoginDecoder(SUPPORTED_CLIENT_TYPES, exponent, modulus)
+        reconnectDecoder = GameReconnectDecoder(SUPPORTED_CLIENT_TYPES, exponent, modulus)
+    }
+
+    override fun decode(
+        ctx: ChannelHandlerContext,
+        buf: ByteBuf,
+        out: MutableList<Any>,
+        state: LoginDecoderState,
+    ) {
         buf.markReaderIndex()
         when (state) {
             LoginDecoderState.HANDSHAKE -> decodeHandshake(ctx, buf)
@@ -33,189 +53,156 @@ class LoginDecoder(private val serverRevision: Int, private val cacheCrcs: IntAr
     }
 
     private fun decodeHandshake(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        if (buf.isReadable) {
-            val opcode = buf.readByte().toInt()
-            if (opcode == LOGIN_OPCODE || opcode == RECONNECT_OPCODE) {
-                reconnecting = opcode == RECONNECT_OPCODE
-                setState(LoginDecoderState.HEADER)
-            } else {
-                ctx.writeResponse(LoginResultType.BAD_SESSION_ID)
-            }
+        if (!buf.isReadable) {
+            return
+        }
+        val opcode = buf.readUnsignedByte().toInt()
+        if (opcode == LOGIN_OPCODE || opcode == RECONNECT_OPCODE) {
+            reconnecting = opcode == RECONNECT_OPCODE
+            setState(LoginDecoderState.HEADER)
+        } else {
+            ctx.writeResponse(LoginResultType.BAD_SESSION_ID)
         }
     }
 
     private fun ChannelHandlerContext.writeResponse(result: LoginResultType) {
-        val buf = channel().alloc().buffer(1)
-        buf.writeByte(result.id)
-        writeAndFlush(buf).addListener(ChannelFutureListener.CLOSE)
+        val response = channel().alloc().buffer(1)
+        response.writeByte(result.id)
+        writeAndFlush(response).addListener(ChannelFutureListener.CLOSE)
     }
 
-    private fun decodeHeader(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>) {
-        if (buf.readableBytes() >= 3) {
-            val size = buf.readUnsignedShort() // always 0
-            if (buf.readableBytes() >= size) {
-
-                val revision
-                    = buf.readInt()
-                buf.readInt() // always 1
-                buf.readUnsignedByte() // client type
-                /**
-                 * login protocols see param4 sent before and inside the xtea buffer
-                 * and clientType here is an addition since the inclusion of mobile;
-                 * all of this is ignored by rsmod for now.
-                 */
-                buf.readUnsignedByte() // param4 is written as a signed byte
-
-                if (revision == serverRevision) {
-                    payloadLength = size - (Int.SIZE_BYTES + Int.SIZE_BYTES + Byte.SIZE_BYTES + Byte.SIZE_BYTES)
-                    decodePayload(ctx, buf, out)
-                } else {
-                    ctx.writeResponse(LoginResultType.REVISION_MISMATCH)
-                }
-            } else {
-                buf.resetReaderIndex()
-            }
+    private fun decodeHeader(
+        ctx: ChannelHandlerContext,
+        buf: ByteBuf,
+        out: MutableList<Any>,
+    ) {
+        if (buf.readableBytes() < HEADER_LENGTH) {
+            buf.resetReaderIndex()
+            return
         }
+        val size = buf.readUnsignedShort()
+        if (buf.readableBytes() < size) {
+            buf.resetReaderIndex()
+            return
+        }
+
+        val revision = buf.readInt()
+        buf.readInt() // always 1
+        buf.readUnsignedByte() // client type
+        buf.readUnsignedByte() // param4
+
+        if (revision != serverRevision) {
+            ctx.writeResponse(LoginResultType.REVISION_MISMATCH)
+            buf.skipBytes(size - HEADER_METADATA_LENGTH)
+            return
+        }
+
+        payloadLength = size - HEADER_METADATA_LENGTH
+        if (payloadLength <= 0) {
+            ctx.writeResponse(LoginResultType.MALFORMED_PACKET)
+            return
+        }
+        decodePayload(ctx, buf, out)
     }
-    private fun decodePayload(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>) {
-        if (buf.readableBytes() >= payloadLength) {
-            buf.markReaderIndex()
-            buf.readUnsignedByte() // The byte that you commented out.
 
-            val secureBuf: ByteBuf = if (rsaExponent != null && rsaModulus != null) {
-                val secureBufLength = buf.readUnsignedShort()
-                val secureBuf = buf.readBytes(secureBufLength)
-                val rsaValue = BigInteger(secureBuf.array()).modPow(rsaExponent, rsaModulus)
-                Unpooled.wrappedBuffer(rsaValue.toByteArray())
-            } else {
-                buf
-            }
+    private fun decodePayload(
+        ctx: ChannelHandlerContext,
+        buf: ByteBuf,
+        out: MutableList<Any>,
+    ) {
+        if (!buf.isReadable(payloadLength)) {
+            buf.resetReaderIndex()
+            return
+        }
 
-            val successfulEncryption = secureBuf.readUnsignedByte().toInt() == 1
-            if (!successfulEncryption) {
-                buf.resetReaderIndex()
-                buf.skipBytes(payloadLength)
-                logger.info("Channel '{}' login request rejected.", ctx.channel())
-                ctx.writeResponse(LoginResultType.BAD_SESSION_ID)
-                return
-            }
-
-            val xteaKeys = IntArray(4) {secureBuf.readInt()}
-            val reportedSeed = secureBuf.readLong()
-
-            var authCode: Int = -1
-            val password: String?
-            val previousXteaKeys = IntArray(4)
-
+        val payload = buf.readSlice(payloadLength)
+        try {
             if (reconnecting) {
-                for (i in 0 until previousXteaKeys.size) {
-                    previousXteaKeys[i] = secureBuf.readInt()
-                }
-
-                password = null
+                val reconnectMessage = reconnectDecoder.decode(payload.toJagByteBuf())
+                val block = reconnectMessage.decoder.apply(reconnectMessage.buffer, false)
+                handleDecodedBlock(ctx, out, block, password = "", authCode = -1, reconnecting = true)
             } else {
-                when(secureBuf.readByte().toInt()) {
-                    0,1 -> {
-                        authCode = secureBuf.readUnsignedMedium()
-                        secureBuf.skipBytes(Byte.SIZE_BYTES)
-                    }
-                    2 -> secureBuf.skipBytes(Int.SIZE_BYTES)
-                    3 -> authCode = secureBuf.readInt()
-                }
-
-                secureBuf.skipBytes(Byte.SIZE_BYTES)
-                password = secureBuf.readString()
+                val loginMessage = loginDecoder.decode(payload.toJagByteBuf())
+                val block = loginMessage.decoder.apply(loginMessage.buffer, false)
+                val authentication = block.authentication
+                val (password, authCode) = extractCredentials(authentication)
+                authentication.clear()
+                handleDecodedBlock(ctx, out, block, password, authCode, reconnecting = false)
             }
-
-            val xteaBuf = buf.decipher(xteaKeys)
-            val username = xteaBuf.readString()
-
-            if (reportedSeed != serverSeed) {
-                xteaBuf.resetReaderIndex()
-                xteaBuf.skipBytes(payloadLength)
-                logger.info("User '{}' login request seed mismatch [receivedSeed=$reportedSeed, expectedSeed=$serverSeed].", username, reportedSeed, serverSeed)
-                ctx.writeResponse(LoginResultType.BAD_SESSION_ID)
-                return
-            }
-
-            val clientSettings = xteaBuf.readByte().toInt()
-            val clientResizable = (clientSettings shr 1) == 1
-            val clientWidth = xteaBuf.readUnsignedShort()
-            val clientHeight = xteaBuf.readUnsignedShort()
-            xteaBuf.skipBytes(24) // random.dat data
-            xteaBuf.readString() // param9
-            xteaBuf.skipBytes(Int.SIZE_BYTES) // param14
-            xteaBuf.skipBytes(55) //platform info block size - rev 211
-            xteaBuf.readByte() // client type
-            xteaBuf.skipBytes(Int.SIZE_BYTES) // 0
-
-
-            /**
-             * For now ignored since 1) Busy with other stuff. 2) Not that important.
-             */
-//            val crcs = decodeCRCs(xteaBuf)
-//            for (i in crcs.indices) {
-//                println("$i ${crcs[i]}")
-//                /**
-//                 * CRC for index 16 is always sent as 0 (at least on the
-//                 * Desktop client, need to look into mobile).
-//                 */
-//                if (i == 16) {
-//                    continue
-//                }
-////                if (!cacheCrcs.contains(crcs[i])) {
-////                    buf.resetReaderIndex()
-////                    buf.skipBytes(payloadLength)
-////                    logger.info { "User '$username' login request crc mismatch [requestCrc=${crcs.contentToString()}, cacheCrc=${cacheCrcs.contentToString()}]." }
-////                    println("$i : ${crcs[i]}  != ${cacheCrcs[i]}")
-////
-////                    ctx.writeResponse(LoginResultType.REVISION_MISMATCH)
-////                    return
-////                }
-//            }
-
-            logger.info { "User '$username' login request from ${ctx.channel()}." }
-
-            val request = LoginRequest(channel = ctx.channel(), username = username,
-                password = password ?: "", revision = serverRevision, xteaKeys = xteaKeys,
-                resizableClient = clientResizable, auth = authCode, uuid = "".lowercase(), clientWidth = clientWidth, clientHeight = clientHeight,
-                reconnecting = reconnecting)
-            out.add(request)
+        } catch (e: InvalidVersionException) {
+            ctx.writeResponse(LoginResultType.REVISION_MISMATCH)
+        } catch (t: Throwable) {
+            logger.error(t) { "Failed to decode login request from channel ${ctx.channel()}." }
+            ctx.writeResponse(LoginResultType.MALFORMED_PACKET)
         }
     }
 
-    private fun ByteBuf.decipher(xteaKeys: IntArray): ByteBuf {
-        val data = ByteArray(readableBytes())
-        readBytes(data)
-        return Unpooled.wrappedBuffer(Xtea.decipher(xteaKeys, data, 0, data.size))
-    }
-    /**
-     * switch based on incoming CRCorder
-     */
-    private fun decodeCRCs(xteaBuf: ByteBuf): IntArray {
-        val crcs = IntArray(cacheCrcs.size)
-        for(i in CRCorder.indices){
-            when(val idx = CRCorder[i]){
-                9,17,10,13,6,12,5,8,1 -> crcs[idx] = xteaBuf.readIntME()
-                20,11,3,15,19 -> crcs[idx] = xteaBuf.readIntLE()
-                18,4,7 -> crcs[idx] = xteaBuf.readInt()
-                0,2,14 -> crcs[idx] = xteaBuf.readIntIME()
-            }
+    private fun handleDecodedBlock(
+        ctx: ChannelHandlerContext,
+        out: MutableList<Any>,
+        block: LoginBlock<*>,
+        password: String,
+        authCode: Int,
+        reconnecting: Boolean,
+    ) {
+        if (block.sessionId != serverSeed) {
+            logger.info { "User '${block.username}' login request seed mismatch [receivedSeed=${block.sessionId}, expectedSeed=$serverSeed]." }
+            ctx.writeResponse(LoginResultType.BAD_SESSION_ID)
+            return
         }
 
-        return crcs
+        if (!block.crc.validate(cacheCrcs)) {
+            logger.info { "User '${block.username}' login request CRC mismatch." }
+            ctx.writeResponse(LoginResultType.REVISION_MISMATCH)
+            return
+        }
+
+        val request =
+            LoginRequest(
+                channel = ctx.channel(),
+                username = block.username,
+                password = password,
+                revision = serverRevision,
+                xteaKeys = block.seed,
+                resizableClient = block.resizable,
+                auth = authCode,
+                uuid = block.uuid.toHexString(),
+                clientWidth = block.width,
+                clientHeight = block.height,
+                reconnecting = reconnecting,
+            )
+        logger.info { "User '${block.username}' login request from ${ctx.channel()}." }
+        out += request
     }
 
-    /**
-     * As of revision 190 the client now sends the CRCs out of order
-     * and with varying byte orders
-     */
-     companion object {
-         private val logger = KotlinLogging.logger{}
-         private const val LOGIN_OPCODE = 16
-         private const val RECONNECT_OPCODE = 18
-         private val CRCorder = intArrayOf(
-             9,20,17,10,13,6,12,18,11,5,3,4,0,2,14,15,19,8,1,7
-         )
+    private fun extractCredentials(authentication: AuthenticationType): Pair<String, Int> =
+        when (authentication) {
+            is AuthenticationType.PasswordAuthentication ->
+                authentication.password.asString() to authentication.otpAuthentication.extractOtp()
+
+            is AuthenticationType.TokenAuthentication ->
+                authentication.token.asString() to authentication.otpAuthentication.extractOtp()
+        }
+
+    private fun OtpAuthenticationType.extractOtp(): Int =
+        when (this) {
+            is OtpAuthenticationType.OtpAuthentication -> otp
+            is OtpAuthenticationType.TrustedComputer -> identifier
+            OtpAuthenticationType.NoMultiFactorAuthentication -> -1
+            is OtpAuthenticationType.UntrustedAuthentication -> otp
+            is OtpAuthenticationType.TrustedAuthenticator -> otp
+        }
+
+    private fun ByteArray.toHexString(): String =
+        joinToString(separator = "") { byte -> "%02x".format(byte.toInt() and 0xFF) }
+
+    companion object {
+        private val logger = KotlinLogging.logger {}
+
+        private const val LOGIN_OPCODE = 16
+        private const val RECONNECT_OPCODE = 18
+        private const val HEADER_LENGTH = Short.SIZE_BYTES
+        private const val HEADER_METADATA_LENGTH = Int.SIZE_BYTES + Int.SIZE_BYTES + Byte.SIZE_BYTES + Byte.SIZE_BYTES
+        private val SUPPORTED_CLIENT_TYPES = listOf(OldSchoolClientType.DESKTOP)
     }
 }
