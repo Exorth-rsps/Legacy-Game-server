@@ -26,7 +26,20 @@ data class AgilityObstacle(
     val animation: Int? = null,
     val animationDuration: Int? = null,
     val interactionOption: String? = null,
+    val movementType: AgilityObstacleMovement = AgilityObstacleMovement.TELEPORT,
 )
+
+/**
+ * Describes how a player should travel between the start and end tiles of an
+ * agility obstacle. TELEPORT matches the previous behaviour where we simply
+ * reposition the player after any configured animation, while FORCED uses the
+ * game's forced movement system so the client can interpolate a smooth path
+ * (for example when walking across tightropes).
+ */
+enum class AgilityObstacleMovement {
+    TELEPORT,
+    FORCED,
+}
 
 /**
  * Describes a lap-based reward. Rooftop courses, for instance, spawn marks
@@ -95,6 +108,7 @@ class AgilityCourseBuilder(private val id: String) {
         animation: Int? = null,
         animationDuration: Int? = null,
         interactionOption: String? = null,
+        movementType: AgilityObstacleMovement = AgilityObstacleMovement.TELEPORT,
     ) {
         obstacles += AgilityObstacle(
             name = name,
@@ -107,6 +121,7 @@ class AgilityCourseBuilder(private val id: String) {
             animation = animation,
             animationDuration = animationDuration,
             interactionOption = interactionOption,
+            movementType = movementType,
         )
     }
 
