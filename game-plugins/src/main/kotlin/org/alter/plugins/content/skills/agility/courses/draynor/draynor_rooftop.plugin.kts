@@ -9,6 +9,7 @@ import org.alter.api.ext.message
 import org.alter.game.model.Direction
 import org.alter.game.model.ForcedMovement
 import org.alter.game.model.LockState
+import org.alter.game.model.MovementQueue
 import org.alter.game.model.Tile
 import org.alter.game.model.entity.Player
 import org.alter.game.model.queue.QueueTask
@@ -256,8 +257,8 @@ private suspend fun QueueTask.performForcedMovement(
 private suspend fun QueueTask.performStepMovement(player: Player, obstacle: AgilityObstacle): Int {
     val endTile = obstacle.endTile ?: return 0
     val startTile = obstacle.startTile ?: player.tile
-    val steps = calculateStepCount(startTile, endTile)
-    if (steps == 0) {
+    val stepPath = buildStepPath(startTile, endTile)
+    if (stepPath.isEmpty()) {
         if (!player.tile.sameAs(endTile)) {
             player.moveTo(endTile)
         }
@@ -265,45 +266,66 @@ private suspend fun QueueTask.performStepMovement(player: Player, obstacle: Agil
     }
 
     val perTileTicks = (obstacle.movementStepDuration ?: DEFAULT_STEP_DURATION_TICKS).coerceAtLeast(1)
-    val stepX = sign(endTile.x - startTile.x)
-    val stepZ = sign(endTile.z - startTile.z)
-    val maxXSteps = abs(endTile.x - startTile.x)
-    val maxZSteps = abs(endTile.z - startTile.z)
-
-    var traversedX = 0
-    var traversedZ = 0
     var totalTicks = 0
-    var currentTile = startTile
 
-    repeat(steps) { index ->
-        val nextX = when {
-            traversedX < maxXSteps -> currentTile.x + stepX
-            else -> currentTile.x
-        }
-        val nextZ = when {
-            traversedZ < maxZSteps -> currentTile.z + stepZ
-            else -> currentTile.z
-        }
+    player.movementQueue.clear()
 
-        val nextTileHeight = if (index == steps - 1) endTile.height else currentTile.height
-        val nextTile = Tile(nextX, nextZ, nextTileHeight)
+    stepPath.forEach { stepTile ->
+        player.movementQueue.addStep(stepTile, MovementQueue.StepType.FORCED_WALK, detectCollision = false)
 
-        if (!player.tile.sameAs(nextTile)) {
-            player.moveTo(nextTile)
+        var stepTicks = 0
+        while (!player.tile.sameAs(stepTile)) {
+            if (!player.movementQueue.hasDestination()) {
+                player.moveTo(stepTile)
+                break
+            }
+
+            wait(1)
+            stepTicks++
         }
 
-        if (traversedX < maxXSteps) traversedX++
-        if (traversedZ < maxZSteps) traversedZ++
-        currentTile = nextTile
-        totalTicks += perTileTicks
-        wait(perTileTicks)
+        while (stepTicks < perTileTicks) {
+            wait(1)
+            stepTicks++
+        }
+
+        totalTicks += stepTicks
     }
 
     if (!player.tile.sameAs(endTile)) {
         player.moveTo(endTile)
     }
 
+    player.movementQueue.clear()
+
     return totalTicks
+}
+
+private fun buildStepPath(startTile: Tile, endTile: Tile): List<Tile> {
+    val steps = calculateStepCount(startTile, endTile)
+    if (steps == 0) {
+        return emptyList()
+    }
+
+    val path = mutableListOf<Tile>()
+    val stepX = sign(endTile.x - startTile.x)
+    val stepZ = sign(endTile.z - startTile.z)
+    var currentX = startTile.x
+    var currentZ = startTile.z
+
+    repeat(steps) { index ->
+        if (currentX != endTile.x) {
+            currentX += stepX
+        }
+        if (currentZ != endTile.z) {
+            currentZ += stepZ
+        }
+
+        val height = if (index == steps - 1) endTile.height else startTile.height
+        path += Tile(currentX, currentZ, height)
+    }
+
+    return path
 }
 
 private fun calculateMovementTicks(
