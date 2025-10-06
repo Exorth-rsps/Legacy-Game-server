@@ -65,6 +65,7 @@ openrs2-compress = { module = "org.openrs2:openrs2-compress", version.ref = "ope
 netty-all = { group = "io.netty", name = "netty-all", version.ref = "nettyAll" }
 
 rsprot-osrs221-api = { group = "net.rsprot", name = "osrs-221-api", version.ref = "rsprot" }
+rsprot-osrs221-shared = { group = "net.rsprot", name = "osrs-221-shared", version.ref = "rsprot" }
 
 logback-classic = { group ="ch.qos.logback", name = "logback-classic", version.ref = "logback"}
 
