@@ -13,7 +13,9 @@ import org.alter.game.model.Tile
  * the tile they should land on once the interaction has finished respectively.
  * The optional [animation] and [animationDuration] (in game ticks) document the
  * expected movement and timing, while [interactionOption] stores the object
- * option that should trigger the obstacle.
+ * option that should trigger the obstacle. When an obstacle covers several
+ * tiles the [movementType] and optional [movementStepDuration] describe how the
+ * player should traverse that distance and how long each step should take.
  */
 data class AgilityObstacle(
     val name: String,
@@ -27,6 +29,7 @@ data class AgilityObstacle(
     val animationDuration: Int? = null,
     val interactionOption: String? = null,
     val movementType: AgilityObstacleMovement = AgilityObstacleMovement.TELEPORT,
+    val movementStepDuration: Int? = null,
 )
 
 /**
@@ -39,6 +42,7 @@ data class AgilityObstacle(
 enum class AgilityObstacleMovement {
     TELEPORT,
     FORCED,
+    STEP,
 }
 
 /**
@@ -109,6 +113,7 @@ class AgilityCourseBuilder(private val id: String) {
         animationDuration: Int? = null,
         interactionOption: String? = null,
         movementType: AgilityObstacleMovement = AgilityObstacleMovement.TELEPORT,
+        movementStepDuration: Int? = null,
     ) {
         obstacles += AgilityObstacle(
             name = name,
@@ -122,6 +127,7 @@ class AgilityCourseBuilder(private val id: String) {
             animationDuration = animationDuration,
             interactionOption = interactionOption,
             movementType = movementType,
+            movementStepDuration = movementStepDuration,
         )
     }
 

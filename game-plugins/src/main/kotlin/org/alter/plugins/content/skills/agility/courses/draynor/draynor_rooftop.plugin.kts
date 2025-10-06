@@ -9,11 +9,16 @@ import org.alter.api.ext.message
 import org.alter.game.model.Direction
 import org.alter.game.model.ForcedMovement
 import org.alter.game.model.LockState
+import org.alter.game.model.MovementQueue
 import org.alter.game.model.Tile
+import org.alter.game.model.entity.Player
+import org.alter.game.model.queue.QueueTask
 import org.alter.plugins.content.skills.agility.AgilityCourseRegistry
 import org.alter.plugins.content.skills.agility.AgilityObstacle
 import org.alter.plugins.content.skills.agility.AgilityObstacleMovement
 import org.alter.plugins.content.skills.agility.agilityCourse
+import kotlin.math.abs
+import kotlin.math.max
 
 private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
     name = "Draynor Village Rooftop Course"
@@ -44,7 +49,8 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         animation = Animation.AGILITY_LOG_WALK,
         animationDuration = 7,
         interactionOption = "Cross",
-        movementType = AgilityObstacleMovement.FORCED,
+        movementType = AgilityObstacleMovement.STEP,
+        movementStepDuration = 1,
     )
     obstacle(
         name = "Second tightrope",
@@ -57,7 +63,8 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         animation = Animation.AGILITY_LOG_WALK,
         animationDuration = 6,
         interactionOption = "Cross",
-        movementType = AgilityObstacleMovement.FORCED,
+        movementType = AgilityObstacleMovement.STEP,
+        movementStepDuration = 1,
     )
     obstacle(
         name = "Narrow wall",
@@ -70,7 +77,8 @@ private val draynorRooftopCourse = agilityCourse("draynor_rooftop") {
         animation = Animation.AGILITY_CROSS_LEDGE_RIGHT,
         animationDuration = 5,
         interactionOption = "Balance",
-        movementType = AgilityObstacleMovement.FORCED,
+        movementType = AgilityObstacleMovement.STEP,
+        movementStepDuration = 1,
     )
     obstacle(
         name = "Wall jump",
@@ -169,41 +177,28 @@ draynorObstaclesByObject.forEach { (objectId, obstacles) ->
 
             player.message(obstacle.description ?: "You attempt the ${obstacle.name.lowercase()}.")
 
-            val handledByForcedMovement = if (obstacle.movementType == AgilityObstacleMovement.FORCED) {
-                val forcedStart = obstacle.startTile
-                val forcedEnd = obstacle.endTile
-                if (forcedStart != null && forcedEnd != null) {
-                    obstacle.animation?.let { animationId ->
-                        player.animate(animationId)
-                    }
-
-                    val movement = createForcedMovement(forcedStart, forcedEnd, obstacle.animationDuration)
-                    player.forceMove(this, movement)
-                    true
-                } else {
-                    false
-                }
-            } else {
-                false
+            val animationId = obstacle.animation
+            val animationDuration = obstacle.animationDuration
+            if (animationId != null) {
+                player.animate(animationId)
             }
 
-            if (!handledByForcedMovement) {
-                obstacle.animation?.let { animationId ->
-                    player.animate(animationId)
-                    val duration = obstacle.animationDuration ?: 0
-                    if (duration > 0) {
-                        wait(duration)
-                    }
-                }
+            val movementTicks = when (obstacle.movementType) {
+                AgilityObstacleMovement.TELEPORT -> performTeleportMovement(player, obstacle)
+                AgilityObstacleMovement.FORCED -> performForcedMovement(player, obstacle, animationDuration)
+                AgilityObstacleMovement.STEP -> performStepMovement(player, obstacle)
+            }
 
-                if (obstacle.animation == null) {
-                    wait(1)
+            if (animationId != null) {
+                val targetDuration = animationDuration ?: movementTicks
+                val remaining = targetDuration - movementTicks
+                when {
+                    remaining > 0 -> wait(remaining)
+                    targetDuration == 0 && movementTicks == 0 -> wait(DEFAULT_ANIMATION_FALLOFF_TICKS)
                 }
-
-                val endTile = obstacle.endTile
-                if (endTile != null && player.tile != endTile) {
-                    player.moveTo(endTile)
-                }
+                player.animate(-1)
+            } else if (movementTicks == 0) {
+                wait(1)
             }
 
             obstacle.experience?.let { xp ->
@@ -235,8 +230,75 @@ private fun chooseDraynorObstacle(obstacles: List<AgilityObstacle>, objectTile: 
         ?: obstacles.firstOrNull()
 }
 
-private fun createForcedMovement(startTile: Tile, endTile: Tile, durationTicks: Int?): ForcedMovement {
-    val ticks = (durationTicks ?: DEFAULT_FORCED_MOVEMENT_TICKS).coerceAtLeast(1)
+private suspend fun QueueTask.performTeleportMovement(player: Player, obstacle: AgilityObstacle): Int {
+    val endTile = obstacle.endTile
+    if (endTile != null && !player.tile.sameAs(endTile)) {
+        player.moveTo(endTile)
+    }
+    return 0
+}
+
+private suspend fun QueueTask.performForcedMovement(
+    player: Player,
+    obstacle: AgilityObstacle,
+    animationDuration: Int?
+): Int {
+    val startTile = obstacle.startTile ?: return performTeleportMovement(player, obstacle)
+    val endTile = obstacle.endTile ?: return performTeleportMovement(player, obstacle)
+    val ticks = calculateMovementTicks(startTile, endTile, animationDuration, obstacle.movementStepDuration)
+    val movement = createForcedMovement(startTile, endTile, ticks)
+    player.forceMove(this, movement, cycleDuration = ticks)
+    if (!player.tile.sameAs(endTile)) {
+        player.moveTo(endTile)
+    }
+    return ticks
+}
+
+private suspend fun QueueTask.performStepMovement(player: Player, obstacle: AgilityObstacle): Int {
+    val endTile = obstacle.endTile ?: return 0
+    val startTile = obstacle.startTile ?: player.tile
+    val steps = calculateStepCount(startTile, endTile)
+    if (steps == 0) {
+        if (!player.tile.sameAs(endTile)) {
+            player.moveTo(endTile)
+        }
+        return 0
+    }
+
+    val perTileTicks = (obstacle.movementStepDuration ?: DEFAULT_STEP_DURATION_TICKS).coerceAtLeast(1)
+    val totalTicks = perTileTicks * steps
+    player.walkTo(endTile.x, endTile.z, MovementQueue.StepType.FORCED_WALK, detectCollision = false)
+    wait(totalTicks)
+    if (!player.tile.sameAs(endTile)) {
+        player.moveTo(endTile)
+    }
+    return totalTicks
+}
+
+private fun calculateMovementTicks(
+    startTile: Tile,
+    endTile: Tile,
+    animationDuration: Int?,
+    movementStepDuration: Int?
+): Int {
+    val steps = calculateStepCount(startTile, endTile)
+    if (steps == 0) {
+        return (animationDuration ?: 0).coerceAtLeast(1)
+    }
+    val perTileTicks = (movementStepDuration ?: DEFAULT_STEP_DURATION_TICKS).coerceAtLeast(1)
+    val stepTicks = perTileTicks * steps
+    val requested = animationDuration ?: stepTicks
+    return max(stepTicks, requested)
+}
+
+private fun calculateStepCount(startTile: Tile, endTile: Tile): Int {
+    val dx = abs(endTile.x - startTile.x)
+    val dz = abs(endTile.z - startTile.z)
+    return max(dx, dz)
+}
+
+private fun createForcedMovement(startTile: Tile, endTile: Tile, durationTicks: Int): ForcedMovement {
+    val ticks = durationTicks.coerceAtLeast(1)
     val duration = ticks * 30
     val directionAngle = directionAngleBetween(startTile, endTile)
     return ForcedMovement.of(startTile, endTile, duration, duration, directionAngle, LockState.FULL)
@@ -259,7 +321,8 @@ private fun directionAngleBetween(startTile: Tile, endTile: Tile): Int {
     }
 }
 
-private const val DEFAULT_FORCED_MOVEMENT_TICKS = 4
+private const val DEFAULT_STEP_DURATION_TICKS = 1
+private const val DEFAULT_ANIMATION_FALLOFF_TICKS = 1
 
 private fun formatExperience(xp: Double): String {
     return if (xp % 1.0 == 0.0) {
