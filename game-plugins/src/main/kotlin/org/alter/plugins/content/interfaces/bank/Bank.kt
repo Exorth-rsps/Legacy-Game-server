@@ -2,6 +2,7 @@ package org.alter.plugins.content.interfaces.bank
 
 import org.alter.game.model.World
 import org.alter.game.model.container.ItemContainer
+import org.alter.game.model.entity.Client
 import org.alter.game.model.entity.Player
 import org.alter.game.model.item.Item
 import org.alter.api.BonusSlot
@@ -13,6 +14,7 @@ import org.alter.plugins.content.interfaces.bank.BankTabs.getCurrentTab
 import org.alter.plugins.content.interfaces.bank.BankTabs.numTabsUnlocked
 import org.alter.plugins.content.interfaces.bank.BankTabs.shiftTabs
 import org.alter.plugins.content.interfaces.equipstats.EquipmentStats
+import org.alter.game.service.serializer.PlayerSerializerService
 
 /**
  * @author Tom <rspsmods@gmail.com>
@@ -39,8 +41,10 @@ object Bank {
 
     fun cleanEmptySlots(player: Player) {
         val bank = player.bank
+        var modified = false
         for (index in bank.capacity - 1 downTo 0) {
             if (bank[index] == null) {
+                modified = true
                 val tab = getCurrentTab(player, index)
                 if (tab != 0) {
                     val varbit = BANK_TAB_ROOT_VARBIT + tab
@@ -55,8 +59,12 @@ object Bank {
         val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT)
         if (selectedTab != 0 && selectedTab > numTabsUnlocked(player)) {
             player.setVarbit(SELECTED_TAB_VARBIT, 0)
+            modified = true
         }
         bank.dirty = true
+        if (modified) {
+            player.persistBank()
+        }
     }
 
     fun swap(player: Player, from: Int, to: Int) {
@@ -67,6 +75,7 @@ object Bank {
 
             if (sourceTab == targetTab) {
                 bank.insert(from, to)
+                player.persistBank()
                 return
             }
 
@@ -74,6 +83,7 @@ object Bank {
             return
         }
         bank.swap(from, to)
+        player.persistBank()
     }
 
     fun tabSafeInsert(player: Player, from: Int, to: Int) {
@@ -99,6 +109,7 @@ object Bank {
                 }
             }
         }
+        player.persistBank()
     }
 
     fun withdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
@@ -157,6 +168,9 @@ object Bank {
         } else if (withdrawn != amount) {
             p.message("You don't have enough inventory space to withdraw that many.")
         }
+        if (withdrawn > 0) {
+            p.persistBank()
+        }
     }
     fun deposit(player: Player, id: Int, amt: Int) {
         val from = player.inventory
@@ -206,6 +220,8 @@ object Bank {
 
         if (deposited == 0) {
             player.message("Bank full.")
+        } else {
+            player.persistBank()
         }
     }
 
@@ -281,4 +297,10 @@ object Bank {
         this[to] = fromItem
     }
 
+}
+
+fun Player.persistBank() {
+    val client = this as? Client ?: return
+    val serializer = world.getService(PlayerSerializerService::class.java, searchSubclasses = true) ?: return
+    serializer.saveClientData(client)
 }

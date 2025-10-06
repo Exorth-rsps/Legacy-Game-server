@@ -64,6 +64,7 @@ object BankTabs {
                 }
             }
         }
+        player.persistBank()
     }
 
 
@@ -98,6 +99,7 @@ object BankTabs {
                 }
             }
         }
+        player.persistBank()
     }
 
 
