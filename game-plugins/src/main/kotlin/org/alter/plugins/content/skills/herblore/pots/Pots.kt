@@ -99,7 +99,7 @@ enum class Pots(val pot: Pot) {
     )),
     ANTI_POISON(Pot(
         unfinished = Items.MARRENTILL_POTION_UNF,
-        secondaries = intArrayOf(Items.EYE_OF_NEWT),
+        secondaries = intArrayOf(Items.UNICORN_HORN_DUST),
         finished = intArrayOf(
             Items.ANTIPOISON1,
             Items.ANTIPOISON2,

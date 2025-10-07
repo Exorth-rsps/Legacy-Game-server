@@ -24,6 +24,7 @@ enum class TeleportSpell(val spellName: String, val type: TeleportType, val endA
 //    /**
 //     * Ancients.
 //     */
+    EDGEVILLE("Edgeville Home Teleport", TeleportType.ANCIENT, Area(2963, 3377, 2968, 3380), 0.0),
 //    PADDEWWA("Paddewwa Teleport", TeleportType.ANCIENT, Area(3095, 9880, 3099, 9884), 64.0),
 //    SENNTISTEN("Senntisten Teleport", TeleportType.ANCIENT, Area(3346, 3343, 3350, 3346), 70.0),
 //    KHARYRLL("Kharyrll Teleport", TeleportType.ANCIENT, Area(3491, 3476, 3494, 3478), 76.0),

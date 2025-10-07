@@ -338,6 +338,11 @@ enum class Altar(
         entrance = Tile(3232, 4841),
         exit = Tile(2857, 3378)
     ),
+    SOUL(
+        altar = Objs.SOUL_ALTAR,
+        rune = Rune.SOUL,
+        option = "Bind"
+    ),
     WRATH(
         altar = Objs.ALTAR_34772,
         exitPortal = Objs.PORTAL_34759,
