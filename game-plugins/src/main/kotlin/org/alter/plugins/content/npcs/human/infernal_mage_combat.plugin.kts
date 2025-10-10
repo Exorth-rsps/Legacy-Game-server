@@ -15,6 +15,13 @@ import org.alter.api.cfg.Animation
 import org.alter.api.cfg.Graphic
 import org.alter.api.cfg.Npcs
 
+val infernalMageIds = intArrayOf(
+    Npcs.INFERNAL_MAGE_443,
+    Npcs.INFERNAL_MAGE_444,
+    Npcs.INFERNAL_MAGE_445,
+    Npcs.INFERNAL_MAGE_446,
+    Npcs.INFERNAL_MAGE_447
+)
 infernalMageIds.forEach { npcId ->
     on_npc_combat(npcId) {
         npc.queue {

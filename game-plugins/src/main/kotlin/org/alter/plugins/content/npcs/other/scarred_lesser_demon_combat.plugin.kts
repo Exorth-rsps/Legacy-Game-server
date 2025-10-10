@@ -13,7 +13,9 @@ import org.alter.api.HitType
 import org.alter.api.cfg.Animation
 import org.alter.api.cfg.Graphic
 import org.alter.api.cfg.Npcs
-
+val scarredLesserDemonIds = intArrayOf(
+    Npcs.SCARRED_LESSER_DEMON_12362
+)
 scarredLesserDemonIds.forEach { npcId ->
     on_npc_combat(npcId) {
         npc.queue {
@@ -44,7 +46,7 @@ fun bloodBurst(npc: Npc, target: Pawn) {
     val minHit = 5
     val maxHit = 21
     npc.prepareAttack(CombatClass.MAGIC, CombatStyle.MAGIC, AttackStyle.ACCURATE)
-    npc.animate(Animation.ANCIENT_SPELL_MULTI_CAST)
+    npc.animate(Animation.DEMON_ATTACK)
     val hitDelay = RangedCombatStrategy.getHitDelay(npc.getFrontFacingTile(target), target.getCentreTile()) - 1
     val accuracy = MagicCombatFormula.getAccuracy(npc, target)
     if (accuracy >= world.randomDouble()) {
