@@ -201,6 +201,21 @@ abstract class KotlinPlugin(private val r: PluginRepository, val world: World, v
 
         r.bindObject(obj, slot + 1, lineOfSightDistance, logic)
     }
+    fun if_obj_has_option(
+        obj: Int,
+        option: String,
+    ): Boolean {
+        val opt = option.lowercase()
+        val def = world.definitions.get(ObjectDef::class.java, obj)
+        val slot =
+            def.options.indexOfFirst {
+                it?.lowercase() == opt
+            }
+        if (slot == -1) {
+            return false
+        }
+        return true
+    }
 
     fun itemHasGroundOption(item: Int, option: String) : Boolean {
         val slot =  world.definitions.get(ItemDef::class.java, item).inventoryMenu.indexOfFirst {

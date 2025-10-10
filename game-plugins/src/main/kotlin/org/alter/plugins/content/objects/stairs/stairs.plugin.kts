@@ -112,3 +112,4 @@ on_obj_option(obj = Objs.STAIRCASE_3416, option = "Climb-Up") {
 }
 
 
+

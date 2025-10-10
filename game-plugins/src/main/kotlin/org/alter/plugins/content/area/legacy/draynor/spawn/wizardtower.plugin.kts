@@ -11,7 +11,7 @@ spawn_npc(Npcs.NECROMANCER_11088, 3114, 9566, 0, 5, Direction.EAST)
 
 
 //Soul altar
-spawn_npc(Npcs.WIZARD_4400, 1825, 3886, 0, 5, Direction.SOUTH)
+spawn_npc(Npcs.WIZARD_4399, 1825, 3886, 0, 5, Direction.SOUTH)
 
 //Ground flour
 spawn_npc(Npcs.NECROMANCER, 3107, 3157, 0, 5, Direction.NORTH)

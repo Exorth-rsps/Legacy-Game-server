@@ -126,6 +126,24 @@ on_obj_option(obj = Objs.LADDER_25844, option = "Climb-Up") {
         else -> player.message("Nothing interesting happens.")
     }
 }
+on_obj_option(obj = Objs.LADDER_2148, option = "Climb-up") {
+    when(player.tile.regionId) {
+        12437 -> { //Wizard Tower
+            player.moveTo(x = 3105, z = 3162, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
+on_obj_option(obj = Objs.LADDER_2147, option = "Climb-Down") {
+    when(player.tile.regionId) {
+        12337 -> { //Wizard Tower
+            player.moveTo(x = 3104, z = 9576, height = 0)
+        }
+
+        else -> player.message("Nothing interesting happens.")
+    }
+}
 
 
 
