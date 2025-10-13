@@ -2,17 +2,19 @@ package org.alter.plugins.content.interfaces.bank
 
 import org.alter.game.model.World
 import org.alter.game.model.container.ItemContainer
+import org.alter.game.model.entity.Client
 import org.alter.game.model.entity.Player
 import org.alter.game.model.item.Item
 import org.alter.api.BonusSlot
 import org.alter.api.InterfaceDestination
 import org.alter.api.ext.*
-import org.alter.plugins.content.interfaces.bank.BankTabs.BANK_TABLIST_ID
 import org.alter.plugins.content.interfaces.bank.BankTabs.BANK_TAB_ROOT_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.SELECTED_TAB_VARBIT
 import org.alter.plugins.content.interfaces.bank.BankTabs.getCurrentTab
-import org.alter.plugins.content.interfaces.bank.BankTabs.getTabByItem
+import org.alter.plugins.content.interfaces.bank.BankTabs.numTabsUnlocked
+import org.alter.plugins.content.interfaces.bank.BankTabs.shiftTabs
 import org.alter.plugins.content.interfaces.equipstats.EquipmentStats
+import org.alter.game.service.serializer.PlayerSerializerService
 
 /**
  * @author Tom <rspsmods@gmail.com>
@@ -37,14 +39,157 @@ object Bank {
      */
     private const val BANK_YOUR_LOOT_VARBIT = 4139
 
+    fun cleanEmptySlots(player: Player) {
+        val bank = player.bank
+        var modified = false
+        for (index in bank.capacity - 1 downTo 0) {
+            if (bank[index] == null) {
+                modified = true
+                val tab = getCurrentTab(player, index)
+                if (tab != 0) {
+                    val varbit = BANK_TAB_ROOT_VARBIT + tab
+                    val newSize = (player.getVarbit(varbit) - 1).coerceAtLeast(0)
+                    player.setVarbit(varbit, newSize)
+                }
+            }
+        }
+
+        bank.shift()
+        shiftTabs(player)
+        val selectedTab = player.getVarbit(SELECTED_TAB_VARBIT)
+        if (selectedTab != 0 && selectedTab > numTabsUnlocked(player)) {
+            player.setVarbit(SELECTED_TAB_VARBIT, 0)
+            modified = true
+        }
+        bank.dirty = true
+        if (modified) {
+            player.persistBank()
+        }
+    }
+
+    fun swap(player: Player, from: Int, to: Int) {
+        val bank = player.bank
+        if (bank[to] == null) {
+            val sourceTab = getCurrentTab(player, from)
+            val targetTab = getCurrentTab(player, to)
+
+            if (sourceTab == targetTab) {
+                bank.insert(from, to)
+                player.persistBank()
+                return
+            }
+
+            tabSafeInsert(player, from, to)
+            return
+        }
+        bank.swap(from, to)
+        player.persistBank()
+    }
+
+    fun tabSafeInsert(player: Player, from: Int, to: Int) {
+        val bank = player.bank
+        val targetTab = getCurrentTab(player, to)
+        val sourceTab = getCurrentTab(player, from)
+
+        bank.insert(from, to)
+
+        if (targetTab != 0) {
+            val targetVarbit = BANK_TAB_ROOT_VARBIT + targetTab
+            player.setVarbit(targetVarbit, player.getVarbit(targetVarbit) + 1)
+        }
+
+        if (sourceTab != 0) {
+            val sourceVarbit = BANK_TAB_ROOT_VARBIT + sourceTab
+            val newSize = (player.getVarbit(sourceVarbit) - 1).coerceAtLeast(0)
+            player.setVarbit(sourceVarbit, newSize)
+            if (newSize == 0) {
+                shiftTabs(player)
+                if (player.getVarbit(SELECTED_TAB_VARBIT) == sourceTab) {
+                    player.setVarbit(SELECTED_TAB_VARBIT, 0)
+                }
+            }
+        }
+        player.persistBank()
+    }
+
     fun withdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
+        val from = p.bank
+        val to = p.inventory
+        val note = p.getVarbit(WITHDRAW_AS_VARBIT) == 1
+
+        val absoluteSlot = BankTabs.resolveInterfaceSlot(p, slot) ?: run {
+            legacyWithdraw(p, id, amt, 0, placehold)
+            return
+        }
+
+        val item = from[absoluteSlot]
+        if (item == null) {
+            p.message("That item is no longer in your bank.")
+            return
+        }
+
+        if (item.id != id) {
+            // Fallback to the legacy search behaviour if the client and server became
+            // desynchronised for some reason.
+            legacyWithdraw(p, id, amt, absoluteSlot, placehold)
+            return
+        }
+
+        val originalAmount = item.amount
+        val amount = Math.min(amt, originalAmount)
+        if (amount <= 0) {
+            p.message("You can't withdraw that many.")
+            return
+        }
+        val copy = Item(item.id, amount)
+        if (copy.amount >= item.amount) {
+            copy.copyAttr(item)
+        }
+
+        val transfer = from.transfer(to, item = copy, fromSlot = absoluteSlot, note = note, unnote = !note)
+        val withdrawn = transfer?.completed ?: 0
+
+        if (withdrawn == 0) {
+            p.message("You don't have enough inventory space.")
+            return
+        }
+
+        if (withdrawn != amount) {
+            p.message("You don't have enough inventory space to withdraw that many.")
+        }
+
+        if (from[absoluteSlot] == null) {
+            val tab = getCurrentTab(p, absoluteSlot)
+            if (placehold || p.getVarbit(ALWAYS_PLACEHOLD_VARBIT) == 1) {
+                val def = item.getDef(p.world.definitions)
+                if (def.placeholderLink > 0) {
+                    p.bank[absoluteSlot] = Item(def.placeholderLink, -2)
+                }
+            } else {
+                p.bank.shift()
+
+                if (tab != 0) {
+                    val tabVarbit = BANK_TAB_ROOT_VARBIT + tab
+                    val newSize = (p.getVarbit(tabVarbit) - 1).coerceAtLeast(0)
+                    p.setVarbit(tabVarbit, newSize)
+
+                    if (newSize == 0) {
+                        shiftTabs(p, tab)
+                        p.setVarbit(SELECTED_TAB_VARBIT, 0)
+                    }
+                }
+            }
+        }
+
+        p.persistBank()
+    }
+
+    private fun legacyWithdraw(p: Player, id: Int, amt: Int, slot: Int, placehold: Boolean) {
         var withdrawn = 0
         val from = p.bank
         val to = p.inventory
         val amount = Math.min(from.getItemCount(id), amt)
         val note = p.getVarbit(WITHDRAW_AS_VARBIT) == 1
-        val oldItemArray = BankTabs.buildBankGrid(p)
-
         for (i in slot until from.capacity) {
             val item = from[i] ?: continue
             if (item.id != id) {
@@ -64,36 +209,25 @@ object Bank {
             withdrawn += transfer?.completed ?: 0
 
             if (from[i] == null) {
+                val tab = getCurrentTab(p, i)
                 if (placehold || p.getVarbit(ALWAYS_PLACEHOLD_VARBIT) == 1) {
                     val def = item.getDef(p.world.definitions)
-                    /**
-                     * Make sure the item has a valid placeholder item in its
-                     * definition.
-                     */
                     if (def.placeholderLink > 0) {
                         p.bank[i] = Item(def.placeholderLink, -2)
                     }
                 } else {
-//                    var itemsTab: Int = -1
-//                    if (oldItemArray != null) {
-//                        itemsTab = getTabByItem(p, item.id, oldItemArray)
-//                    }
-//
-//                    val tabed = oldItemArray?.filter { it.tabId == itemsTab }
-//                    if (tabed!![0].item!!.id == item.id && tabed[0].item!!.amount == 0) {
-//                        val tabVarbit = BANK_TAB_ROOT_VARBIT + itemsTab
-//
-//                        val remove = from.shiftV2(tabed[0].slot)
-//                        val setVarsValue = p.getVarbit(tabVarbit)
-//
-//                        if (itemsTab != 0) {
-//                            p.setVarbit(tabVarbit, setVarsValue - remove)
-//                            if (setVarsValue == 0) {
-//                                BankTabs.shiftTabs(p, itemsTab)
-//                                p.setVarbit(SELECTED_TAB_VARBIT, 0)
-//                            }
-//                        }
-//                    }
+                    p.bank.shift()
+
+                    if (tab != 0) {
+                        val tabVarbit = BANK_TAB_ROOT_VARBIT + tab
+                        val newSize = (p.getVarbit(tabVarbit) - 1).coerceAtLeast(0)
+                        p.setVarbit(tabVarbit, newSize)
+
+                        if (newSize == 0) {
+                            shiftTabs(p, tab)
+                            p.setVarbit(SELECTED_TAB_VARBIT, 0)
+                        }
+                    }
                 }
             }
         }
@@ -101,6 +235,9 @@ object Bank {
             p.message("You don't have enough inventory space.")
         } else if (withdrawn != amount) {
             p.message("You don't have enough inventory space to withdraw that many.")
+        }
+        if (withdrawn > 0) {
+            p.persistBank()
         }
     }
     fun deposit(player: Player, id: Int, amt: Int) {
@@ -151,6 +288,8 @@ object Bank {
 
         if (deposited == 0) {
             player.message("Bank full.")
+        } else {
+            player.persistBank()
         }
     }
 
@@ -226,4 +365,10 @@ object Bank {
         this[to] = fromItem
     }
 
+}
+
+fun Player.persistBank() {
+    val client = this as? Client ?: return
+    val serializer = world.getService(PlayerSerializerService::class.java, searchSubclasses = true) ?: return
+    serializer.saveClientData(client)
 }
