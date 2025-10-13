@@ -1,7 +1,7 @@
 [versions]
 fastutil = "8.2.1"
 sparkCore = "2.3"
-kotlinStdlibJdk8 = "1.8.20-RC2"
+kotlinStdlibJdk8 = "1.9.23"
 slf4jApi = "2.0.9"
 log4jSlf4jImpl = "2.20.0"
 kotlinLogging = "5.1.0"
@@ -16,7 +16,8 @@ cache = "_"
 kotlinxSerializationCore = "_"
 junit = "4.+"
 kotlinTestJunit = "_"
-kotlin = "1.8.10"
+kotlin = "1.9.23"
+rsprot = "1.0.0-ALPHA-20251005"
 openrs2 = "0.1.0-SNAPSHOT"
 nettyAll = "4.0.34.Final"
 slf4j = "2.0.0-alpha0"
@@ -62,6 +63,9 @@ openrs2-crypto = { module = "org.openrs2:openrs2-crypto", version.ref = "openrs2
 openrs2-compress = { module = "org.openrs2:openrs2-compress", version.ref = "openrs2"}
 
 netty-all = { group = "io.netty", name = "netty-all", version.ref = "nettyAll" }
+
+rsprot-osrs221-api = { group = "net.rsprot", name = "osrs-221-api", version.ref = "rsprot" }
+rsprot-osrs221-shared = { group = "net.rsprot", name = "osrs-221-shared", version.ref = "rsprot" }
 
 logback-classic = { group ="ch.qos.logback", name = "logback-classic", version.ref = "logback"}
 

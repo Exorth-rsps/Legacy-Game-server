@@ -2,4 +2,6 @@ description = "Alter Net, This module will be eventually implemented inside game
 
 dependencies {
     implementation(project(":util"))
+    implementation(rootProject.libs.rsprot.osrs221.api)
+    implementation(rootProject.libs.rsprot.osrs221.shared)
 }
