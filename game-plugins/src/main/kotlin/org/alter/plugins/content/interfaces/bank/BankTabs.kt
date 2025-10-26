@@ -15,6 +15,8 @@ object BankTabs {
 
     const val SELECTED_TAB_VARBIT = 4150
 
+    const val MAX_BANK_TABS = 9
+
     /**
      * So when we set example: 4171 -> to 7
      * From top 7 first items get sent to be at that tab[4171 : represents tab 1]
@@ -62,6 +64,7 @@ object BankTabs {
                 }
             }
         }
+        player.persistBank()
     }
 
 
@@ -96,6 +99,7 @@ object BankTabs {
                 }
             }
         }
+        player.persistBank()
     }
 
 
@@ -214,6 +218,18 @@ object BankTabs {
         for(tab in emptyTabIdx..numUnlocked)
             player.setVarbit(BANK_TAB_ROOT_VARBIT+tab, player.getVarbit(BANK_TAB_ROOT_VARBIT+tab+1))
         player.setVarbit(BANK_TAB_ROOT_VARBIT+numUnlocked+1, 0)
+    }
+
+    fun shiftTabs(player: Player) {
+        var tab = 1
+        while (tab <= MAX_BANK_TABS) {
+            val size = player.getVarbit(BANK_TAB_ROOT_VARBIT + tab)
+            if (size == 0 && tab <= numTabsUnlocked(player)) {
+                shiftTabs(player, tab)
+            } else {
+                tab++
+            }
+        }
     }
 
     /**

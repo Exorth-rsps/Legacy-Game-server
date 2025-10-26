@@ -20,6 +20,7 @@ import org.alter.game.model.social.Social
 import org.alter.game.model.timer.*
 import org.alter.game.model.varp.VarpSet
 import org.alter.game.service.log.LoggerService
+import org.alter.game.service.serializer.PlayerSerializerService
 import org.alter.game.sync.block.UpdateBlockType
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import java.util.*
@@ -367,6 +368,9 @@ open class Player(world: World) : Pawn(world) {
         if (bank.dirty) {
             write(UpdateInvFullMessage(containerKey = 95, items = bank.rawItems))
             bank.dirty = false
+            if (this is Client) {
+                world.getService(PlayerSerializerService::class.java, searchSubclasses = true)?.saveClientData(this)
+            }
         }
 
         if (shopDirty) {
